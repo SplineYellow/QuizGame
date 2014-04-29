@@ -21,15 +21,34 @@ public class DomandeDatabaseAdapter {
     public static final String KEY_RISPOSTA4 = "risposta4";
     public static final String KEY_ESATTA = "risp_esatta";
 
+    public static final String KEY_CATEGORIA = "categoria";
+
     public static final String TAG = "DomandaDatabaseAdapter";
     public static final String DATABASE_NAME = "domande.db";
     public static final String TABLE_DOMANDE = "domande";
-    //meglio in un altro db
-    //public static final String TABLE_UTENTI = "utenti";
+    public static final String TABLE_CATEGORIE = "categorie";
+
     public static final int DATABASE_VERSION = 1;
 
-    private static final String DATABASE_CREATE = "create..."; //stringa per la creazione delle tabelle
+    private static final String TABLE_CATEGORIE_CREATE = "create table " +
+            TABLE_CATEGORIE + " (" +
+            KEY_CATEGORIA + " text primary key" +
+            ");";
 
+    private static final String TABLE_DOMANDE_CREATE = "create table " +
+            TABLE_DOMANDE + " (" +
+            KEY_DOMANDA + " text primary key," +
+            KEY_ARGOMENTO + " text not null references " + TABLE_CATEGORIE +
+            "("+ KEY_CATEGORIA +")," +
+            KEY_RISPOSTA1 + " text not null," +
+            KEY_RISPOSTA2 + " text not null," +
+            KEY_RISPOSTA3 + " text not null," +
+            KEY_RISPOSTA4 + " text not null," +
+            KEY_ESATTA + " integer not null," +
+            "check (" + KEY_ESATTA + " between 1 and 4)" +
+            ");";
+
+    public static final String TABLE_CATEGORIE_DROP = "drop table if exists " + TABLE_CATEGORIE + ";";
     public static final String TABLE_DOMANDE_DROP = "drop table if exists " + TABLE_DOMANDE + ";";
 
     private final Context context;
@@ -49,7 +68,8 @@ public class DomandeDatabaseAdapter {
 
         @Override
         public void onCreate(SQLiteDatabase db) {
-            db.execSQL(DATABASE_CREATE);
+            db.execSQL(TABLE_CATEGORIE_CREATE);
+            db.execSQL(TABLE_DOMANDE_CREATE);
         }
 
         @Override
@@ -58,6 +78,7 @@ public class DomandeDatabaseAdapter {
                     + " to "
                     + newVersion + ", which will destroy all old data");
             db.execSQL(TABLE_DOMANDE_DROP);
+            db.execSQL(TABLE_CATEGORIE_DROP);
             onCreate(db);
         }
 
@@ -80,7 +101,9 @@ public class DomandeDatabaseAdapter {
         }
         catch(Exception s){
             db.execSQL(TABLE_DOMANDE_DROP);
-            db.execSQL(DATABASE_CREATE);
+            db.execSQL(TABLE_CATEGORIE_DROP);
+            db.execSQL(TABLE_CATEGORIE_CREATE);
+            db.execSQL(TABLE_DOMANDE_CREATE);
         }
     }
 
