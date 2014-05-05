@@ -11,11 +11,16 @@ import android.widget.Toast;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
+import java.sql.SQLException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class MainActivity extends Activity {
 
     EditText editTextUser, editTextPassword;
     Button buttonLogin;
+
+    UtentiDatabaseAdapter db = new UtentiDatabaseAdapter(this);
 
     //parametri per connessione al server
 
@@ -41,8 +46,25 @@ public class MainActivity extends Activity {
                 @Override
                 public void onClick(View arg0) {
                     MyClientTask myClientTask = new MyClientTask();
+                    String nick = getUser();
+                    String passwd = getPassword();
 
-                    if (!getUser().equals("") || !getPassword().equals("")) {
+                    SimpleDateFormat ts = new SimpleDateFormat("ddMMyyyyhhmmss");
+                    String timestamp = ts.format(new Date());
+
+                    if (!nick.equals("") || !passwd.equals("")) {
+                        try {
+                            db.open();
+                        } catch (SQLException e) {
+                            e.printStackTrace();
+                        }
+                        if (db.alreadyIn(nick)) {
+                            db.updateLastAccess(timestamp, nick);
+                        }
+                        else {
+                            db.insertUser(nick, passwd, timestamp);
+                        }
+                        db.close();
                         myClientTask.execute();
                     }
                     else {
