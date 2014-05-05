@@ -1,8 +1,12 @@
 package it.splineyellow.quizgame;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -22,21 +26,22 @@ public class MainActivity extends Activity {
     String dstAddress = "thebertozz.no-ip.org";
     int dstPort = 9533;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        editTextUser = (EditText)findViewById(R.id.user);
-        editTextPassword = (EditText)findViewById(R.id.password);
-        buttonLogin = (Button)findViewById(R.id.login);
+        editTextUser = (EditText) findViewById(R.id.user);
+        editTextPassword = (EditText) findViewById(R.id.password);
+        buttonLogin = (Button) findViewById(R.id.login);
 
         buttonLogin.setOnClickListener(buttonLoginOnClickListener);
 
     }
 
     View.OnClickListener buttonLoginOnClickListener =
-            new View.OnClickListener(){
+            new View.OnClickListener() {
 
                 @Override
                 public void onClick(View arg0) {
@@ -44,22 +49,20 @@ public class MainActivity extends Activity {
 
                     if (!getUser().equals("") || !getPassword().equals("")) {
                         myClientTask.execute();
-                    }
-                    else {
+                    } else {
                         Toast t = Toast.makeText(getApplicationContext(), "Completare tutti i campi", Toast.LENGTH_LONG);
                         t.show();
                     }
-                }};
+                }
+            };
 
     public class MyClientTask extends AsyncTask<Void, Void, Void> {
 
         @Override
-        protected Void doInBackground(Void... params)
-        {
+        protected Void doInBackground(Void... params) {
             DatagramSocket ds = null;
 
-            try
-            {
+            try {
                 InetAddress serverAddr = InetAddress.getByName(dstAddress);
 
                 String data = getUser() + "," + getPassword();
@@ -70,15 +73,10 @@ public class MainActivity extends Activity {
                 dp = new DatagramPacket(buffer, buffer.length, serverAddr, dstPort);
 
                 ds.send(dp);
-            }
-            catch (Exception e)
-            {
+            } catch (Exception e) {
                 e.printStackTrace();
-            }
-            finally
-            {
-                if (ds != null)
-                {
+            } finally {
+                if (ds != null) {
                     ds.close();
                 }
             }
@@ -93,13 +91,63 @@ public class MainActivity extends Activity {
 
     }
 
-    public String getUser(){
+    public String getUser() {
 
         return editTextUser.getText().toString();
     }
 
-    public String getPassword(){
+    public String getPassword() {
 
         return editTextPassword.getText().toString();
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        // Handle action bar item clicks here.
+
+        switch (item.getItemId()) {
+
+
+            case R.id.action_delete_db:
+
+                AlertDialog.Builder dropBuilder = new AlertDialog.Builder(this);
+                dropBuilder.setMessage("Sei sicuro di voler eliminare il database utenti?")
+                        .setCancelable(false)
+                        .setPositiveButton("Si", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+
+                                Context context = getApplicationContext();
+                                try {
+                                    context.deleteDatabase("utenti.db");
+                                }catch (Throwable t) {
+                                    t.printStackTrace();
+                                }
+                                if (context!=null) {
+                                    Toast t = Toast.makeText(context, "Dati eliminati!", Toast.LENGTH_LONG);
+                                    t.show();
+                                }
+                            }
+                        })
+                        .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+
+                                dialogInterface.cancel();
+                            }
+                        });
+
+                AlertDialog dropAlert = dropBuilder.create();
+                dropAlert.show();
+
+                return true;
+
+            default:
+
+            return super.onOptionsItemSelected(item);
+
+        }
+
     }
 }
