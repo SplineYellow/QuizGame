@@ -146,6 +146,8 @@ public class UtentiDatabaseAdapter {
 
     public void updateLastAccess (String timestamp, String username) {
 
+        timestamp = formatDate(timestamp);
+
         ContentValues initialValues = new ContentValues();
         initialValues.put(KEY_ULTIMO, timestamp);
         db.update(TABLE_UTENTI, initialValues, KEY_NICKNAME + " = '" + username + "'", null);
