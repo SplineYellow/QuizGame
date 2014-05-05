@@ -1,74 +1,58 @@
 package it.splineyellow.quizgame;
 
 import android.app.Activity;
-import android.net.http.AndroidHttpClient;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Message;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
+import android.widget.Toast;
 
-import org.apache.http.client.HttpClient;
-
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
-import java.net.Socket;
-import java.net.UnknownHostException;
-
 
 public class MainActivity extends Activity {
 
-    TextView textResponse;
-    EditText editTextAddress, editTextPort;
-    Button buttonConnect, buttonClear;
+    EditText editTextUser, editTextPassword;
+    Button buttonLogin;
+
+    //parametri per connessione al server
+
+    String dstAddress = "thebertozz.no-ip.org";
+    int dstPort = 9533;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        editTextAddress = (EditText)findViewById(R.id.address);
-        editTextPort = (EditText)findViewById(R.id.port);
-        buttonConnect = (Button)findViewById(R.id.connect);
-        buttonClear = (Button)findViewById(R.id.clear);
-        textResponse = (TextView)findViewById(R.id.response);
+        editTextUser = (EditText)findViewById(R.id.user);
+        editTextPassword = (EditText)findViewById(R.id.password);
+        buttonLogin = (Button)findViewById(R.id.login);
 
-        buttonConnect.setOnClickListener(buttonConnectOnClickListener);
+        buttonLogin.setOnClickListener(buttonLoginOnClickListener);
 
-        buttonClear.setOnClickListener(new View.OnClickListener(){
-
-            @Override
-            public void onClick(View v) {
-                textResponse.setText("");
-            }});
     }
 
-    View.OnClickListener buttonConnectOnClickListener =
+    View.OnClickListener buttonLoginOnClickListener =
             new View.OnClickListener(){
 
                 @Override
                 public void onClick(View arg0) {
-                    MyClientTask myClientTask = new MyClientTask(
-                            editTextAddress.getText().toString(),
-                            Integer.parseInt(editTextPort.getText().toString()));
-                    myClientTask.execute();
+                    MyClientTask myClientTask = new MyClientTask();
+
+                    if (!getUser().equals("") || !getPassword().equals("")) {
+                        myClientTask.execute();
+                    }
+                    else {
+                        Toast t = Toast.makeText(getApplicationContext(), "Completare tutti i campi", Toast.LENGTH_LONG);
+                        t.show();
+                    }
                 }};
 
     public class MyClientTask extends AsyncTask<Void, Void, Void> {
 
-        String dstAddress;
-        int dstPort;
-
-        MyClientTask(String addr, int port){
-            dstAddress = addr;
-            dstPort = port;
-        }
         @Override
         protected Void doInBackground(Void... params)
         {
@@ -77,12 +61,14 @@ public class MainActivity extends Activity {
             try
             {
                 InetAddress serverAddr = InetAddress.getByName(dstAddress);
-                String data = "Sconosciuto,pass";
+
+                String data = getUser() + "," + getPassword();
                 byte[] buffer = data.getBytes();
+
                 ds = new DatagramSocket();
                 DatagramPacket dp;
                 dp = new DatagramPacket(buffer, buffer.length, serverAddr, dstPort);
-                ds.setBroadcast(true);
+
                 ds.send(dp);
             }
             catch (Exception e)
@@ -107,4 +93,13 @@ public class MainActivity extends Activity {
 
     }
 
+    public String getUser(){
+
+        return editTextUser.getText().toString();
+    }
+
+    public String getPassword(){
+
+        return editTextPassword.getText().toString();
+    }
 }
