@@ -4,8 +4,9 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.os.AsyncTask;
+import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -13,9 +14,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import java.net.DatagramPacket;
-import java.net.DatagramSocket;
-import java.net.InetAddress;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -25,13 +23,9 @@ public class MainActivity extends Activity {
     EditText editTextUser, editTextPassword;
     Button buttonLogin;
 
+    public final static String EXTRA_MESSAGE = "it.splineyellow.quizgame.MESSAGE";
+
     UtentiDatabaseAdapter db = new UtentiDatabaseAdapter(this);
-
-    //parametri per connessione al server
-
-    String dstAddress = "thebertozz.no-ip.org";
-    int dstPort = 9533;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,7 +45,7 @@ public class MainActivity extends Activity {
 
                 @Override
                 public void onClick(View arg0) {
-                    MyClientTask myClientTask = new MyClientTask();
+
                     String nick = getUser();
                     String passwd = getPassword();
 
@@ -71,7 +65,7 @@ public class MainActivity extends Activity {
                             db.insertUser(nick, passwd, timestamp);
                         }
                         db.close();
-                        myClientTask.execute();
+                        goToMenu();
                     } else {
                         Toast t = Toast.makeText(getApplicationContext(), "Completare tutti i campi", Toast.LENGTH_LONG);
                         t.show();
@@ -79,40 +73,7 @@ public class MainActivity extends Activity {
                 }
             };
 
-    public class MyClientTask extends AsyncTask<Void, Void, Void> {
 
-        @Override
-        protected Void doInBackground(Void... params) {
-            DatagramSocket ds = null;
-
-            try {
-                InetAddress serverAddr = InetAddress.getByName(dstAddress);
-
-                String data = getUser() + "," + getPassword();
-                byte[] buffer = data.getBytes();
-
-                ds = new DatagramSocket();
-                DatagramPacket dp;
-                dp = new DatagramPacket(buffer, buffer.length, serverAddr, dstPort);
-
-                ds.send(dp);
-            } catch (Exception e) {
-                e.printStackTrace();
-            } finally {
-                if (ds != null) {
-                    ds.close();
-                }
-            }
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Void result) {
-
-            super.onPostExecute(result);
-        }
-
-    }
 
     public String getUser() {
 
@@ -179,6 +140,18 @@ public class MainActivity extends Activity {
             return super.onOptionsItemSelected(item);
 
         }
+
+    }
+
+    public void goToMenu () {
+
+        Intent intent = new Intent(this, MenuActivity.class);
+        String data = getUser() + "," + getPassword();
+
+        Log.d("TAG", "Dati della EXTRA: " + data);
+
+        intent.putExtra(EXTRA_MESSAGE, data);
+        startActivity(intent);
 
     }
 }
