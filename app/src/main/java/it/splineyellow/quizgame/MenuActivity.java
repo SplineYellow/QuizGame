@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -60,12 +61,29 @@ public class MenuActivity extends Activity {
         setTitle("Utente: " + user);
     }
 
+    /*
+        Disable "hardware" back button.
+     */
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        return (keyCode == KeyEvent.KEYCODE_BACK || super.onKeyDown(keyCode, event));
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu, menu);
+
+        /*
+            Disable action bar back button.
+         */
+        try {
+            getActionBar().setDisplayHomeAsUpEnabled(false);
+        } catch (NullPointerException n) {
+            n.printStackTrace();
+        }
+
         return true;
     }
 
@@ -75,10 +93,8 @@ public class MenuActivity extends Activity {
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-        if (id == R.id.action_settings) {
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
+
+        return id == R.id.action_settings || super.onOptionsItemSelected(item);
     }
 
     MyClientTask myClientTask = new MyClientTask();

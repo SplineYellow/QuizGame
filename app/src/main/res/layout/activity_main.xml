@@ -10,28 +10,32 @@
     tools:context=".MainActivity" >
 
     <ImageView
+        android:id="@+id/immagine_prova"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/immagine_prova"
         android:src="@drawable/image"
-        android:layout_gravity="center"/>
+        android:layout_gravity="center_horizontal" />
 
     <EditText
         android:id="@+id/user"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="@string/hint_username" />
+        android:hint="@string/hint_username"
+        android:inputType="text"
+        android:textIsSelectable="false" />
+
     <EditText
         android:id="@+id/password"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="@string/hint_password" />
+        android:hint="@string/hint_password"
+        android:inputType="textPassword"
+        android:textIsSelectable="false" />
+
     <Button
         android:id="@+id/login"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/login"/>
-
-
+        android:text="@string/login" />
 
 </LinearLayout>
