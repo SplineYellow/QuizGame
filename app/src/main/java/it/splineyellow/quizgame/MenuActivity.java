@@ -11,6 +11,7 @@ import android.widget.Button;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
+import java.sql.SQLException;
 
 /**
  * Created by Francesco on 06/05/2014.
@@ -23,6 +24,8 @@ public class MenuActivity extends Activity {
     int dstPort = 9533;
 
     String userData;
+
+    UtentiDatabaseAdapter db = new UtentiDatabaseAdapter(this);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,9 +48,15 @@ public class MenuActivity extends Activity {
             }
         });
 
-        Intent intent = getIntent();
+        try {
+            db.open();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
 
-        userData = intent.getStringExtra(MainActivity.EXTRA_MESSAGE);
+        userData = db.getCurrentUser();
+        db.close();
+
         String[] parts = userData.split(",");
         String user = parts[0];
         String password = parts[1];
@@ -114,6 +123,7 @@ public class MenuActivity extends Activity {
     }
 
     public void goToStatistics () {
+
         Intent intent = new Intent(this, StatisticsActivity.class);
         startActivity(intent);
     }

@@ -49,7 +49,7 @@ public class MainActivity extends Activity {
                     String nick = getUser();
                     String passwd = getPassword();
 
-                    SimpleDateFormat ts = new SimpleDateFormat("ddMMyyyyhhmmss");
+                    SimpleDateFormat ts = new SimpleDateFormat("hhmmssddMMyyyy");
                     String timestamp = ts.format(new Date());
 
                     if (!nick.equals("") || !passwd.equals("")) {
@@ -146,11 +146,6 @@ public class MainActivity extends Activity {
     public void goToMenu () {
 
         Intent intent = new Intent(this, MenuActivity.class);
-        String data = getUser() + "," + getPassword();
-
-        Log.d("TAG", "Dati della EXTRA: " + data);
-
-        intent.putExtra(EXTRA_MESSAGE, data);
         startActivity(intent);
 
     }

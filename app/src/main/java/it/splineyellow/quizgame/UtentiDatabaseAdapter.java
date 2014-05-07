@@ -137,8 +137,8 @@ public class UtentiDatabaseAdapter {
 
     public String formatDate (String ts) {
 
-        ts = ts.substring(0, 2) + "/" + ts.substring(2,4) + "/" + ts.substring(4, 8) + ";" +
-                ts.substring(8, 10) + ":" + ts.substring(10, 12) + ":" + ts.substring(12);
+        ts = ts.substring(0, 2) + ":" + ts.substring(2,4) + ":" + ts.substring(4, 6) + ";" +
+                ts.substring(6, 8) + "/" + ts.substring(8, 10) + "/" + ts.substring(10);
 
         return ts;
     }
@@ -152,6 +152,17 @@ public class UtentiDatabaseAdapter {
         db.update(TABLE_UTENTI, initialValues, KEY_NICKNAME + " = '" + username + "'", null);
 
         Log.d(TAG, "Aggiornato a: " + timestamp);
+    }
+
+    public String getCurrentUser () {
+        String query = "select " + KEY_NICKNAME + ", " +
+            KEY_PASSWORD + ", max(" + KEY_ULTIMO + ") from " + TABLE_UTENTI + ";";
+        Cursor c = db.rawQuery(query, null);
+
+        if (c != null && c.moveToFirst()) {
+            return c.getString(0) + "," + c.getString(1);
+        }
+        else return "Guest,guest";
     }
 
 }
