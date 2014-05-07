@@ -19,6 +19,7 @@ import java.util.Date;
 
 //Copyright SplineYellow - 2014
 //Senza questo l'app non va. Sappiatelo.
+//Aggiunta fondamentale. Pure questa.
 
 public class MainActivity extends Activity {
 
