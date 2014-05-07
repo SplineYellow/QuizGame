@@ -29,6 +29,14 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="it.splineyellow.quizgame.MainActivity" />
         </activity>
+        <activity
+            android:name="it.splineyellow.quizgame.StatisticsActivity"
+            android:label="@string/title_activity_statistics"
+            android:parentActivityName="it.splineyellow.quizgame.MenuActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="MenuActivity" />
+        </activity>
     </application>
 
 </manifest>

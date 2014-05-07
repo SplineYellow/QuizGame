@@ -37,6 +37,14 @@ public class MenuActivity extends Activity {
             }
         });
 
+        Button buttonStatistics = (Button) findViewById(R.id.button_statistics);
+        buttonStatistics.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                goToStatistics();
+            }
+        });
+
         Intent intent = getIntent();
 
         userData = intent.getStringExtra(MainActivity.EXTRA_MESSAGE);
@@ -103,6 +111,11 @@ public class MenuActivity extends Activity {
             super.onPostExecute(result);
         }
 
+    }
+
+    public void goToStatistics () {
+        Intent intent = new Intent(this, StatisticsActivity.class);
+        startActivity(intent);
     }
 
 }
