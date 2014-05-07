@@ -13,10 +13,6 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.sql.SQLException;
 
-/**
- * Created by Francesco on 06/05/2014.
- */
-
 public class MenuActivity extends Activity {
 
 

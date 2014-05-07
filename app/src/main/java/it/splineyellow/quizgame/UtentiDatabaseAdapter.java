@@ -9,9 +9,6 @@ import android.util.Log;
 
 import java.sql.SQLException;
 
-/**
- * Created by Francesco on 29/04/2014.
- */
 public class UtentiDatabaseAdapter {
 
     public static final String KEY_NICKNAME = "nickname";

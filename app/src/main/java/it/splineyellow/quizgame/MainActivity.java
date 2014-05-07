@@ -18,12 +18,12 @@ import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+//Copyright SplineYellow - 2014
+
 public class MainActivity extends Activity {
 
     EditText editTextUser, editTextPassword;
     Button buttonLogin;
-
-    public final static String EXTRA_MESSAGE = "it.splineyellow.quizgame.MESSAGE";
 
     UtentiDatabaseAdapter db = new UtentiDatabaseAdapter(this);
 
