@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <color name="spline_yellow">#fffff900</color>
+    <color name="tortuga_green">#ff00ff03</color>
+    <color name="blue_skyler">#ff0088e5</color>
+    <color name="walter_white">#ffe7d4c7</color>
+    <color name="jesse_pinkman">#ffff0088</color>
+    <color name="hank_in_black">#ff191719</color>
+</resources>

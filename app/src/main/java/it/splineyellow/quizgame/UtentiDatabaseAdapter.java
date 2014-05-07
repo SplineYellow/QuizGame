@@ -165,4 +165,47 @@ public class UtentiDatabaseAdapter {
         else return "Guest,guest";
     }
 
+    public int getPlayData (String user, int parameter) {
+
+        String camp;
+
+        switch (parameter) {
+            case 1: camp = KEY_GIOCATE;
+                break;
+            case 2: camp = KEY_VINTE;
+                break;
+            case 3: camp = KEY_PAREGGIATE;
+                break;
+            case 4: camp = KEY_PERSE;
+                break;
+            case 5: camp = KEY_GIUSTE;
+                break;
+            case 6: camp = KEY_ERRATE;
+                break;
+            default: return 0;
+        }
+
+        String query = "select " + camp + " from " + TABLE_UTENTI +
+                " where " + KEY_NICKNAME + " = '" + user + "';";
+        Cursor c = db.rawQuery(query, null);
+
+        if (c != null && c.moveToFirst()) {
+            return c.getInt(0);
+        }
+
+        return 0;
+    }
+
+    public String getLastAccess (String user) {
+        String query = "select " + KEY_ULTIMO + " from " + TABLE_UTENTI +
+                " where " + KEY_NICKNAME + " = '" + user + "';";
+        Cursor c = db.rawQuery(query, null);
+
+        if (c != null && c.moveToFirst()) {
+            return c.getString(0);
+        }
+        return "";
+
+    }
+
 }

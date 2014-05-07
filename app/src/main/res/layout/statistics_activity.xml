@@ -24,6 +24,7 @@
             android:layout_marginLeft="6dp"
             android:text="@string/statistic_nick"
             android:textStyle="bold|italic"
+            android:textColor="@color/blue_skyler"
             android:typeface="normal"/>
 
         <TextView
@@ -36,8 +37,7 @@
             android:layout_alignParentRight="true"
             android:layout_alignBottom="@id/st_nickname"
             android:textStyle="italic"
-            android:typeface="normal"
-            />
+            android:typeface="normal"/>
 
         <TextView
             android:layout_width="wrap_content"
@@ -48,7 +48,8 @@
             android:layout_marginTop="20dp"
             android:layout_marginLeft="6dp"
             android:textStyle="bold|italic"
-            android:typeface="normal"/>
+            android:typeface="normal"
+            android:textColor="@color/blue_skyler"/>
 
         <TextView
             android:layout_width="wrap_content"
@@ -60,8 +61,7 @@
             android:layout_below="@id/st_nickname"
             android:layout_alignBottom="@id/st_giocate"
             android:textStyle="italic"
-            android:typeface="normal"
-            />
+            android:typeface="normal"/>
 
         <TextView
             android:layout_width="wrap_content"
@@ -72,7 +72,8 @@
             android:layout_marginTop="20dp"
             android:layout_marginLeft="6dp"
             android:textStyle="bold|italic"
-            android:typeface="normal"/>
+            android:typeface="normal"
+            android:textColor="@color/blue_skyler"/>
 
         <TextView
             android:layout_width="wrap_content"
@@ -84,8 +85,7 @@
             android:layout_below="@id/st_giocate"
             android:layout_alignBottom="@id/st_vinte"
             android:textStyle="italic"
-            android:typeface="normal"
-            />
+            android:typeface="normal"/>
 
         <TextView
             android:layout_width="wrap_content"
@@ -96,7 +96,8 @@
             android:layout_marginTop="20dp"
             android:layout_marginLeft="6dp"
             android:textStyle="bold|italic"
-            android:typeface="normal"/>
+            android:typeface="normal"
+            android:textColor="@color/blue_skyler"/>
 
         <TextView
             android:layout_width="wrap_content"
@@ -108,8 +109,7 @@
             android:layout_below="@id/st_vinte"
             android:layout_alignBottom="@id/st_pareggiate"
             android:textStyle="italic"
-            android:typeface="normal"
-            />
+            android:typeface="normal"/>
 
         <TextView
             android:layout_width="wrap_content"
@@ -120,7 +120,8 @@
             android:layout_marginTop="20dp"
             android:layout_marginLeft="6dp"
             android:textStyle="bold|italic"
-            android:typeface="normal"/>
+            android:typeface="normal"
+            android:textColor="@color/blue_skyler"/>
 
         <TextView
             android:layout_width="wrap_content"
@@ -132,8 +133,7 @@
             android:layout_below="@id/st_pareggiate"
             android:layout_alignBottom="@id/st_perse"
             android:textStyle="italic"
-            android:typeface="normal"
-            />
+            android:typeface="normal"/>
 
         <TextView
             android:layout_width="wrap_content"
@@ -144,7 +144,8 @@
             android:layout_marginTop="20dp"
             android:layout_marginLeft="6dp"
             android:textStyle="bold|italic"
-            android:typeface="normal"/>
+            android:typeface="normal"
+            android:textColor="@color/blue_skyler"/>
 
         <TextView
             android:layout_width="wrap_content"
@@ -156,8 +157,7 @@
             android:layout_below="@id/st_perse"
             android:layout_alignBottom="@id/st_giuste"
             android:textStyle="italic"
-            android:typeface="normal"
-            />
+            android:typeface="normal"/>
 
         <TextView
             android:layout_width="wrap_content"
@@ -168,7 +168,8 @@
             android:layout_marginTop="20dp"
             android:layout_marginLeft="6dp"
             android:textStyle="bold|italic"
-            android:typeface="normal"/>
+            android:typeface="normal"
+            android:textColor="@color/blue_skyler"/>
 
         <TextView
             android:layout_width="wrap_content"
@@ -180,8 +181,7 @@
             android:layout_below="@id/st_giuste"
             android:layout_alignBottom="@id/st_sbagliate"
             android:textStyle="italic"
-            android:typeface="normal"
-            />
+            android:typeface="normal"/>
 
         <TextView
             android:layout_width="wrap_content"
@@ -192,7 +192,8 @@
             android:layout_marginTop="20dp"
             android:layout_marginLeft="6dp"
             android:textStyle="bold|italic"
-            android:typeface="normal"/>
+            android:typeface="normal"
+            android:textColor="@color/blue_skyler"/>
 
         <TextView
             android:layout_width="wrap_content"
@@ -204,8 +205,7 @@
             android:layout_below="@id/st_sbagliate"
             android:layout_alignBottom="@id/st_ultimo_accesso"
             android:textStyle="italic"
-            android:typeface="normal"
-            />
+            android:typeface="normal"/>
 
     </RelativeLayout>
 </ScrollView>
