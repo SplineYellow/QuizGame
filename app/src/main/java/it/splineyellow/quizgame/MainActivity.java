@@ -12,14 +12,11 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
-
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
 //Copyright SplineYellow - 2014
-//Senza questo l'app non va. Sappiatelo.
-//Aggiunta fondamentale. Pure questa.
 
 public class MainActivity extends Activity {
 
@@ -32,27 +29,20 @@ public class MainActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
         editTextUser = (EditText) findViewById(R.id.user);
         editTextPassword = (EditText) findViewById(R.id.password);
         buttonLogin = (Button) findViewById(R.id.login);
-
         buttonLogin.setOnClickListener(buttonLoginOnClickListener);
-
     }
 
     View.OnClickListener buttonLoginOnClickListener =
             new View.OnClickListener() {
-
                 @Override
                 public void onClick(View arg0) {
-
                     String nick = getUser();
                     String passwd = getPassword();
-
                     SimpleDateFormat ts = new SimpleDateFormat("hhmmssddMMyyyy");
                     String timestamp = ts.format(new Date());
-
                     if (!nick.equals("") || !passwd.equals("")) {
                         try {
                             db.open();
@@ -74,21 +64,16 @@ public class MainActivity extends Activity {
                 }
             };
 
-
-
     public String getUser() {
-
         return editTextUser.getText().toString();
     }
 
     public String getPassword() {
-
         return editTextPassword.getText().toString();
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
         return true;
@@ -96,21 +81,15 @@ public class MainActivity extends Activity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-
-        // Handle action bar item clicks here.
-
+       // Handle action bar item clicks here.
         switch (item.getItemId()) {
-
-
             case R.id.action_delete_db:
-
                 AlertDialog.Builder dropBuilder = new AlertDialog.Builder(this);
                 dropBuilder.setMessage("Sei sicuro di voler eliminare il database utenti?")
                         .setCancelable(false)
                         .setPositiveButton("Si", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
-
                                 Context context = getApplicationContext();
                                 try {
                                     context.deleteDatabase("utenti.db");
@@ -130,24 +109,24 @@ public class MainActivity extends Activity {
                                 dialogInterface.cancel();
                             }
                         });
-
                 AlertDialog dropAlert = dropBuilder.create();
                 dropAlert.show();
-
                 return true;
-
             default:
-
-            return super.onOptionsItemSelected(item);
-
+                return super.onOptionsItemSelected(item);
         }
+    }
 
+    @Override
+    protected void onRestart() {
+        /*
+            Reset password when coming from MenuActivity.
+         */
+        editTextPassword.setText("");
     }
 
     public void goToMenu () {
-
         Intent intent = new Intent(this, MenuActivity.class);
         startActivity(intent);
-
     }
 }

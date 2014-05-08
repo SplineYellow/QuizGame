@@ -9,14 +9,14 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
+
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.sql.SQLException;
 
 public class MenuActivity extends Activity {
-
-
     String dstAddress = "thebertozz.no-ip.org";
     int dstPort = 9533;
 
@@ -28,7 +28,13 @@ public class MenuActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.menu_activity);
-
+        Button buttonNewGame = (Button) findViewById(R.id.button_new_game);
+        buttonNewGame.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                goToNewMenu();
+            }
+        });
         Button buttonLogout = (Button) findViewById(R.id.button_logout);
         buttonLogout.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -36,7 +42,6 @@ public class MenuActivity extends Activity {
                 onBackPressed();
             }
         });
-
         Button buttonStatistics = (Button) findViewById(R.id.button_statistics);
         buttonStatistics.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -44,20 +49,16 @@ public class MenuActivity extends Activity {
                 goToStatistics();
             }
         });
-
         try {
             db.open();
         } catch (SQLException e) {
             e.printStackTrace();
         }
-
         userData = db.getCurrentUser();
         db.close();
-
         String[] parts = userData.split(",");
         String user = parts[0];
         String password = parts[1];
-
         setTitle("Utente: " + user);
     }
 
@@ -71,7 +72,6 @@ public class MenuActivity extends Activity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu, menu);
 
@@ -83,7 +83,6 @@ public class MenuActivity extends Activity {
         } catch (NullPointerException n) {
             n.printStackTrace();
         }
-
         return true;
     }
 
@@ -93,28 +92,33 @@ public class MenuActivity extends Activity {
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-
         return id == R.id.action_settings || super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        MenuItem item = menu.findItem(R.id.action_settings);
+
+        /*
+            Remove "more action" setting in the action bar.
+         */
+        item.setVisible(false);
+        return super.onPrepareOptionsMenu(menu);
     }
 
     MyClientTask myClientTask = new MyClientTask();
 
     // si attiva con il click su "Nuova partita"
     public class MyClientTask extends AsyncTask<Void, Void, Void> {
-
         @Override
         protected Void doInBackground(Void... params) {
             DatagramSocket ds = null;
-
             try {
                 InetAddress serverAddr = InetAddress.getByName(dstAddress);
-
                 byte[] buffer = userData.getBytes();
-
                 ds = new DatagramSocket();
                 DatagramPacket dp;
                 dp = new DatagramPacket(buffer, buffer.length, serverAddr, dstPort);
-
                 ds.send(dp);
             } catch (Exception e) {
                 e.printStackTrace();
@@ -128,16 +132,30 @@ public class MenuActivity extends Activity {
 
         @Override
         protected void onPostExecute(Void result) {
-
             super.onPostExecute(result);
         }
-
     }
 
-    public void goToStatistics () {
-
+    private void goToStatistics () {
         Intent intent = new Intent(this, StatisticsActivity.class);
         startActivity(intent);
     }
 
+    /*
+        Launch StartGameActivity.
+     */
+    private void goToNewMenu() {
+        Intent intent = new Intent(this, StartGameActivity.class);
+
+        /*
+            Communicate the connection.
+         */
+        Toast t = Toast.makeText(this, "Connessione in corso...", Toast.LENGTH_SHORT);
+        t.show();
+
+        // Connection to Server
+        myClientTask.execute();
+
+        startActivity(intent);
+    }
 }
