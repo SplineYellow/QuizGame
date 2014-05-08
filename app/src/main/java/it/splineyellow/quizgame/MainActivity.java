@@ -43,7 +43,7 @@ public class MainActivity extends Activity {
                     String passwd = getPassword();
                     SimpleDateFormat ts = new SimpleDateFormat("hhmmssddMMyyyy");
                     String timestamp = ts.format(new Date());
-                    if (!nick.equals("") || !passwd.equals("")) {
+                    if (!nick.equals("") && !passwd.equals("")) {
                         try {
                             db.open();
                         } catch (SQLException e) {
