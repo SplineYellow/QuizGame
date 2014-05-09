@@ -35,11 +35,11 @@ public class MenuActivity extends Activity {
                 goToNewMenu();
             }
         });
-        Button buttonLogout = (Button) findViewById(R.id.button_logout);
-        buttonLogout.setOnClickListener(new View.OnClickListener() {
+        Button buttonListGame = (Button) findViewById(R.id.button_list_games);
+        buttonListGame.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
-                onBackPressed();
+            public void onClick(View v){
+                goToListGames();
             }
         });
         Button buttonStatistics = (Button) findViewById(R.id.button_statistics);
@@ -47,6 +47,13 @@ public class MenuActivity extends Activity {
             @Override
             public void onClick(View v) {
                 goToStatistics();
+            }
+        });
+        Button buttonLogout = (Button) findViewById(R.id.button_logout);
+        buttonLogout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onBackPressed();
             }
         });
         try {
@@ -97,12 +104,16 @@ public class MenuActivity extends Activity {
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
-        MenuItem item = menu.findItem(R.id.action_settings);
+        try {
+            MenuItem item = menu.findItem(R.id.action_settings);
 
         /*
             Remove "more action" setting in the action bar.
          */
-        item.setVisible(false);
+            item.setVisible(false);
+        } catch(NullPointerException n) {
+            n.printStackTrace();
+        }
         return super.onPrepareOptionsMenu(menu);
     }
 
@@ -134,6 +145,11 @@ public class MenuActivity extends Activity {
         protected void onPostExecute(Void result) {
             super.onPostExecute(result);
         }
+    }
+
+    private void goToListGames() {
+        Intent intent = new Intent(this, ListGamesActivity.class);
+        startActivity(intent);
     }
 
     private void goToStatistics () {

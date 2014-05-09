@@ -13,7 +13,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@drawable/image"
-        android:layout_centerHorizontal="true" />
+        android:layout_centerHorizontal="true"
+        android:cropToPadding="false" />
 
     <Button
         android:layout_width="wrap_content"
@@ -29,9 +30,20 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:id="@id/button_list_games"
+        android:layout_below="@+id/button_new_game"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:text="@string/button_list_games" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:text="@string/button_statistics"
         android:id="@+id/button_statistics"
-        android:layout_below="@id/button_new_game"
+        android:layout_below="@id/button_list_games"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
         android:layout_alignParentLeft="true"
@@ -43,9 +55,9 @@
         android:text="@string/button_logout"
         android:id="@+id/button_logout"
         android:layout_below="@id/button_statistics"
-        android:layout_alignRight="@id/button_statistics"
         android:layout_alignEnd="@id/button_statistics"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true" />
 
 </RelativeLayout>

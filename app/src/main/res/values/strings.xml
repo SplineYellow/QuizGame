@@ -6,8 +6,9 @@
     <string name="hint_username">Username</string>
     <string name="hint_password">Password</string>
     <string name="login">Login</string>
-    <string name="title_activity_menu">MenuActivity</string>
+    <string name="title_activity_menu">Menu</string>
     <string name="button_new_game">Nuova partita</string>
+    <string name="button_list_games">Elenco partite</string>
     <string name="button_logout">Logout</string>
     <string name="button_statistics">Statistiche</string>
     <string name="title_activity_statistics">Statistiche Giocatore</string>
@@ -21,6 +22,7 @@
     <string name="statistic_giuste">Risposte giuste: </string>
     <string name="statistic_sbagliate">Risposte sbagliate: </string>
     <string name="statistic_ultimo_accesso">Ultimo accesso: </string>
-    <string name="title_activity_start_game">StartGameActivity</string>
+    <string name="title_activity_start_game">Nuova Partita</string>
+    <string name="title_activity_list_games">Elenco Partite</string>
 
 </resources>
