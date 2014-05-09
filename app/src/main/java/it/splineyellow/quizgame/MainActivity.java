@@ -119,6 +119,7 @@ public class MainActivity extends Activity {
 
     @Override
     protected void onRestart() {
+        super.onRestart();
         /*
             Reset password when coming from MenuActivity.
          */
