@@ -205,4 +205,14 @@ public class UtentiDatabaseAdapter {
 
     }
 
+    public String getPasswordByUser (String user) {
+        String query = "select " + KEY_PASSWORD + " from " + TABLE_UTENTI +
+                " where " + KEY_NICKNAME + " = '" + user + "';";
+        Cursor c = db.rawQuery(query, null);
+        if (c != null && c.moveToFirst()) {
+            return c.getString(0);
+        }
+        return "";
+    }
+
 }

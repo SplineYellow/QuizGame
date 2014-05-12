@@ -43,6 +43,7 @@ public class MainActivity extends Activity {
                     String passwd = getPassword();
                     SimpleDateFormat ts = new SimpleDateFormat("hhmmssddMMyyyy");
                     String timestamp = ts.format(new Date());
+                    boolean correctUserPass = false;
                     if (!nick.equals("") && !passwd.equals("")) {
                         try {
                             db.open();
@@ -50,13 +51,24 @@ public class MainActivity extends Activity {
                             e.printStackTrace();
                         }
                         if (db.alreadyIn(nick)) {
-                            db.updateLastAccess(timestamp, nick);
+
+                            if (!passwd.equals(db.getPasswordByUser(nick))) {
+                                Toast t = Toast.makeText(getApplicationContext(), "Username o Password errati", Toast.LENGTH_LONG);
+                                t.show();
+                            }
+                            else {
+                                correctUserPass = true;
+                                db.updateLastAccess(timestamp, nick);
+                            }
                         }
                         else {
                             db.insertUser(nick, passwd, timestamp);
+                            correctUserPass = true;
                         }
                         db.close();
-                        goToMenu();
+                        if (correctUserPass) {
+                            goToMenu();
+                        }
                     } else {
                         Toast t = Toast.makeText(getApplicationContext(), "Completare tutti i campi", Toast.LENGTH_LONG);
                         t.show();
