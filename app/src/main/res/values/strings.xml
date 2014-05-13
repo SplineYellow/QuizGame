@@ -24,5 +24,6 @@
     <string name="statistic_ultimo_accesso">Ultimo accesso: </string>
     <string name="title_activity_start_game">Nuova Partita</string>
     <string name="title_activity_list_games">Elenco Partite</string>
+    <string name="title_activity_connection">Connessione...</string>
 
 </resources>

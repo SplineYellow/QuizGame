@@ -2,6 +2,7 @@ package it.splineyellow.quizgame;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -24,10 +25,19 @@ public class StartGameActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_start_game);
 
+        Intent intent = getIntent();
+        String message = intent.getStringExtra(ConnectionActivity.EXTRA_MESSAGE);
+        String[] myFabData = message.split(",");
+        String nick = myFabData[0];
+        String enemy = myFabData[1];
+        String color = myFabData[2];
+        String turn = myFabData[3];
+
         setTitle("Nuova Partita");
 
         TextView textView = (TextView) findViewById(R.id.placeholder);
-        textView.setText("Placeholder Textview, Punteggi, Nomi giocatori");
+        textView.setText("n = " + nick + ", c = " + enemy + ", " +
+                " t = " + turn + ", c = " + color);
 
         GridView gridview = (GridView) findViewById(R.id.gridview);
         gridview.setAdapter(new ImageAdapter(this));
