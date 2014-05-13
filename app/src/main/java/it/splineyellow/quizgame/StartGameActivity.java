@@ -15,9 +15,17 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.Collections;
+import java.util.Random;
+
 public class StartGameActivity extends Activity {
 
     public static final String TAG = "onItemClick --> posizione : ";
+
+    public Integer[] mThumbIds = {R.drawable.arte, R.drawable.cinema, R.drawable.geografia,
+            R.drawable.informatica, R.drawable.letteratura, R.drawable.matematica,
+            R.drawable.musica, R.drawable.sport, R.drawable.storia};
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,9 +58,7 @@ public class StartGameActivity extends Activity {
 
         @Override
         public boolean onOptionsItemSelected (MenuItem item){
-            // Handle action bar item clicks here. The action bar will
-            // automatically handle clicks on the Home/Up button, so long
-            // as you specify a parent activity in AndroidManifest.xml.
+
             int id = item.getItemId();
             return id == R.id.action_settings || super.onOptionsItemSelected(item);
         }
@@ -61,9 +67,6 @@ public class StartGameActivity extends Activity {
         public boolean onPrepareOptionsMenu (Menu menu){
             MenuItem item = menu.findItem(R.id.action_settings);
 
-        /*
-            Remove "more action" setting in the action bar.
-         */
             try {
                 item.setVisible(false);
             } catch (NullPointerException n) {
@@ -74,6 +77,7 @@ public class StartGameActivity extends Activity {
         }
 
         public class ImageAdapter extends BaseAdapter {
+
             private Context mContext;
 
             public ImageAdapter(Context c) {
@@ -91,6 +95,7 @@ public class StartGameActivity extends Activity {
             public long getItemId(int position) {
                 return 0;
             }
+
 
             // create a new ImageView for each item referenced by the Adapter
             public View getView(int position, View convertView, ViewGroup parent) {
@@ -114,11 +119,20 @@ public class StartGameActivity extends Activity {
                 return imageView;
             }
 
-            private Integer[] mThumbIds = {R.drawable.arte, R.drawable.cinema, R.drawable.geografia,
-                    R.drawable.informatica, R.drawable.letteratura, R.drawable.matematica,
-                    R.drawable.musica, R.drawable.sport, R.drawable.storia};
-
         }
 
+    private int[] shuffleArray(int[] array) {
+        int index;
+        Random random = new Random();
+        for (int i = array.length - 1; i > 0; i--) {
+            index = random.nextInt(i + 1);
+            if (index != i) {
+                array[index] ^= array[i];
+                array[i] ^= array[index];
+                array[index] ^= array[i];
+            }
+        }
+        return array;
     }
+}
 

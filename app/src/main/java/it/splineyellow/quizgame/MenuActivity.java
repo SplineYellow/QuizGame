@@ -117,8 +117,6 @@ public class MenuActivity extends Activity {
         return super.onPrepareOptionsMenu(menu);
     }
 
-    MyClientTask myClientTask = new MyClientTask();
-
     // si attiva con il click su "Nuova partita"
     public class MyClientTask extends AsyncTask<Void, Void, Void> {
         @Override
@@ -170,7 +168,7 @@ public class MenuActivity extends Activity {
         t.show();
 
         // Connection to Server
-        myClientTask.execute();
+        new MyClientTask().execute();
 
         startActivity(intent);
     }
