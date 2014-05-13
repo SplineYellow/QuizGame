@@ -35,17 +35,18 @@ public class StartGameActivity extends Activity {
 
         Intent intent = getIntent();
         String message = intent.getStringExtra(ConnectionActivity.EXTRA_MESSAGE);
-        String[] myFabData = message.split(",");
+        /*String[] myFabData = message.split(",");
         String nick = myFabData[0];
         String enemy = myFabData[1];
         String color = myFabData[2];
-        String turn = myFabData[3];
+        String turn = myFabData[3];*/
 
         setTitle("Nuova Partita");
 
         TextView textView = (TextView) findViewById(R.id.placeholder);
-        textView.setText("n = " + nick + ", c = " + enemy + ", " +
-                " t = " + turn + ", c = " + color);
+        //textView.setText("n = " + nick + ", c = " + enemy + ", " +
+        //        " t = " + turn + ", c = " + color);
+        textView.setText(message);
 
         GridView gridview = (GridView) findViewById(R.id.gridview);
         gridview.setAdapter(new ImageAdapter(this));

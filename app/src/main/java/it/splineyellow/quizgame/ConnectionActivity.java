@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -13,6 +14,9 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
 import java.net.UnknownHostException;
+import java.nio.charset.Charset;
+import java.nio.charset.CharsetDecoder;
+import java.nio.charset.CharsetEncoder;
 import java.sql.SQLException;
 
 
@@ -127,9 +131,9 @@ public class ConnectionActivity extends Activity {
                 }
             }
             DatagramPacket dp;
-            byte[] bufferRec = userData.getBytes();
+            byte[] bufferRec = new byte[4096];
             dp = new DatagramPacket(bufferRec, bufferRec.length, serverAddr, dstPort);
-            while (data != null) {
+            while (data == null) {
                 try {
                     recSocket.receive(dp);
                 } catch (IOException e) {
@@ -139,13 +143,17 @@ public class ConnectionActivity extends Activity {
                         recSocket.close();
                     }
                 }
+
+                Log.v("Data", String.valueOf(data));
+
                 data = dp.getData();
-                String dataString = data.toString();
-                String[] resp = dataString.split(",");
+                //String s = data.toString();
+                String[] resp = String.valueOf(data).split(",");
 
                 if (resp[0].equals("errore")) {
                     backToMenu();
                 } else {
+                    Log.v("LogCONNECTION", "dentro a nick c'è: " + String.valueOf(data));
                     nick = resp[0];
                     myID = Integer.parseInt(resp[1]);
                     timestamp = resp[2];
@@ -192,9 +200,13 @@ public class ConnectionActivity extends Activity {
                 }
             }
             DatagramPacket dp;
-            byte[] bufferRec = userData.getBytes();
+            byte[] bufferRec = new byte[4096];
             dp = new DatagramPacket(bufferRec, bufferRec.length, serverAddr, dstPort);
-            while (data != null) {
+
+            while (data == null) {
+
+                Log.v("ReceiveCatTask", " categorie non è vuoto!");
+
                 try {
                     recSocket.receive(dp);
                 } catch (IOException e) {

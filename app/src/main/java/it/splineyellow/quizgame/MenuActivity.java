@@ -2,23 +2,16 @@ package it.splineyellow.quizgame;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-import android.widget.Toast;
 
-import java.net.DatagramPacket;
-import java.net.DatagramSocket;
-import java.net.InetAddress;
 import java.sql.SQLException;
 
 public class MenuActivity extends Activity {
-    String dstAddress = "thebertozz.no-ip.org";
-    int dstPort = 9533;
 
     String userData;
 
@@ -32,7 +25,7 @@ public class MenuActivity extends Activity {
         buttonNewGame.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                goToNewMenu();
+                goToConnect();
             }
         });
         Button buttonListGame = (Button) findViewById(R.id.button_list_games);
@@ -117,35 +110,7 @@ public class MenuActivity extends Activity {
         return super.onPrepareOptionsMenu(menu);
     }
 
-    MyClientTask myClientTask = new MyClientTask();
 
-    // si attiva con il click su "Nuova partita"
-    public class MyClientTask extends AsyncTask<Void, Void, Void> {
-        @Override
-        protected Void doInBackground(Void... params) {
-            DatagramSocket ds = null;
-            try {
-                InetAddress serverAddr = InetAddress.getByName(dstAddress);
-                byte[] buffer = userData.getBytes();
-                ds = new DatagramSocket();
-                DatagramPacket dp;
-                dp = new DatagramPacket(buffer, buffer.length, serverAddr, dstPort);
-                ds.send(dp);
-            } catch (Exception e) {
-                e.printStackTrace();
-            } finally {
-                if (ds != null) {
-                    ds.close();
-                }
-            }
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Void result) {
-            super.onPostExecute(result);
-        }
-    }
 
     private void goToListGames() {
         Intent intent = new Intent(this, ListGamesActivity.class);
@@ -157,21 +122,8 @@ public class MenuActivity extends Activity {
         startActivity(intent);
     }
 
-    /*
-        Launch StartGameActivity.
-     */
-    private void goToNewMenu() {
-        Intent intent = new Intent(this, StartGameActivity.class);
-
-        /*
-            Communicate the connection.
-         */
-        Toast t = Toast.makeText(this, "Connessione in corso...", Toast.LENGTH_SHORT);
-        t.show();
-
-        // Connection to Server
-        myClientTask.execute();
-
+    private void goToConnect() {
+        Intent intent = new Intent(this, ConnectionActivity.class);
         startActivity(intent);
     }
 }
