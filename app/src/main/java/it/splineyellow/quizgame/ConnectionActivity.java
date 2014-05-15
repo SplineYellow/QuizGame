@@ -2,12 +2,15 @@ package it.splineyellow.quizgame;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.net.wifi.WifiManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.text.format.Formatter;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
@@ -54,7 +57,6 @@ public class ConnectionActivity extends Activity {
 
         new MyClientTask().execute();
         new ReceiveTask().execute();
-
 
     }
 
@@ -109,134 +111,81 @@ public class ConnectionActivity extends Activity {
     public class ReceiveTask extends AsyncTask<Void, Void, Void> {
         @Override
         protected Void doInBackground(Void... params) {
-            byte[] data = null;
 
-            InetAddress serverAddr = null;
-            DatagramSocket recSocket = null;
+            DatagramSocket datagramSocket = null;
+
+            InetAddress inetAddress = null;
+
             try {
-                serverAddr = InetAddress.getByName(dstAddress);
+
+                inetAddress = InetAddress.getByName(dstAddress);
+
             } catch (UnknownHostException e) {
+
                 e.printStackTrace();
+
             }
+
             try {
-                recSocket = new DatagramSocket();
+
+                datagramSocket = new DatagramSocket(dstPort, inetAddress);
+
+                Log.v("Tentativo ricezione UDP: ", "Creato socket");
+
             } catch (SocketException s) {
+
                 s.printStackTrace();
             }
-            if (recSocket != null) {
-                try {
-                    recSocket.setSoTimeout(60);
-                } catch (SocketException e) {
-                    e.printStackTrace();
-                }
-            }
-            DatagramPacket dp;
-            byte[] bufferRec = new byte[4096];
-            dp = new DatagramPacket(bufferRec, bufferRec.length, serverAddr, dstPort);
-            while (data == null) {
-                try {
-                    recSocket.receive(dp);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                } finally {
-                    if (recSocket != null) {
-                        recSocket.close();
-                    }
-                }
 
-                Log.v("Data", String.valueOf(data));
+            byte[] receiveBuffer = new byte[4096];
 
-                data = dp.getData();
-                //String s = data.toString();
-                String[] resp = String.valueOf(data).split(",");
+            WifiManager wifiManager = (WifiManager) getSystemService(WIFI_SERVICE);
 
-                if (resp[0].equals("errore")) {
-                    backToMenu();
-                } else {
-                    Log.v("LogCONNECTION", "dentro a nick c'è: " + String.valueOf(data));
-                    nick = resp[0];
-                    myID = Integer.parseInt(resp[1]);
-                    timestamp = resp[2];
+            String ip = Formatter.formatIpAddress(wifiManager.getConnectionInfo().getIpAddress());
 
-                    color = "rosso";
+            InetAddress ipAddress = null;
 
-                    if (myID == 0) {
-                        color = "blu";
-                    }
-                }
-                new ReceiveCatTask().execute();
+            DatagramPacket datagramPacket = new DatagramPacket(receiveBuffer, receiveBuffer.length, inetAddress, dstPort);
+
+            try {
+
+                datagramSocket.receive(datagramPacket);
+
+                Log.v("Tentativo ricezione UDP: ", "In ricezione" );
+
+            } catch (NullPointerException n) {
+
+                n.printStackTrace();
+
+            } catch (Exception e) {
+
+                e.printStackTrace();
 
             }
+
+            String received = "Ricevuto da: " + datagramPacket.getAddress() + ", " + datagramPacket.getPort() + ", " + datagramPacket.getLength();
+                 //   new String(datagramPacket.getData(), 0, datagramPacket.getLength());
+
+            Log.v("Tentativo ricezione UDP: ", received);
+
+
             return null;
         }
+
         @Override
         protected void onPostExecute(Void result) {
             super.onPostExecute(result);
         }
     }
 
-    public class ReceiveCatTask extends AsyncTask<Void, Void, Void> {
+    public class ReceiveCategoriesTask extends AsyncTask<Void, Void, Void> {
         @Override
         protected Void doInBackground(Void... params){
-            byte[] data = null;
 
-            InetAddress serverAddr = null;
-            DatagramSocket recSocket = null;
-            try {
-                serverAddr = InetAddress.getByName(dstAddress);
-            } catch (UnknownHostException e) {
-                e.printStackTrace();
-            }
-            try {
-                recSocket = new DatagramSocket();
-            } catch (SocketException s) {
-                s.printStackTrace();
-            }
-            if (recSocket != null) {
-                try {
-                    recSocket.setSoTimeout(60);
-                } catch (SocketException e) {
-                    e.printStackTrace();
-                }
-            }
-            DatagramPacket dp;
-            byte[] bufferRec = new byte[4096];
-            dp = new DatagramPacket(bufferRec, bufferRec.length, serverAddr, dstPort);
+            //TODO implementare
 
-            while (data == null) {
-
-                Log.v("ReceiveCatTask", " categorie non è vuoto!");
-
-                try {
-                    recSocket.receive(dp);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                } finally {
-                    if (recSocket != null) {
-                        recSocket.close();
-                    }
-                }
-                data = dp.getData();
-                String gameData = data.toString();
-                String[] gameDataCont = gameData.split(",");
-
-                turn = Integer.parseInt(gameDataCont[0]);
-                for (int i = 1; i <= 9; i++) {
-                    categories[i-1] = gameDataCont[i];
-                }
-                if (myID == 0) {
-                    enemyNick = gameDataCont[11];
-                }
-                else {
-                    enemyNick = gameDataCont[10];
-                }
-
-                goToStartGameActivity();
-
-            }
             return null;
-
-        }
+       }
         @Override
         protected void onPostExecute(Void result) {
             super.onPostExecute(result);
