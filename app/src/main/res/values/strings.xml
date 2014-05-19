@@ -12,7 +12,6 @@
     <string name="button_logout">Logout</string>
     <string name="button_statistics">Statistiche</string>
     <string name="title_activity_statistics">Statistiche Giocatore</string>
-    <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
     <string name="statistic_nick">User name: </string>
     <string name="statistic_giocate">Partite giocate: </string>
@@ -25,5 +24,6 @@
     <string name="title_activity_start_game">Nuova Partita</string>
     <string name="title_activity_list_games">Elenco Partite</string>
     <string name="title_activity_connection">Connessione...</string>
+    <string name="title_activity_question">QuestionActivity</string>
 
 </resources>

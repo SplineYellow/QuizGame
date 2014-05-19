@@ -61,6 +61,14 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="MenuActivity" />
         </activity>
+        <activity
+            android:name="it.splineyellow.quizgame.QuestionActivity"
+            android:label="@string/title_activity_question"
+            android:parentActivityName="it.splineyellow.quizgame.StartGameActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="StartGameActivity" />
+        </activity>
     </application>
 
 </manifest>

@@ -143,12 +143,6 @@ public class ConnectionActivity extends Activity {
                 }
 
                 counter ++;
-
-                String received = "Ricevuto da: " + datagramPacket.getAddress() + ", "
-                        + datagramPacket.getPort() + ", "
-                        + new String(datagramPacket.getData(), 0, datagramPacket.getLength());
-
-                Log.v("Tentativo ricezione UDP: ", received);
             }
         }
 
@@ -163,10 +157,12 @@ public class ConnectionActivity extends Activity {
 
         String message = "";
 
-        for (int i = 0; i <= 9; i++) {
+        for (int i = 1; i <= 9; i++) {
             message = message + categories[i];
             if (i < 9) message = message + ",";
         }
+
+        message =  Integer.toString(turn) + "," + message;
 
         intent.putExtra(EXTRA_MESSAGE, message);
         startActivity(intent);

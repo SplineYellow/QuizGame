@@ -3,6 +3,7 @@ package it.splineyellow.quizgame;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -16,13 +17,23 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+
 public class StartGameActivity extends Activity {
+
+    String dstAddress = "thebertozz.no-ip.org";
+    int dstPort = 9533;
+
+    String actualCategory;
 
     public static final String TAG = "onItemClick --> posizione : ";
 
-    public Integer[] mThumbIds = {/*R.drawable.arte, R.drawable.cinema, R.drawable.geografia,
-            R.drawable.informatica, R.drawable.letteratura, R.drawable.matematica,
-            R.drawable.musica, R.drawable.sport, R.drawable.storia*/};
+    public Integer[] mThumbIds = {};
+
+    String questionData;
 
 
     @Override
@@ -32,15 +43,14 @@ public class StartGameActivity extends Activity {
 
         Intent intent = getIntent();
         String message = intent.getStringExtra(ConnectionActivity.EXTRA_MESSAGE);
-        String[] categories = message.toLowerCase().split(",");
-        int turn = Integer.parseInt(categories[0]);
+        final String[] categories = message.toLowerCase().split(",");
 
         mThumbIds = categoriesOrder(categories);
 
         setTitle("Nuova Partita");
 
         TextView textView = (TextView) findViewById(R.id.placeholder);
-        textView.setText(message);
+        textView.setText("Turno: " + categories[0]);
 
         GridView gridview = (GridView) findViewById(R.id.gridview);
         gridview.setAdapter(new ImageAdapter(this));
@@ -48,8 +58,8 @@ public class StartGameActivity extends Activity {
             @Override
             public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
                 Log.d(TAG, "" + position);
-                //Starts from 0
-                Toast.makeText(StartGameActivity.this, "Elemento in posizione: " + position, Toast.LENGTH_SHORT).show();
+                goToQuestion(position, categories);
+
             }
         });
     }
@@ -145,5 +155,80 @@ public class StartGameActivity extends Activity {
 
         return categoriesId;
     }
+
+    public void goToQuestion (int position, String[] categories) {
+
+        String category = categories[position+1];
+        setActualCategory(category);
+        new SocketTask().execute();
+
+        Intent intent = new Intent (this, QuestionActivity.class);
+        startActivity(intent);
+    }
+
+    public class SocketTask extends AsyncTask<Void, Void, Void> {
+        @Override
+        protected Void doInBackground(Void... params) {
+            DatagramSocket ds = null;
+            try {
+                InetAddress serverAddr = InetAddress.getByName(dstAddress);
+                questionData = getActualCategory() + "," + dstAddress;
+                byte[] buffer = questionData.getBytes();
+                ds = new DatagramSocket();
+                DatagramPacket dp;
+                dp = new DatagramPacket(buffer, buffer.length, serverAddr, dstPort);
+                ds.send(dp);
+
+                Log.v("INVIANDO: ", questionData);
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            InetAddress inetAddress = null;
+
+            try {
+                inetAddress = InetAddress.getByName(dstAddress);
+            } catch (UnknownHostException e) {
+                e.printStackTrace();
+            }
+
+            byte[] receiveBuffer = new byte[4096];
+
+            String[] questions = {};
+
+            while (true) {
+                DatagramPacket datagramPacket = new DatagramPacket(receiveBuffer,
+                        receiveBuffer.length, inetAddress, dstPort);
+                try {
+                    ds.receive(datagramPacket);
+                    Log.v("Tentativo ricezione UDP: ", "In ricezione");
+                } catch (NullPointerException n) {
+                    n.printStackTrace();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+                questions = new String(datagramPacket.getData(), 0, datagramPacket.getLength()).split("_");
+
+                Log.v("DOMANDA ARRIVATA: ", questions[0]);
+            }
+        }
+
+        @Override
+        protected void onPostExecute(Void result) {
+            super.onPostExecute(result);
+        }
+    }
+
+    public void setActualCategory (String category) {
+        actualCategory = category;
+    }
+
+    public String getActualCategory () {
+        return actualCategory;
+    }
+
+
 }
 
