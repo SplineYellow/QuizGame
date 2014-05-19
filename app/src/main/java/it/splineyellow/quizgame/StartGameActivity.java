@@ -16,16 +16,13 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.util.Collections;
-import java.util.Random;
-
 public class StartGameActivity extends Activity {
 
     public static final String TAG = "onItemClick --> posizione : ";
 
-    public Integer[] mThumbIds = {R.drawable.arte, R.drawable.cinema, R.drawable.geografia,
+    public Integer[] mThumbIds = {/*R.drawable.arte, R.drawable.cinema, R.drawable.geografia,
             R.drawable.informatica, R.drawable.letteratura, R.drawable.matematica,
-            R.drawable.musica, R.drawable.sport, R.drawable.storia};
+            R.drawable.musica, R.drawable.sport, R.drawable.storia*/};
 
 
     @Override
@@ -35,17 +32,14 @@ public class StartGameActivity extends Activity {
 
         Intent intent = getIntent();
         String message = intent.getStringExtra(ConnectionActivity.EXTRA_MESSAGE);
-        /*String[] myFabData = message.split(",");
-        String nick = myFabData[0];
-        String enemy = myFabData[1];
-        String color = myFabData[2];
-        String turn = myFabData[3];*/
+        String[] categories = message.toLowerCase().split(",");
+        int turn = Integer.parseInt(categories[0]);
+
+        mThumbIds = categoriesOrder(categories);
 
         setTitle("Nuova Partita");
 
         TextView textView = (TextView) findViewById(R.id.placeholder);
-        //textView.setText("n = " + nick + ", c = " + enemy + ", " +
-        //        " t = " + turn + ", c = " + color);
         textView.setText(message);
 
         GridView gridview = (GridView) findViewById(R.id.gridview);
@@ -132,18 +126,24 @@ public class StartGameActivity extends Activity {
 
         }
 
-    private int[] shuffleArray(int[] array) {
-        int index;
-        Random random = new Random();
-        for (int i = array.length - 1; i > 0; i--) {
-            index = random.nextInt(i + 1);
-            if (index != i) {
-                array[index] ^= array[i];
-                array[i] ^= array[index];
-                array[index] ^= array[i];
-            }
+    public Integer[] categoriesOrder(String[] categories) {
+        Integer[] categoriesId = {R.drawable.arte, R.drawable.cinema, R.drawable.geografia,
+                R.drawable.informatica, R.drawable.letteratura, R.drawable.matematica,
+                R.drawable.musica, R.drawable.sport, R.drawable.storia};
+
+        for (int i = 1; i <= 9; i++) {
+            if (categories[i].equals("arte")) categoriesId[i-1] = R.drawable.arte;
+            if (categories[i].equals("cinema")) categoriesId[i-1] = R.drawable.cinema;
+            if (categories[i].equals("geografia")) categoriesId[i-1] = R.drawable.geografia;
+            if (categories[i].equals("informatica")) categoriesId[i-1] = R.drawable.informatica;
+            if (categories[i].equals("letteratura")) categoriesId[i-1] = R.drawable.letteratura;
+            if (categories[i].equals("matematica")) categoriesId[i-1] = R.drawable.matematica;
+            if (categories[i].equals("musica")) categoriesId[i-1] = R.drawable.musica;
+            if (categories[i].equals("sport")) categoriesId[i-1] = R.drawable.sport;
+            if (categories[i].equals("storia")) categoriesId[i-1] = R.drawable.storia;
         }
-        return array;
+
+        return categoriesId;
     }
 }
 

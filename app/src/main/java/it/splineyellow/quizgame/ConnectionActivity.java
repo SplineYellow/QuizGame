@@ -9,6 +9,7 @@ import android.text.format.Formatter;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -37,7 +38,7 @@ public class ConnectionActivity extends Activity {
     String timestamp;
     String color;
     int turn;
-    String[] categories;
+
     String enemyNick;
 
     UtentiDatabaseAdapter db = new UtentiDatabaseAdapter(this);
@@ -103,6 +104,11 @@ public class ConnectionActivity extends Activity {
 
             byte[] receiveBuffer = new byte[4096];
 
+            int counter = 0;
+            String[] firstResponse;
+            String[] secondResponse;
+            String[] categories = {};
+
             while (true) {
                 DatagramPacket datagramPacket = new DatagramPacket(receiveBuffer, receiveBuffer.length, inetAddress, dstPort);
 
@@ -116,6 +122,27 @@ public class ConnectionActivity extends Activity {
                     e.printStackTrace();
                 }
 
+                if (counter == 0) {
+                    firstResponse = new String(datagramPacket.getData(), 0, datagramPacket.getLength()).split(",");
+                    if (firstResponse[0].equals("errore")) {
+                        Toast t = Toast.makeText(getApplicationContext(), "Errore di connessione", Toast.LENGTH_LONG);
+                        t.show();
+                        backToMenu();
+                    }
+                    nick = firstResponse[0];
+                    turn = Integer.parseInt(firstResponse[1]);
+
+                }
+                if (counter == 1) {
+                    secondResponse = new String (datagramPacket.getData(), 0, datagramPacket.getLength()).split(",");
+                    for (int i = 0; i <= 9; i++) {
+                        // categories [0] ---> turn
+                        categories = secondResponse;
+                    }
+                    goToStartGameActivity(categories);
+                }
+
+                counter ++;
 
                 String received = "Ricevuto da: " + datagramPacket.getAddress() + ", "
                         + datagramPacket.getPort() + ", "
@@ -131,9 +158,16 @@ public class ConnectionActivity extends Activity {
         }
     }
 
-    public void goToStartGameActivity () {
+    public void goToStartGameActivity (String[] categories) {
         Intent intent = new Intent(this, StartGameActivity.class);
-        String message = nick + "," + enemyNick + "," + color + "," + turn;
+
+        String message = "";
+
+        for (int i = 0; i <= 9; i++) {
+            message = message + categories[i];
+            if (i < 9) message = message + ",";
+        }
+
         intent.putExtra(EXTRA_MESSAGE, message);
         startActivity(intent);
     }
