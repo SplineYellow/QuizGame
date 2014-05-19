@@ -56,7 +56,6 @@ public class ConnectionActivity extends Activity {
         db.close();
 
         new MyClientTask().execute();
-        new ReceiveTask().execute();
 
     }
 
@@ -71,9 +70,7 @@ public class ConnectionActivity extends Activity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
+
         int id = item.getItemId();
         if (id == R.id.action_settings) {
             return true;
@@ -94,98 +91,40 @@ public class ConnectionActivity extends Activity {
                 ds.send(dp);
             } catch (Exception e) {
                 e.printStackTrace();
-            } finally {
-                if (ds != null) {
-                    ds.close();
-                }
             }
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Void result) {
-            super.onPostExecute(result);
-        }
-    }
-
-    public class ReceiveTask extends AsyncTask<Void, Void, Void> {
-        @Override
-        protected Void doInBackground(Void... params) {
-
-            DatagramSocket datagramSocket = null;
 
             InetAddress inetAddress = null;
 
             try {
-
                 inetAddress = InetAddress.getByName(dstAddress);
-
             } catch (UnknownHostException e) {
-
                 e.printStackTrace();
-
-            }
-
-            try {
-
-                datagramSocket = new DatagramSocket(dstPort, inetAddress);
-
-                Log.v("Tentativo ricezione UDP: ", "Creato socket");
-
-            } catch (SocketException s) {
-
-                s.printStackTrace();
             }
 
             byte[] receiveBuffer = new byte[4096];
 
-            WifiManager wifiManager = (WifiManager) getSystemService(WIFI_SERVICE);
+            while (true) {
+                DatagramPacket datagramPacket = new DatagramPacket(receiveBuffer, receiveBuffer.length, inetAddress, dstPort);
 
-            String ip = Formatter.formatIpAddress(wifiManager.getConnectionInfo().getIpAddress());
 
-            InetAddress ipAddress = null;
+                try {
+                    ds.receive(datagramPacket);
+                    Log.v("Tentativo ricezione UDP: ", "In ricezione");
+                } catch (NullPointerException n) {
+                    n.printStackTrace();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
 
-            DatagramPacket datagramPacket = new DatagramPacket(receiveBuffer, receiveBuffer.length, inetAddress, dstPort);
 
-            try {
+                String received = "Ricevuto da: " + datagramPacket.getAddress() + ", "
+                        + datagramPacket.getPort() + ", "
+                        + new String(datagramPacket.getData(), 0, datagramPacket.getLength());
 
-                datagramSocket.receive(datagramPacket);
-
-                Log.v("Tentativo ricezione UDP: ", "In ricezione" );
-
-            } catch (NullPointerException n) {
-
-                n.printStackTrace();
-
-            } catch (Exception e) {
-
-                e.printStackTrace();
-
+                Log.v("Tentativo ricezione UDP: ", received);
             }
-
-            String received = "Ricevuto da: " + datagramPacket.getAddress() + ", " + datagramPacket.getPort() + ", " + datagramPacket.getLength();
-                 //   new String(datagramPacket.getData(), 0, datagramPacket.getLength());
-
-            Log.v("Tentativo ricezione UDP: ", received);
-
-
-            return null;
         }
 
-        @Override
-        protected void onPostExecute(Void result) {
-            super.onPostExecute(result);
-        }
-    }
-
-    public class ReceiveCategoriesTask extends AsyncTask<Void, Void, Void> {
-        @Override
-        protected Void doInBackground(Void... params){
-
-            //TODO implementare
-
-            return null;
-       }
         @Override
         protected void onPostExecute(Void result) {
             super.onPostExecute(result);
