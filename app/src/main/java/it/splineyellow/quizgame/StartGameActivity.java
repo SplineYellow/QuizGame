@@ -159,7 +159,10 @@ public class StartGameActivity extends Activity {
     public void goToQuestion (int position, String[] categories) {
 
         String category = categories[position+1];
-        setActualCategory(category);
+        actualCategory = category.substring(0,1).toUpperCase() + category.substring(1);
+
+        Log.v("Actual Category: ", actualCategory);
+
         new SocketTask().execute();
 
         Intent intent = new Intent (this, QuestionActivity.class);
@@ -170,16 +173,18 @@ public class StartGameActivity extends Activity {
         @Override
         protected Void doInBackground(Void... params) {
             DatagramSocket ds = null;
+
+            Log.v("SocketTask", "Partito");
+
             try {
                 InetAddress serverAddr = InetAddress.getByName(dstAddress);
-                questionData = getActualCategory() + "," + dstAddress;
+                questionData = actualCategory + "," + dstAddress;
+                Log.v("INVIANDO: ", questionData);
                 byte[] buffer = questionData.getBytes();
                 ds = new DatagramSocket();
                 DatagramPacket dp;
                 dp = new DatagramPacket(buffer, buffer.length, serverAddr, dstPort);
                 ds.send(dp);
-
-                Log.v("INVIANDO: ", questionData);
 
             } catch (Exception e) {
                 e.printStackTrace();
@@ -212,7 +217,10 @@ public class StartGameActivity extends Activity {
                 questions = new String(datagramPacket.getData(), 0, datagramPacket.getLength()).split("_");
 
                 Log.v("DOMANDA ARRIVATA: ", questions[0]);
+                ds.close();
             }
+
+
         }
 
         @Override
@@ -220,15 +228,6 @@ public class StartGameActivity extends Activity {
             super.onPostExecute(result);
         }
     }
-
-    public void setActualCategory (String category) {
-        actualCategory = category;
-    }
-
-    public String getActualCategory () {
-        return actualCategory;
-    }
-
 
 }
 

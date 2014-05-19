@@ -105,6 +105,7 @@ public class ConnectionActivity extends Activity {
             byte[] receiveBuffer = new byte[4096];
 
             int counter = 0;
+            //TODO boolean per sostituire while true, altrimenti non si chiude il socket e non parte l'altro async task (forse)
             String[] firstResponse;
             String[] secondResponse;
             String[] categories = {};
@@ -121,6 +122,7 @@ public class ConnectionActivity extends Activity {
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
+
 
                 if (counter == 0) {
                     firstResponse = new String(datagramPacket.getData(), 0, datagramPacket.getLength()).split(",");
@@ -139,10 +141,13 @@ public class ConnectionActivity extends Activity {
                         // categories [0] ---> turn
                         categories = secondResponse;
                     }
+
                     goToStartGameActivity(categories);
+
                 }
 
                 counter ++;
+
             }
         }
 
