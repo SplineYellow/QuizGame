@@ -58,7 +58,6 @@ public class MenuActivity extends Activity {
         db.close();
         String[] parts = userData.split(",");
         String user = parts[0];
-        String password = parts[1];
         setTitle("Utente: " + user);
     }
 

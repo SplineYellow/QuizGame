@@ -2,25 +2,16 @@ package it.splineyellow.quizgame;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.net.wifi.WifiManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.text.format.Formatter;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
-import java.io.BufferedReader;
-import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
-import java.net.SocketException;
 import java.net.UnknownHostException;
-import java.nio.charset.Charset;
-import java.nio.charset.CharsetDecoder;
-import java.nio.charset.CharsetEncoder;
 import java.sql.SQLException;
 
 
@@ -110,7 +101,6 @@ public class ConnectionActivity extends Activity {
 
                 try {
                     ds.receive(datagramPacket);
-                    Log.v("Tentativo ricezione UDP: ", "In ricezione");
                 } catch (NullPointerException n) {
                     n.printStackTrace();
                 } catch (Exception e) {

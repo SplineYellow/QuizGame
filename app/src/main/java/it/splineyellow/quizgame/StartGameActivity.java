@@ -195,22 +195,22 @@ public class StartGameActivity extends Activity {
             String[] questions;
             boolean checkExecute = true;
 
-            while (checkExecute) {
-                DatagramPacket datagramPacket = new DatagramPacket(receiveBuffer,
-                        receiveBuffer.length, inetAddress, dstPort);
-                try {
-                    ds.receive(datagramPacket);
-                } catch (NullPointerException n) {
-                    n.printStackTrace();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
 
-                questions = new String(datagramPacket.getData(), 0, datagramPacket.getLength()).split("_");
-
-                Log.v("DOMANDA ARRIVATA: ", questions[0]);
-                checkExecute = false;
+            DatagramPacket datagramPacket = new DatagramPacket(receiveBuffer,
+                    receiveBuffer.length, inetAddress, dstPort);
+            try {
+                ds.receive(datagramPacket);
+            } catch (NullPointerException n) {
+                n.printStackTrace();
+            } catch (Exception e) {
+                e.printStackTrace();
             }
+
+            questions = new String(datagramPacket.getData(), 0, datagramPacket.getLength()).split("_");
+
+            Log.v("DOMANDA ARRIVATA: ", questions[0]);
+            checkExecute = false;
+
             ds.close();
             return null;
         }
