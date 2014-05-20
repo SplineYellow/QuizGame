@@ -102,17 +102,15 @@ public class ConnectionActivity extends Activity {
                 e.printStackTrace();
             }
 
-            byte[] receiveBuffer = new byte[4096];
-
-            int counter = 0;
-            //TODO boolean per sostituire while true, altrimenti non si chiude il socket e non parte l'altro async task (forse)
+            Boolean checkExecute = true;
             String[] firstResponse;
             String[] secondResponse;
             String[] categories = {};
+            byte[] receiveBuffer = new byte[4096];
+            int counter = 0;
 
-            while (true) {
+            while (checkExecute && counter < 2) {
                 DatagramPacket datagramPacket = new DatagramPacket(receiveBuffer, receiveBuffer.length, inetAddress, dstPort);
-
 
                 try {
                     ds.receive(datagramPacket);
@@ -133,22 +131,22 @@ public class ConnectionActivity extends Activity {
                     }
                     nick = firstResponse[0];
                     turn = Integer.parseInt(firstResponse[1]);
-
-                }
+                 }
                 if (counter == 1) {
                     secondResponse = new String (datagramPacket.getData(), 0, datagramPacket.getLength()).split(",");
                     for (int i = 0; i <= 9; i++) {
                         // categories [0] ---> turn
                         categories = secondResponse;
                     }
-
                     goToStartGameActivity(categories);
-
+                    checkExecute = false;
                 }
 
                 counter ++;
-
             }
+
+            ds.close();
+            return null;
         }
 
         @Override

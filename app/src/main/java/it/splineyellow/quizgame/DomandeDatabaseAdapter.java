@@ -23,7 +23,7 @@ public class DomandeDatabaseAdapter {
     public static final String TAG = "DomandaDatabaseAdapter";
     public static final String DATABASE_NAME = "domande.db";
     public static final String TABLE_DOMANDE = "domande";
-    public static final String TABLE_CATEGORIE = "categories";
+    public static final String TABLE_CATEGORIE = "categorie";
 
     public static final int DATABASE_VERSION = 1;
 

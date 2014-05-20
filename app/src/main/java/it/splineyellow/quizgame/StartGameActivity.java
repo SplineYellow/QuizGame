@@ -180,6 +180,16 @@ public class StartGameActivity extends Activity {
                 InetAddress serverAddr = InetAddress.getByName(dstAddress);
                 questionData = actualCategory + "," + dstAddress;
                 Log.v("INVIANDO: ", questionData);
+
+                /* TODO
+                    Ora funziona l'invio della categoria, ma restituisce il seguente errore:
+                    [DEBUG] Categoria scelta: Arte,thebertozz.no-ip.org
+                    Traceback (most recent call last):
+                    File "server.py", line 282, in <module>
+                    categoriaScelta = int(categoriaScelta)
+                    ValueError: invalid literal for int() with base 10: 'Arte,thebertozz.no-ip.org'
+                */
+
                 byte[] buffer = questionData.getBytes();
                 ds = new DatagramSocket();
                 DatagramPacket dp;
