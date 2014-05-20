@@ -15,7 +15,6 @@ import android.widget.BaseAdapter;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
@@ -27,7 +26,7 @@ public class StartGameActivity extends Activity {
     String dstAddress = "thebertozz.no-ip.org";
     int dstPort = 9533;
 
-    String actualCategory;
+    int actualCategoryPosition;
 
     public static final String TAG = "onItemClick --> posizione : ";
 
@@ -57,8 +56,8 @@ public class StartGameActivity extends Activity {
         gridview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
-                Log.d(TAG, "" + position);
-                goToQuestion(position, categories);
+                actualCategoryPosition = position;
+                goToQuestion();
 
             }
         });
@@ -156,12 +155,7 @@ public class StartGameActivity extends Activity {
         return categoriesId;
     }
 
-    public void goToQuestion (int position, String[] categories) {
-
-        String category = categories[position+1];
-        actualCategory = category.substring(0,1).toUpperCase() + category.substring(1);
-
-        Log.v("Actual Category: ", actualCategory);
+    public void goToQuestion () {
 
         new SocketTask().execute();
 
@@ -174,21 +168,9 @@ public class StartGameActivity extends Activity {
         protected Void doInBackground(Void... params) {
             DatagramSocket ds = null;
 
-            Log.v("SocketTask", "Partito");
-
             try {
                 InetAddress serverAddr = InetAddress.getByName(dstAddress);
-                questionData = actualCategory + "," + dstAddress;
-                Log.v("INVIANDO: ", questionData);
-
-                /* TODO
-                    Ora funziona l'invio della categoria, ma restituisce il seguente errore:
-                    [DEBUG] Categoria scelta: Arte,thebertozz.no-ip.org
-                    Traceback (most recent call last):
-                    File "server.py", line 282, in <module>
-                    categoriaScelta = int(categoriaScelta)
-                    ValueError: invalid literal for int() with base 10: 'Arte,thebertozz.no-ip.org'
-                */
+                questionData = Integer.toString(actualCategoryPosition + 1);
 
                 byte[] buffer = questionData.getBytes();
                 ds = new DatagramSocket();
@@ -210,14 +192,14 @@ public class StartGameActivity extends Activity {
 
             byte[] receiveBuffer = new byte[4096];
 
-            String[] questions = {};
+            String[] questions;
+            boolean checkExecute = true;
 
-            while (true) {
+            while (checkExecute) {
                 DatagramPacket datagramPacket = new DatagramPacket(receiveBuffer,
                         receiveBuffer.length, inetAddress, dstPort);
                 try {
                     ds.receive(datagramPacket);
-                    Log.v("Tentativo ricezione UDP: ", "In ricezione");
                 } catch (NullPointerException n) {
                     n.printStackTrace();
                 } catch (Exception e) {
@@ -227,10 +209,10 @@ public class StartGameActivity extends Activity {
                 questions = new String(datagramPacket.getData(), 0, datagramPacket.getLength()).split("_");
 
                 Log.v("DOMANDA ARRIVATA: ", questions[0]);
-                ds.close();
+                checkExecute = false;
             }
-
-
+            ds.close();
+            return null;
         }
 
         @Override

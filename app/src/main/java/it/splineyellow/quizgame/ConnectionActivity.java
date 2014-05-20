@@ -34,12 +34,8 @@ public class ConnectionActivity extends Activity {
     String userData;
 
     String nick;
-    int myID;
-    String timestamp;
-    String color;
     int turn;
 
-    String enemyNick;
 
     UtentiDatabaseAdapter db = new UtentiDatabaseAdapter(this);
 
