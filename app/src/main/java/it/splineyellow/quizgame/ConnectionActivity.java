@@ -25,7 +25,8 @@ public class ConnectionActivity extends Activity {
     String userData;
 
     String nick;
-    int turn;
+    int myID;
+    String enemyNick;
 
 
     UtentiDatabaseAdapter db = new UtentiDatabaseAdapter(this);
@@ -46,7 +47,6 @@ public class ConnectionActivity extends Activity {
         new MyClientTask().execute();
 
     }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -116,16 +116,16 @@ public class ConnectionActivity extends Activity {
                         backToMenu();
                     }
                     nick = firstResponse[0];
-                    turn = Integer.parseInt(firstResponse[1]);
+                    myID = Integer.parseInt(firstResponse[1]);
                  }
                 if (counter == 1) {
                     secondResponse = new String (datagramPacket.getData(), 0, datagramPacket.getLength()).split(",");
-                    for (int i = 0; i <= 9; i++) {
-                        // categories [0] ---> turn
-                        categories = secondResponse;
-                    }
+
+                    categories = secondResponse;
+
                     goToStartGameActivity(categories);
                     checkExecute = false;
+
                 }
 
                 counter ++;
@@ -145,13 +145,14 @@ public class ConnectionActivity extends Activity {
         Intent intent = new Intent(this, StartGameActivity.class);
 
         String message = "";
+        String turn = categories[0];
 
         for (int i = 1; i <= 9; i++) {
             message = message + categories[i];
             if (i < 9) message = message + ",";
         }
 
-        message =  Integer.toString(turn) + "," + message;
+        message = turn + "," + Integer.toString(myID) + "," + message;
 
         intent.putExtra(EXTRA_MESSAGE, message);
         startActivity(intent);
