@@ -1,5 +1,6 @@
 package it.splineyellow.quizgame;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -67,6 +68,7 @@ public class DomandeDatabaseAdapter {
         public void onCreate(SQLiteDatabase db) {
             db.execSQL(TABLE_CATEGORIE_CREATE);
             db.execSQL(TABLE_DOMANDE_CREATE);
+
         }
 
         @Override
@@ -104,6 +106,60 @@ public class DomandeDatabaseAdapter {
         }
     }
 
-    // query functions
+    public String[] getQuestion (String category) {
+
+        String[] question = {};
+        String query = "SELECT " + KEY_DOMANDA + ", " + KEY_RISPOSTA1 + ", " + KEY_RISPOSTA2 +
+                ", " + KEY_RISPOSTA3 + ", " + KEY_RISPOSTA4 + ", " + KEY_ARGOMENTO +
+                " FROM " + TABLE_DOMANDE + " WHERE " + KEY_ARGOMENTO + " = '" + category + "';";
+        Cursor c = db.rawQuery(query, null);
+        if (c != null && c.moveToFirst()) {
+            question[0] = c.getString(0);  // question
+            question[1] = c.getString(1);  // answer
+            question[2] = c.getString(2);  // answer
+            question[3] = c.getString(3);  // answer
+            question[4] = c.getString(4);  // answer
+            question[5] = c.getString(5);  // right answer (0-3)
+        }
+
+        return question;
+
+    }
+
+
+    /* PROVISIONAL METHODS */
+
+    public void fillCategoryTable () {
+        db.delete(TABLE_CATEGORIE, null, null);
+
+        ContentValues category = new ContentValues();
+        category.put(KEY_CATEGORIA, "ARTE");
+        category.put(KEY_CATEGORIA, "CINEMA");
+        category.put(KEY_CATEGORIA, "MATEMATICA");
+        category.put(KEY_CATEGORIA, "INFORMATICA");
+        category.put(KEY_CATEGORIA, "LETTERATURA");
+        category.put(KEY_CATEGORIA, "STORIA");
+        category.put(KEY_CATEGORIA, "GEOGRAFIA");
+        category.put(KEY_CATEGORIA, "MUSICA");
+
+        db.insert(TABLE_CATEGORIE, null, category);
+
+    }
+    public void fillQuestionsTable () {
+        db.delete(TABLE_DOMANDE, null, null);
+
+        ContentValues domanda = new ContentValues();
+
+        domanda.put(KEY_DOMANDA, "Quanto ne sa Bettoli?");
+        domanda.put(KEY_ARGOMENTO, "ARTE");
+        domanda.put(KEY_RISPOSTA1, "A pacchi");
+        domanda.put(KEY_RISPOSTA2, "22");
+        domanda.put(KEY_RISPOSTA3, "Dipende da Sasha");
+        domanda.put(KEY_RISPOSTA4, "Chi minchia è Bettoli?");
+        domanda.put(KEY_ESATTA, 1);
+
+        db.insert(TABLE_DOMANDE, null, domanda);
+
+    }
 
 }
