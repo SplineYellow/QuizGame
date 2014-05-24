@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
@@ -25,9 +26,7 @@ public class ConnectionActivity extends Activity {
     String userData;
 
     String nick;
-    int myID;
-    String enemyNick;
-
+    int turn;
 
     UtentiDatabaseAdapter db = new UtentiDatabaseAdapter(this);
 
@@ -116,7 +115,7 @@ public class ConnectionActivity extends Activity {
                         backToMenu();
                     }
                     nick = firstResponse[0];
-                    myID = Integer.parseInt(firstResponse[1]);
+                    turn = Integer.parseInt(firstResponse[1]);
                  }
                 if (counter == 1) {
                     secondResponse = new String (datagramPacket.getData(), 0, datagramPacket.getLength()).split(",");
@@ -145,14 +144,14 @@ public class ConnectionActivity extends Activity {
         Intent intent = new Intent(this, StartGameActivity.class);
 
         String message = "";
-        String turn = categories[0];
+        String myID = categories[0];
 
         for (int i = 1; i <= 9; i++) {
             message = message + categories[i];
             if (i < 9) message = message + ",";
         }
 
-        message = turn + "," + Integer.toString(myID) + "," + message;
+        message = Integer.toString(turn) + "," + myID + "," + message;
 
         intent.putExtra(EXTRA_MESSAGE, message);
         startActivity(intent);
