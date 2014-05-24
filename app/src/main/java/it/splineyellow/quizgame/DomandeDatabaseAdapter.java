@@ -108,19 +108,35 @@ public class DomandeDatabaseAdapter {
 
     public String[] getQuestion (String category) {
 
-        String[] question = {};
+        String[] question = new String[6];
         String query = "SELECT " + KEY_DOMANDA + ", " + KEY_RISPOSTA1 + ", " + KEY_RISPOSTA2 +
                 ", " + KEY_RISPOSTA3 + ", " + KEY_RISPOSTA4 + ", " + KEY_ARGOMENTO +
                 " FROM " + TABLE_DOMANDE + " WHERE " + KEY_ARGOMENTO + " = '" + category + "';";
         Cursor c = db.rawQuery(query, null);
+
+        String domanda = "";
+        String risp1 = "";
+        String risp2 = "";
+        String risp3 = "";
+        String risp4 = "";
+        String esatta = "";
+
+
         if (c != null && c.moveToFirst()) {
-            question[0] = c.getString(0);  // question
-            question[1] = c.getString(1);  // answer
-            question[2] = c.getString(2);  // answer
-            question[3] = c.getString(3);  // answer
-            question[4] = c.getString(4);  // answer
-            question[5] = c.getString(5);  // right answer (0-3)
+            domanda = c.getString(0);  // question
+            risp1 = c.getString(1);  // answer
+            risp2 = c.getString(2);  // answer
+            risp3 = c.getString(3);  // answer
+            risp4 = c.getString(4);  // answer
+            esatta = c.getString(5);  // right answer (0-3)
         }
+
+        question [0] = domanda;
+        question [1] = risp1;
+        question [2] = risp2;
+        question [3] = risp3;
+        question [4] = risp4;
+        question [5] = esatta;
 
         return question;
 

@@ -110,8 +110,8 @@ public class ConnectionActivity extends Activity {
                 if (counter == 0) {
                     firstResponse = new String(datagramPacket.getData(), 0, datagramPacket.getLength()).split(",");
                     if (firstResponse[0].equals("errore")) {
-                        Toast t = Toast.makeText(getApplicationContext(), "Errore di connessione", Toast.LENGTH_LONG);
-                        t.show();
+                      //  Toast t = Toast.makeText(getApplicationContext(), "Errore di connessione", Toast.LENGTH_LONG);
+                      //  t.show();
                         backToMenu();
                     }
                     nick = firstResponse[0];

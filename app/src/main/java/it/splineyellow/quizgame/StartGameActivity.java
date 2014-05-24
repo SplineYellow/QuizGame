@@ -20,9 +20,12 @@ import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
+import java.net.SocketException;
 import java.net.UnknownHostException;
 
 public class StartGameActivity extends Activity {
+
+    public final static String EXTRA_MESSAGE = "it.splineyellow.quizgame.MESSAGE";
 
     String dstAddress = "thebertozz.no-ip.org";
     int dstPort = 9533;
@@ -65,83 +68,83 @@ public class StartGameActivity extends Activity {
             @Override
             public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
                 actualCategoryPosition = position;
-                goToQuestion();
+                goToQuestion(categories[actualCategoryPosition+2]);
 
             }
         });
     }
 
-        @Override
-        public boolean onCreateOptionsMenu (Menu menu){
-            // Inflate the menu; this adds items to the action bar if it is present.
-            getMenuInflater().inflate(R.menu.start_game, menu);
-            return true;
+    @Override
+    public boolean onCreateOptionsMenu (Menu menu){
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.start_game, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected (MenuItem item){
+
+        int id = item.getItemId();
+        return id == R.id.action_settings || super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu (Menu menu){
+        MenuItem item = menu.findItem(R.id.action_settings);
+
+        try {
+            item.setVisible(false);
+        } catch (NullPointerException n) {
+            n.printStackTrace();
         }
 
-        @Override
-        public boolean onOptionsItemSelected (MenuItem item){
+        return super.onPrepareOptionsMenu(menu);
+    }
 
-            int id = item.getItemId();
-            return id == R.id.action_settings || super.onOptionsItemSelected(item);
+    public class ImageAdapter extends BaseAdapter {
+
+        private Context mContext;
+
+        public ImageAdapter(Context c) {
+            mContext = c;
         }
 
-        @Override
-        public boolean onPrepareOptionsMenu (Menu menu){
-            MenuItem item = menu.findItem(R.id.action_settings);
-
-            try {
-                item.setVisible(false);
-            } catch (NullPointerException n) {
-                n.printStackTrace();
-            }
-
-            return super.onPrepareOptionsMenu(menu);
+        public int getCount() {
+            return mThumbIds.length;
         }
 
-        public class ImageAdapter extends BaseAdapter {
-
-            private Context mContext;
-
-            public ImageAdapter(Context c) {
-                mContext = c;
-            }
-
-            public int getCount() {
-                return mThumbIds.length;
-            }
-
-            public Object getItem(int position) {
-                return null;
-            }
-
-            public long getItemId(int position) {
-                return 0;
-            }
-
-
-            // create a new ImageView for each item referenced by the Adapter
-            public View getView(int position, View convertView, ViewGroup parent) {
-                ImageView imageView;
-                if (convertView == null) {  // if it's not recycled, initialize some attributes
-                    imageView = new ImageView(mContext);
-                    imageView.setLayoutParams(new GridView.LayoutParams(85, 85));
-                    imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
-                    imageView.setPadding(8, 8, 8, 8);
-                } else {
-                    imageView = (ImageView) convertView;
-                }
-
-                imageView.setImageResource(mThumbIds[position]);
-
-                imageView.setLayoutParams(new GridView.LayoutParams(
-                        (int)mContext.getResources().getDimension(R.dimen.width),
-                        (int)mContext.getResources().getDimension(R.dimen.height)));
-
-
-                return imageView;
-            }
-
+        public Object getItem(int position) {
+            return null;
         }
+
+        public long getItemId(int position) {
+            return 0;
+        }
+
+
+        // create a new ImageView for each item referenced by the Adapter
+        public View getView(int position, View convertView, ViewGroup parent) {
+            ImageView imageView;
+            if (convertView == null) {  // if it's not recycled, initialize some attributes
+                imageView = new ImageView(mContext);
+                imageView.setLayoutParams(new GridView.LayoutParams(85, 85));
+                imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
+                imageView.setPadding(8, 8, 8, 8);
+            } else {
+                imageView = (ImageView) convertView;
+            }
+
+            imageView.setImageResource(mThumbIds[position]);
+
+            imageView.setLayoutParams(new GridView.LayoutParams(
+                    (int)mContext.getResources().getDimension(R.dimen.width),
+                    (int)mContext.getResources().getDimension(R.dimen.height)));
+
+
+            return imageView;
+        }
+
+    }
 
     public Integer[] categoriesOrder(String[] categories) {
         Integer[] categoriesId = {R.drawable.arte, R.drawable.cinema, R.drawable.geografia,
@@ -163,12 +166,13 @@ public class StartGameActivity extends Activity {
         return categoriesId;
     }
 
-    public void goToQuestion () {
+    public void goToQuestion(String i) {
 
         new SocketTask().execute();
 
-      //  Intent intent = new Intent (this, QuestionActivity.class);
-      //  startActivity(intent);
+        Intent intent = new Intent (this, QuestionActivity.class);
+        intent.putExtra(EXTRA_MESSAGE, i);
+        startActivity(intent);
     }
 
     public class SocketTask extends AsyncTask<Void, Void, Void> {
@@ -198,11 +202,21 @@ public class StartGameActivity extends Activity {
                     Log.v("TESTIF", "Dentro a !firstTurn");
 
                     DatagramPacket receivePacket;
-                    byte[] receiveBuffer = new byte[4096];
-                    receivePacket = new DatagramPacket(receiveBuffer, receiveBuffer.length,
-                            serverAddr, dstPort);
+
+                    DatagramSocket datagramSocket = null;
                     try {
-                        ds.receive(receivePacket);
+                        datagramSocket = new DatagramSocket(dstPort, serverAddr);
+                    } catch (SocketException e) {
+                        e.printStackTrace();
+                    }
+                    byte[] receiveBuffer = new byte[4096];
+                    /*receivePacket = new DatagramPacket(receiveBuffer, receiveBuffer.length,
+                            serverAddr, dstPort);*/
+                    receivePacket= new DatagramPacket(receiveBuffer,receiveBuffer.length);
+
+
+                    try {
+                        datagramSocket.receive(receivePacket);
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
