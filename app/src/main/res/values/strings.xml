@@ -25,5 +25,8 @@
     <string name="title_activity_list_games">Elenco Partite</string>
     <string name="title_activity_connection">Connessione...</string>
     <string name="title_activity_question">QuestionActivity</string>
+    <string name="title_activity_score">Punteggio</string>
+    <string name="print_score">PUNTI</string>
+    <string name="hello_world">Hello world!</string>
 
 </resources>

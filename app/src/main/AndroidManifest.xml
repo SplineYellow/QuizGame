@@ -69,6 +69,14 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="StartGameActivity" />
         </activity>
+        <activity
+            android:name="it.splineyellow.quizgame.ScoreActivity"
+            android:label="@string/title_activity_score"
+            android:parentActivityName="it.splineyellow.quizgame.QuestionActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="it.splineyellow.quizgame.QuestionActivity" />
+        </activity>
     </application>
 
 </manifest>

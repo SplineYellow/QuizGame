@@ -215,4 +215,45 @@ public class UtentiDatabaseAdapter {
         return "";
     }
 
+    public int getGiuste (String username) {
+        String query = "SELECT " + KEY_GIUSTE + " FROM " + TABLE_UTENTI +
+                " WHERE " + KEY_NICKNAME + " = '" + username + "';";
+        Cursor c = db.rawQuery(query, null);
+        if (c != null && c.moveToFirst()) {
+            return c.getInt(0);
+        }
+        return 0;
+    }
+
+    public int getErrate (String username) {
+        String query = "SELECT " + KEY_ERRATE + " FROM " + TABLE_UTENTI +
+                " WHERE " + KEY_NICKNAME + " = '" + username + "';";
+        Cursor c = db.rawQuery(query, null);
+        if (c != null && c.moveToFirst()) {
+            return c.getInt(0);
+        }
+        return 0;
+    }
+
+    public void updateScore (String username, int giuste) {
+
+        int errate = 3 - giuste;
+
+        int oldGiuste = getGiuste(username);
+        int oldErrate = getErrate(username);
+
+        giuste = giuste + oldGiuste;
+        errate = errate + oldErrate;
+
+        String queryGiuste = "UPDATE " + TABLE_UTENTI + " SET " +
+                KEY_GIUSTE + " = " + Integer.toString(giuste) + " WHERE " + KEY_NICKNAME + " = '" + username + "';";
+        String queryErrate = "UPDATE " + TABLE_UTENTI + " SET " +
+                KEY_ERRATE + " = " + Integer.toString(errate) + " WHERE " + KEY_NICKNAME + " = '" + username + "';";
+
+        db.execSQL(queryGiuste);
+        if (errate != 0) {
+            db.execSQL(queryErrate);
+        }
+    }
+
 }
