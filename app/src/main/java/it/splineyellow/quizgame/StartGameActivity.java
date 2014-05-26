@@ -55,7 +55,7 @@ public class StartGameActivity extends Activity {
             message = intent.getStringExtra(ConnectionActivity.EXTRA_MESSAGE);
         } catch (NullPointerException e) {
             e.printStackTrace();
-            message = intent.getStringExtra(QuestionActivity.EXTRA_MESSAGE);
+            message = intent.getStringExtra(ScoreActivity.EXTRA_MESSAGE);
         }
         final String[] categories = message.toLowerCase().split(",");
 

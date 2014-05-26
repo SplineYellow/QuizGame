@@ -47,8 +47,6 @@ public class QuestionActivity extends Activity {
         risposta3 = (Button) findViewById(R.id.risposta3);
         risposta4 = (Button) findViewById(R.id.risposta4);
 
-        //DA IMPLEMENTARE PER 3 DOMANDE, FARE FUNZIONE
-
         try {
 
            questionsMatrix = getQuestion(category);
@@ -75,18 +73,20 @@ public class QuestionActivity extends Activity {
 
                 if (!answered) {
                     answered = true;
-                    contatore++;
                     SystemClock.sleep(1000);
-                    if (questionsMatrix[0][5].equals(posizioneBottone)) {
+                    if (questionsMatrix[contatore][5].equals(posizioneBottone)) {
                         punteggio++;
+                        Log.v("Contatore: ", Integer.toString(contatore));
                         Toast t = Toast.makeText(getApplicationContext(), "Risposta 1 esatta!", Toast.LENGTH_SHORT);
                         t.show();
+                        contatore++;
                     }
 
                     else {
 
                         Toast t = Toast.makeText(getApplicationContext(), "Risposta 1 errata!", Toast.LENGTH_SHORT);
                         t.show();
+                        contatore++;
 
                     }
 
@@ -106,18 +106,20 @@ public class QuestionActivity extends Activity {
 
                 if (!answered) {
                     answered = true;
-                    contatore++;
                     SystemClock.sleep(1000);
-                    if (questionsMatrix[0][5].equals(posizioneBottone)) {
+                    if (questionsMatrix[contatore][5].equals(posizioneBottone)) {
                         punteggio++;
+                        Log.v("Contatore: ", Integer.toString(contatore));
                         Toast t = Toast.makeText(getApplicationContext(), "Risposta 2 esatta!", Toast.LENGTH_SHORT);
                         t.show();
+                        contatore++;
                     }
 
                     else {
 
                         Toast t = Toast.makeText(getApplicationContext(), "Risposta 2 errata!", Toast.LENGTH_SHORT);
                         t.show();
+                        contatore++;
 
                     }
                     setQuestions(contatore);
@@ -136,18 +138,20 @@ public class QuestionActivity extends Activity {
 
                 if (!answered) {
                     answered = true;
-                    contatore++;
                     SystemClock.sleep(1000);
-                    if (questionsMatrix[0][5].equals(posizioneBottone)) {
+                    if (questionsMatrix[contatore][5].equals(posizioneBottone)) {
                         punteggio++;
+                        Log.v("Contatore: ", Integer.toString(contatore));
                         Toast t = Toast.makeText(getApplicationContext(), "Risposta 3 esatta!", Toast.LENGTH_SHORT);
                         t.show();
+                        contatore++;
                     }
 
                     else {
 
                         Toast t = Toast.makeText(getApplicationContext(), "Risposta 3 errata!", Toast.LENGTH_SHORT);
                         t.show();
+                        contatore++;
 
                     }
                     setQuestions(contatore);
@@ -166,18 +170,20 @@ public class QuestionActivity extends Activity {
 
                 if (!answered) {
                     answered = true;
-                    contatore++;
                     SystemClock.sleep(1000);
-                    if (questionsMatrix[0][5].equals(posizioneBottone)) {
+                    if (questionsMatrix[contatore][5].equals(posizioneBottone)) {
                         punteggio++;
+                        Log.v("Contatore: ", Integer.toString(contatore));
                         Toast t = Toast.makeText(getApplicationContext(), "Risposta 4 esatta!", Toast.LENGTH_SHORT);
                         t.show();
+                        contatore++;
                     }
 
                     else {
 
                         Toast t = Toast.makeText(getApplicationContext(), "Risposta 4 errata!", Toast.LENGTH_SHORT);
                         t.show();
+                        contatore++;
 
                     }
                     setQuestions(contatore);
@@ -239,12 +245,15 @@ public class QuestionActivity extends Activity {
 
         String punti = Integer.toString(punteggio);
         intent.putExtra(EXTRA_MESSAGE, punti);
+        intent.putExtra("Categories", message);
         startActivity(intent);
     }
 
     public void setQuestions (int contatore) {
 
         answered = false;
+
+        Log.v("Contatore dentro setQuestions: ", Integer.toString(contatore));
 
         if (contatore == 3) {
             goToScoreActivity();
