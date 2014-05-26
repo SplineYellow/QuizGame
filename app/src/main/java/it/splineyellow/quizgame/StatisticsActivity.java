@@ -18,32 +18,43 @@ public class StatisticsActivity extends Activity {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+
         String currentUserData = db.getCurrentUser();
         String [] data = currentUserData.split(",");
         String currentUser = data[0];
+
         TextView username = (TextView) findViewById(R.id.statistics_nickname);
         username.setText(currentUser);
         int result = db.getPlayData(currentUser, 1);
+
         TextView giocate = (TextView) findViewById(R.id.statistics_giocate);
         giocate.setText(Integer.toString(result));
         result = db.getPlayData(currentUser, 2);
+
         TextView vinte = (TextView) findViewById(R.id.statistics_vinte);
         vinte.setText(Integer.toString(result));
         result = db.getPlayData(currentUser, 3);
+
         TextView pareggiate = (TextView) findViewById(R.id.statistics_pareggiate);
         pareggiate.setText(Integer.toString(result));
         result = db.getPlayData(currentUser, 4);
+
         TextView perse = (TextView) findViewById(R.id.statistics_perse);
         perse.setText(Integer.toString(result));
         result = db.getPlayData(currentUser, 5);
+
         TextView giuste = (TextView) findViewById(R.id.statistics_giuste);
         giuste.setText(Integer.toString(result));
         result = db.getPlayData(currentUser, 6);
+
         TextView sbagliate = (TextView) findViewById(R.id.statistics_sbagliate);
         sbagliate.setText(Integer.toString(result));
+
         String access = db.getLastAccess(currentUser);
+
         String[] accessData = access.split(";");
         access = accessData[0] + " " + accessData[1];
+
         TextView lastAccess = (TextView) findViewById(R.id.statistics_ultimo_accesso);
         lastAccess.setText(access);
         db.close();
