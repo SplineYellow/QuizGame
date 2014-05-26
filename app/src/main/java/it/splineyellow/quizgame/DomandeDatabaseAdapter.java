@@ -108,48 +108,14 @@ public class DomandeDatabaseAdapter {
         }
     }
 
-    public String[] getQuestion (String category) {
-
-        String[] question = new String[6];
-        String query = "SELECT " + KEY_DOMANDA + ", " + KEY_RISPOSTA1 + ", " + KEY_RISPOSTA2 +
-                ", " + KEY_RISPOSTA3 + ", " + KEY_RISPOSTA4 + ", " + KEY_ARGOMENTO +
-                " FROM " + TABLE_DOMANDE + " WHERE " + KEY_ARGOMENTO + " = '" + category + "';";
-        Cursor c = db.rawQuery(query, null);
-
-        String domanda = "";
-        String risp1 = "";
-        String risp2 = "";
-        String risp3 = "";
-        String risp4 = "";
-        String esatta = "";
-
-
-        if (c != null && c.moveToFirst()) {
-            domanda = c.getString(0);  // question
-            risp1 = c.getString(1);  // answer
-            risp2 = c.getString(2);  // answer
-            risp3 = c.getString(3);  // answer
-            risp4 = c.getString(4);  // answer
-            esatta = c.getString(5);  // right answer (0-3)
-        }
-
-        question [0] = domanda;
-        question [1] = risp1;
-        question [2] = risp2;
-        question [3] = risp3;
-        question [4] = risp4;
-        question [5] = esatta;
-
-        return question;
-
-    }
-
     public String[][] getQuestions (String category) {
 
         category = category.toUpperCase();
-        String [][] questionByCategory = new String[QUESTION_NUMBER][5];
+        String [][] questionByCategory = new String[QUESTION_NUMBER][6];
 
-        String query = "SELECT * FROM " + TABLE_DOMANDE +
+        String query = "SELECT " + KEY_DOMANDA + ", " + KEY_RISPOSTA1 + ", " +
+                KEY_RISPOSTA2 + ", " + KEY_RISPOSTA3 + ", " + KEY_RISPOSTA4 + ", " + KEY_ESATTA +
+                " FROM " + TABLE_DOMANDE +
                 " WHERE " + KEY_ARGOMENTO + " = '" + category + "';";
 
         int rand1, rand2, rand3;
@@ -168,20 +134,31 @@ public class DomandeDatabaseAdapter {
 
         if (c != null && c.moveToFirst()) {
             for (int i = 0; i < QUESTION_NUMBER; i++) {
-                questionByCategory[i][0] = c.getString(0 + i * 6);
-                questionByCategory[i][1] = c.getString(1 + i * 6);
-                questionByCategory[i][2] = c.getString(2 + i * 6);
-                questionByCategory[i][3] = c.getString(3 + i * 6);
-                questionByCategory[i][4] = c.getString(4 + i * 6);
-                questionByCategory[i][5] = Integer.toString(c.getInt(5 + i * 6));
+                questionByCategory[i][0] = c.getString(0);
+                questionByCategory[i][1] = c.getString(1);
+                questionByCategory[i][2] = c.getString(2);
+                questionByCategory[i][3] = c.getString(3);
+                questionByCategory[i][4] = c.getString(4);
+                questionByCategory[i][5] = Integer.toString(c.getInt(5));
+                if (!c.moveToNext()) break;
+
+                Log.v("Stampa questionByCategory: ", c.getString(0) + " " + c.getString(1) + " " + c.getString(2) +
+                " " + c.getString(3) + " " + c.getString(4) + " " + c.getString(5));
+
+                c.moveToNext();
             }
         }
-
+       /*
         String [] firstQuestion = questionByCategory[rand1];
         String [] secondQuestion = questionByCategory[rand2];
         String [] thirdQuestion = questionByCategory[rand3];
+       */
 
-        String[][] questionsToSend = new String[3][5];
+        String [] firstQuestion = questionByCategory[0];
+        String [] secondQuestion = questionByCategory[1];
+        String [] thirdQuestion = questionByCategory[2];
+
+        String[][] questionsToSend = new String[3][6];
         questionsToSend [0] = firstQuestion;
         questionsToSend [1] = secondQuestion;
         questionsToSend [2] = thirdQuestion;
@@ -215,6 +192,46 @@ public class DomandeDatabaseAdapter {
         ContentValues domanda = new ContentValues();
 
         domanda.put(KEY_DOMANDA, "Quanto ne sa Bettoli?");
+        domanda.put(KEY_ARGOMENTO, "ARTE");
+        domanda.put(KEY_RISPOSTA1, "A pacchi");
+        domanda.put(KEY_RISPOSTA2, "22");
+        domanda.put(KEY_RISPOSTA3, "Dipende da Sasha");
+        domanda.put(KEY_RISPOSTA4, "Chi minchia è Bettoli?");
+        domanda.put(KEY_ESATTA, 1);
+
+        db.insert(TABLE_DOMANDE, null, domanda);
+
+        domanda.put(KEY_DOMANDA, "Perchè Mando non c'è?");
+        domanda.put(KEY_ARGOMENTO, "ARTE");
+        domanda.put(KEY_RISPOSTA1, "A pacchi");
+        domanda.put(KEY_RISPOSTA2, "22");
+        domanda.put(KEY_RISPOSTA3, "Dipende da Sasha");
+        domanda.put(KEY_RISPOSTA4, "Chi minchia è Bettoli?");
+        domanda.put(KEY_ESATTA, 3);
+
+        db.insert(TABLE_DOMANDE, null, domanda);
+
+        domanda.put(KEY_DOMANDA, "Sono bionda?");
+        domanda.put(KEY_ARGOMENTO, "ARTE");
+        domanda.put(KEY_RISPOSTA1, "A pacchi");
+        domanda.put(KEY_RISPOSTA2, "22");
+        domanda.put(KEY_RISPOSTA3, "Dipende da Sasha");
+        domanda.put(KEY_RISPOSTA4, "Chi minchia è Bettoli?");
+        domanda.put(KEY_ESATTA, 1);
+
+        db.insert(TABLE_DOMANDE, null, domanda);
+
+        domanda.put(KEY_DOMANDA, "Perchè il Cozzi ha la barba?");
+        domanda.put(KEY_ARGOMENTO, "ARTE");
+        domanda.put(KEY_RISPOSTA1, "A pacchi");
+        domanda.put(KEY_RISPOSTA2, "22");
+        domanda.put(KEY_RISPOSTA3, "Dipende da Sasha");
+        domanda.put(KEY_RISPOSTA4, "Chi minchia è Bettoli?");
+        domanda.put(KEY_ESATTA, 3);
+
+        db.insert(TABLE_DOMANDE, null, domanda);
+
+        domanda.put(KEY_DOMANDA, "A pacchi?");
         domanda.put(KEY_ARGOMENTO, "ARTE");
         domanda.put(KEY_RISPOSTA1, "A pacchi");
         domanda.put(KEY_RISPOSTA2, "22");

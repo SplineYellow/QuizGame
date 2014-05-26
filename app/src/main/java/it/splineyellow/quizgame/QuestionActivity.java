@@ -17,7 +17,7 @@ import java.sql.SQLException;
 public class QuestionActivity extends Activity {
 
     DomandeDatabaseAdapter db = new DomandeDatabaseAdapter(this);
-    String[] questionsArray = {};
+    String[][] questionsMatrix = new String[3][6];
     int contatore = 0;
     int punteggio = 0;
     boolean answered = false;
@@ -39,19 +39,23 @@ public class QuestionActivity extends Activity {
 
         //DA IMPLEMENTARE PER 3 DOMANDE, FARE FUNZIONE
 
-        long start = System.currentTimeMillis();
-        long end = start + 60*1000; // 60 seconds * 1000 ms/sec
+        try {
 
-            try {
-                questionsArray = getQuestion(category);
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-            question.setText(questionsArray[0]);
-            risposta1.setText(questionsArray[1]);
-            risposta2.setText(questionsArray[2]);
-            risposta3.setText(questionsArray[3]);
-            risposta4.setText(questionsArray[4]);
+           questionsMatrix = getQuestion(category);
+           Log.v("questionMatrix", "Tento di riempire la matrice");
+
+        } catch (SQLException e) {
+
+           e.printStackTrace();
+
+        }
+
+        question.setText(questionsMatrix[0][0] + "\n Risposta esatta: " + questionsMatrix[0][5]);
+        risposta1.setText(questionsMatrix[0][1]);
+        risposta2.setText(questionsMatrix[0][2]);
+        risposta3.setText(questionsMatrix[0][3]);
+        risposta4.setText(questionsMatrix[0][4]);
+
 
 //        goToStartGameActivity();
 
@@ -66,7 +70,7 @@ public class QuestionActivity extends Activity {
                 if (!answered) {
                     answered = true;
                     contatore++;
-                    if (questionsArray[5].equals(posizioneBottone)) punteggio++;
+                    if (questionsMatrix[0][5].equals(posizioneBottone)) punteggio++;
                 }
 
             }
@@ -84,7 +88,7 @@ public class QuestionActivity extends Activity {
                 if (!answered) {
                     answered = true;
                     contatore++;
-                    if (questionsArray[5].equals(posizioneBottone)) punteggio++;
+                    if (questionsMatrix[0][5].equals(posizioneBottone)) punteggio++;
                 }
 
             }
@@ -102,7 +106,7 @@ public class QuestionActivity extends Activity {
                 if (!answered) {
                     answered = true;
                     contatore++;
-                    if (questionsArray[5].equals(posizioneBottone)) punteggio++;
+                    if (questionsMatrix[0][5].equals(posizioneBottone)) punteggio++;
                 }
 
             }
@@ -121,7 +125,7 @@ public class QuestionActivity extends Activity {
                     answered = true;
                     contatore++;
 
-                    if (questionsArray[5].equals(posizioneBottone)) punteggio++;
+                    if (questionsMatrix[0][5].equals(posizioneBottone)) punteggio++;
                 }
 
             }
@@ -153,7 +157,7 @@ public class QuestionActivity extends Activity {
         return false;
     }
 
-    private String[] getQuestion(String category) throws SQLException {
+    private String[][] getQuestion(String category) throws SQLException {
 
         //Send al db della categoria
 
@@ -166,8 +170,9 @@ public class QuestionActivity extends Activity {
         db.fillCategoryTable();
         db.fillQuestionsTable();
 
-        String[] questions = {};
-        questions = db.getQuestion(category.toUpperCase());
+      //  String[][] questions = db.getQuestions(category);
+        String[][] questions = db.getQuestions("ARTE");
+        Log.v("getQuestion", "Chiamata getQuestions");
 
         db.close();
 
