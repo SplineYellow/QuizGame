@@ -17,7 +17,9 @@ import java.sql.SQLException;
 public class QuestionActivity extends Activity {
 
     DomandeDatabaseAdapter db = new DomandeDatabaseAdapter(this);
+    String[] questionsArray = {};
     int contatore = 0;
+    int punteggio = 0;
     boolean answered = false;
 
 
@@ -29,28 +31,29 @@ public class QuestionActivity extends Activity {
         Intent intent = getIntent();
         String category = intent.getStringExtra(StartGameActivity.EXTRA_MESSAGE);
 
-        String[] questionsArray = {};
-        try {
-            questionsArray = getQuestion(category);
-            String k = Integer.toString(questionsArray.length);
-            Log.v("QUESTIONS ARRAY: ", k);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-
         TextView question = (TextView) findViewById(R.id.testo_domanda);
-
-        question.setText(questionsArray[0]);
-
         Button risposta1 = (Button) findViewById(R.id.risposta1);
         Button risposta2 = (Button) findViewById(R.id.risposta2);
         Button risposta3 = (Button) findViewById(R.id.risposta3);
         Button risposta4 = (Button) findViewById(R.id.risposta4);
 
-        risposta1.setText(questionsArray[1]);
-        risposta2.setText(questionsArray[2]);
-        risposta3.setText(questionsArray[3]);
-        risposta4.setText(questionsArray[4]);
+        //DA IMPLEMENTARE PER 3 DOMANDE, FARE FUNZIONE
+
+        long start = System.currentTimeMillis();
+        long end = start + 60*1000; // 60 seconds * 1000 ms/sec
+
+            try {
+                questionsArray = getQuestion(category);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+            question.setText(questionsArray[0]);
+            risposta1.setText(questionsArray[1]);
+            risposta2.setText(questionsArray[2]);
+            risposta3.setText(questionsArray[3]);
+            risposta4.setText(questionsArray[4]);
+
+//        goToStartGameActivity();
 
         risposta1.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -58,10 +61,12 @@ public class QuestionActivity extends Activity {
                 //chiama funzione checkRisposta
                 Toast t = Toast.makeText(getApplicationContext(), "Risposta 1", Toast.LENGTH_SHORT);
                 t.show();
+                String posizioneBottone = "1";
 
                 if (!answered) {
                     answered = true;
                     contatore++;
+                    if (questionsArray[5].equals(posizioneBottone)) punteggio++;
                 }
 
             }
@@ -74,9 +79,12 @@ public class QuestionActivity extends Activity {
                 Toast t = Toast.makeText(getApplicationContext(), "Risposta 2", Toast.LENGTH_SHORT);
                 t.show();
 
+                String posizioneBottone = "2";
+
                 if (!answered) {
                     answered = true;
                     contatore++;
+                    if (questionsArray[5].equals(posizioneBottone)) punteggio++;
                 }
 
             }
@@ -89,9 +97,12 @@ public class QuestionActivity extends Activity {
                 Toast t = Toast.makeText(getApplicationContext(), "Risposta 3", Toast.LENGTH_SHORT);
                 t.show();
 
+                String posizioneBottone = "3";
+
                 if (!answered) {
                     answered = true;
                     contatore++;
+                    if (questionsArray[5].equals(posizioneBottone)) punteggio++;
                 }
 
             }
@@ -104,15 +115,18 @@ public class QuestionActivity extends Activity {
                 Toast t = Toast.makeText(getApplicationContext(), "Risposta 4", Toast.LENGTH_SHORT);
                 t.show();
 
+                String posizioneBottone = "4";
+
                 if (!answered) {
                     answered = true;
                     contatore++;
+
+                    if (questionsArray[5].equals(posizioneBottone)) punteggio++;
                 }
 
             }
         });
     }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -158,6 +172,12 @@ public class QuestionActivity extends Activity {
         db.close();
 
         return questions;
+    }
+
+    public void goToStartGameActivity () {
+
+        Intent intent = new Intent(this, StartGameActivity.class);
+        startActivity(intent);
     }
 
 }
