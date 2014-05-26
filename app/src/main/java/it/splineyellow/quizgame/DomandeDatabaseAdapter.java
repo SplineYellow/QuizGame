@@ -28,6 +28,8 @@ public class DomandeDatabaseAdapter {
 
     public static final int DATABASE_VERSION = 1;
 
+    public static final int QUESTION_NUMBER = 5;
+
     private static final String TABLE_CATEGORIE_CREATE = "create table " +
             TABLE_CATEGORIE + " (" +
             KEY_CATEGORIA + " text primary key" +
@@ -139,6 +141,52 @@ public class DomandeDatabaseAdapter {
         question [5] = esatta;
 
         return question;
+
+    }
+
+    public String[][] getQuestions (String category) {
+
+        category = category.toUpperCase();
+        String [][] questionByCategory = new String[QUESTION_NUMBER][5];
+
+        String query = "SELECT * FROM " + TABLE_DOMANDE +
+                " WHERE " + KEY_ARGOMENTO + " = '" + category + "';";
+
+        int rand1, rand2, rand3;
+        rand1 = (int) (Math.random() * (QUESTION_NUMBER));
+        rand2 = rand1;
+        rand3 = rand1;
+
+        while (rand1 == rand2) {
+            rand2 = (int) (Math.random() * QUESTION_NUMBER);
+        }
+        while (rand3 == rand1 || rand3 == rand2) {
+            rand3 = (int) (Math.random() * QUESTION_NUMBER);
+        }
+
+        Cursor c = db.rawQuery(query, null);
+
+        if (c != null && c.moveToFirst()) {
+            for (int i = 0; i < QUESTION_NUMBER; i++) {
+                questionByCategory[i][0] = c.getString(0 + i * 6);
+                questionByCategory[i][1] = c.getString(1 + i * 6);
+                questionByCategory[i][2] = c.getString(2 + i * 6);
+                questionByCategory[i][3] = c.getString(3 + i * 6);
+                questionByCategory[i][4] = c.getString(4 + i * 6);
+                questionByCategory[i][5] = Integer.toString(c.getInt(5 + i * 6));
+            }
+        }
+
+        String [] firstQuestion = questionByCategory[rand1];
+        String [] secondQuestion = questionByCategory[rand2];
+        String [] thirdQuestion = questionByCategory[rand3];
+
+        String[][] questionsToSend = new String[3][5];
+        questionsToSend [0] = firstQuestion;
+        questionsToSend [1] = secondQuestion;
+        questionsToSend [2] = thirdQuestion;
+
+        return questionsToSend;
 
     }
 
