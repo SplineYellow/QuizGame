@@ -43,6 +43,7 @@ public class StartGameActivity extends Activity {
 
     InetAddress serverAddr;
 
+    String message;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,7 +51,12 @@ public class StartGameActivity extends Activity {
         setContentView(R.layout.activity_start_game);
 
         Intent intent = getIntent();
-        String message = intent.getStringExtra(ConnectionActivity.EXTRA_MESSAGE);
+        try {
+            message = intent.getStringExtra(ConnectionActivity.EXTRA_MESSAGE);
+        } catch (NullPointerException e) {
+            e.printStackTrace();
+            message = intent.getStringExtra(QuestionActivity.EXTRA_MESSAGE);
+        }
         final String[] categories = message.toLowerCase().split(",");
 
         mThumbIds = categoriesOrder(categories);
@@ -172,6 +178,7 @@ public class StartGameActivity extends Activity {
 
         Intent intent = new Intent (this, QuestionActivity.class);
         intent.putExtra(EXTRA_MESSAGE, i);
+        intent.putExtra("Categories", message);
         startActivity(intent);
     }
 
