@@ -215,32 +215,12 @@ public class UtentiDatabaseAdapter {
         return "";
     }
 
-    public int getGiuste (String username) {
-        String query = "SELECT " + KEY_GIUSTE + " FROM " + TABLE_UTENTI +
-                " WHERE " + KEY_NICKNAME + " = '" + username + "';";
-        Cursor c = db.rawQuery(query, null);
-        if (c != null && c.moveToFirst()) {
-            return c.getInt(0);
-        }
-        return 0;
-    }
-
-    public int getErrate (String username) {
-        String query = "SELECT " + KEY_ERRATE + " FROM " + TABLE_UTENTI +
-                " WHERE " + KEY_NICKNAME + " = '" + username + "';";
-        Cursor c = db.rawQuery(query, null);
-        if (c != null && c.moveToFirst()) {
-            return c.getInt(0);
-        }
-        return 0;
-    }
-
     public void updateScore (String username, int giuste) {
 
         int errate = 3 - giuste;
 
-        int oldGiuste = getGiuste(username);
-        int oldErrate = getErrate(username);
+        int oldGiuste = getPlayData(username, 5);
+        int oldErrate = getPlayData(username, 6);
 
         giuste = giuste + oldGiuste;
         errate = errate + oldErrate;
