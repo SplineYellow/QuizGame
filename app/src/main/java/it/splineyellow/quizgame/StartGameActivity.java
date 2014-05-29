@@ -20,7 +20,9 @@ import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
+import java.net.SocketAddress;
 import java.net.SocketException;
+import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
 
 public class StartGameActivity extends Activity {
@@ -186,9 +188,7 @@ public class StartGameActivity extends Activity {
         @Override
         protected Void doInBackground(Void... params) {
 
-            DatagramSocket notFirstTurnSocket = null;
-
-            DatagramSocket datagramSocketTurnEqualsMyId = null;
+            DatagramSocket ds = null;
 
             try {
                 serverAddr = InetAddress.getByName(dstAddress);
@@ -204,94 +204,76 @@ public class StartGameActivity extends Activity {
             boolean firstTurn = true;
             boolean game = true;
 
-            while (game) {
+            if (!firstTurn) {
 
-                if (!firstTurn) {
-
-                    Log.v("TESTIF", "Dentro a !firstTurn");
-
-                    DatagramPacket receivePacket;
-
+                    Log.v("TESTIF1", "testif1");
+                    DatagramSocket datagramSocket = null;
                     try {
-                        notFirstTurnSocket = new DatagramSocket();
-                        notFirstTurnSocket.setReuseAddress(true);
+                        datagramSocket = new DatagramSocket(dstPort, serverAddr);
                     } catch (SocketException e) {
                         e.printStackTrace();
                     }
                     byte[] receiveBuffer = new byte[4096];
-                    receivePacket = new DatagramPacket(receiveBuffer, receiveBuffer.length,
-                            serverAddr, dstPort);
+                    DatagramPacket receivePacket = null;
+
 
                     try {
-                        notFirstTurnSocket.receive(receivePacket);
+                        Log.v("TRY RECEIVE1", "receive1");
+                        receivePacket = new DatagramPacket(receiveBuffer,receiveBuffer.length);
+                        ds.receive(receivePacket);
+                        Log.v("RECEIVE1", "receive1");
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
 
-                    //SPLITTARE E GESTIRE, BLACK MAGIC
-
-                    //STAMPA DI PROVA
-
                     String test = receivePacket.getData().toString();
-                    Log.v("STRINGA TEST", test);
-
-                    notFirstTurnSocket.close();
+                    Log.v("STRINGA TEST1", test);
 
                 }
 
-                if (turn == 2) {
+            if (turn == 2) {
 
-                    Log.v("FINE PARTITA", "fine partita");
-                    game = false;
+                Log.v("FINE PARTITA", "fine partita");
+                game = false;
 
-                }
+            }
 
-                else if (turn == myID) {
+            else if (turn == myID) {
 
-                    Log.v("TESTIF", "Dentro turn == myID");
+                Log.v("TESTIF2", "testif2");
 
-                    // send della categoria
-
-                    datagramSocketTurnEqualsMyId = null;
-
-                    try {
-                        datagramSocketTurnEqualsMyId = new DatagramSocket();
-                        datagramSocketTurnEqualsMyId.setReuseAddress(true);
-                        DatagramPacket dp;
-                        dp = new DatagramPacket(buffer, buffer.length, serverAddr, dstPort);
-                        Log.v("StartGameActivity", questionData);
-                        datagramSocketTurnEqualsMyId.send(dp);
-
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-
-                    // receive delle domande
-
+                try {
+                    ds = new DatagramSocket();
+                    DatagramPacket dp = null;
+                    DatagramPacket packet = null;
                     byte[] receiveBuffer = new byte[8192];
-                    DatagramPacket packet = new DatagramPacket(receiveBuffer, receiveBuffer.length,
-                            serverAddr, dstPort);
+                    dp = new DatagramPacket(buffer, buffer.length, serverAddr, dstPort);
 
-                    while (firstTurn) {
+                    ds.setSoTimeout(1000);
+                    boolean continueSending = true;
+                    int counter = 0;
+
+                    while (continueSending && counter < 1) {
+                        ds.send(dp);
+                        counter++;
                         try {
-                            Log.v("TRY della receive", "Parte la receive");
-                            datagramSocketTurnEqualsMyId.receive(packet);
-                        } catch (IOException e) {
-                            e.printStackTrace();
+                            packet = new DatagramPacket(receiveBuffer, receiveBuffer.length, serverAddr, dstPort);
+                            ds.receive(packet);
+                            continueSending = false; // a packet has been received : stop sending
                         }
-
-                        String questions = new String(packet.getData(), 0, packet.getLength());
-                        Log.v("STRINGA TEST2", questions);
-
-                        firstTurn = false;
-
+                        catch (SocketTimeoutException e) {
+                            // no response received after 1 second. continue sending
+                        }
                     }
 
-                    datagramSocketTurnEqualsMyId.close();
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
             }
 
 
+            ds.close();
+            Log.v("CLOSE", "close");
 
             return null;
 
