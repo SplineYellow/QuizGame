@@ -31,6 +31,8 @@ public class ScoreActivity extends Activity {
     UtentiDatabaseAdapter db = new UtentiDatabaseAdapter(this);
     String message;
     Button okButton;
+    String[] categories = {};
+    int turn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,6 +42,19 @@ public class ScoreActivity extends Activity {
         Intent intent = getIntent();
         score = intent.getStringExtra(QuestionActivity.EXTRA_MESSAGE);
         message = intent.getStringExtra("Categories");
+        categories = message.toLowerCase().split(",");
+
+        turn = Integer.parseInt(categories[0]);
+
+        if (turn == 0) {
+
+            turn = 1;
+        }
+
+        else if (turn == 1) {
+
+            turn = 0;
+        }
 
         new SendScoreTask().execute();
 
@@ -72,7 +87,9 @@ public class ScoreActivity extends Activity {
     public void goToStartGameActivity () {
 
         Intent intent = new Intent(this, StartGameActivity.class);
-        intent.putExtra(EXTRA_MESSAGE, message);
+        intent.putExtra(EXTRA_MESSAGE, Integer.toString(turn) + "," + categories[1] + "," + categories[2] + "," +
+        categories[3] + "," + categories[4] + "," + categories[5] + "," + categories[6] + "," + categories[7] + "," +
+        categories[8] + "," + categories[9] + "," + categories[10]);
 
         Log.v(TAG, "Parte intent");
 

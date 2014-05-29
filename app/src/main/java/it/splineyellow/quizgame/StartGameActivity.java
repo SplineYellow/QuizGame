@@ -68,7 +68,7 @@ public class StartGameActivity extends Activity {
         setTitle("Nuova Partita");
 
         TextView textView = (TextView) findViewById(R.id.placeholder);
-        textView.setText("Turno: " + categories[0]);
+        textView.setText("Turno: " + categories[0] + "MyId: " + categories[1]);
 
         GridView gridview = (GridView) findViewById(R.id.gridview);
         gridview.setAdapter(new ImageAdapter(this));
@@ -199,46 +199,18 @@ public class StartGameActivity extends Activity {
             questionData = Integer.toString(actualCategoryPosition + 1);
             byte[] buffer = questionData.getBytes();
 
-            //struttura dati per tabellone
-
-            boolean firstTurn = true;
-            boolean game = true;
-
-            if (!firstTurn) {
-
-                    Log.v("TESTIF1", "testif1");
-                    DatagramSocket datagramSocket = null;
-                    try {
-                        datagramSocket = new DatagramSocket(dstPort, serverAddr);
-                    } catch (SocketException e) {
-                        e.printStackTrace();
-                    }
-                    byte[] receiveBuffer = new byte[4096];
-                    DatagramPacket receivePacket = null;
 
 
-                    try {
-                        Log.v("TRY RECEIVE1", "receive1");
-                        receivePacket = new DatagramPacket(receiveBuffer,receiveBuffer.length);
-                        ds.receive(receivePacket);
-                        Log.v("RECEIVE1", "receive1");
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-
-                    String test = receivePacket.getData().toString();
-                    Log.v("STRINGA TEST1", test);
-
-                }
 
             if (turn == 2) {
 
+                //IMPLEMENTARE
+
                 Log.v("FINE PARTITA", "fine partita");
-                game = false;
 
             }
 
-            else if (turn == myID) {
+            if (turn == myID) {
 
                 Log.v("TESTIF2", "testif2");
 
@@ -254,11 +226,19 @@ public class StartGameActivity extends Activity {
                     int counter = 0;
 
                     while (continueSending && counter < 1) {
+
+                        //send della categoria
+
                         ds.send(dp);
                         counter++;
                         try {
                             packet = new DatagramPacket(receiveBuffer, receiveBuffer.length, serverAddr, dstPort);
+
+                            //receive delle domande
+
                             ds.receive(packet);
+
+                            String questions = new String();
                             continueSending = false; // a packet has been received : stop sending
                         }
                         catch (SocketTimeoutException e) {
@@ -271,8 +251,42 @@ public class StartGameActivity extends Activity {
                 }
             }
 
+            if (turn != myID) {
 
-            ds.close();
+                DatagramPacket packet = null;
+
+                try {
+                    ds = new DatagramSocket();
+                    byte[] receiveBuffer = new byte[8192];
+                    try {
+                        packet = new DatagramPacket(receiveBuffer, receiveBuffer.length, serverAddr, dstPort);
+
+                        //receive delle domande
+                        ds.receive(packet);
+                        String questions = new String();
+                    }
+                    catch (SocketTimeoutException e) {
+                        // no response received after 1 second. continue sending
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+
+                } catch (SocketException e) {
+                    e.printStackTrace();
+                }
+
+                 String[] response = new String(packet.getData(), 0, packet.getLength()).split(";");
+                 Log.v(TAG, "Turno: " + response[0] + " Tabellone: " + response[1] +" " + response[2]);
+
+            }
+
+            try {
+                ds.close();
+            } catch (NullPointerException e) {
+
+                e.printStackTrace();
+
+            }
             Log.v("CLOSE", "close");
 
             return null;
