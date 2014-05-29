@@ -73,6 +73,7 @@ public class ConnectionActivity extends Activity {
                 InetAddress serverAddr = InetAddress.getByName(dstAddress);
                 byte[] buffer = userData.getBytes();
                 ds = new DatagramSocket();
+                ds.setReuseAddress(true);
                 DatagramPacket dp;
                 dp = new DatagramPacket(buffer, buffer.length, serverAddr, dstPort);
                 ds.send(dp);

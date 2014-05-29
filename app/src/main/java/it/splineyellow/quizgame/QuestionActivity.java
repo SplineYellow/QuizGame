@@ -230,7 +230,6 @@ public class QuestionActivity extends Activity {
         db.fillCategoryTable();
         db.fillQuestionsTable();
 
-      //  String[][] questions = db.getQuestions(category);
         String[][] questions = db.getQuestions(category);
         Log.v("getQuestion", "Chiamata getQuestions");
 

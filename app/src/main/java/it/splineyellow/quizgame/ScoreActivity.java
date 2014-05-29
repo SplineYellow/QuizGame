@@ -24,6 +24,7 @@ public class ScoreActivity extends Activity {
     public final static String EXTRA_MESSAGE = "it.splineyellow.quizgame.MESSAGE";
     public final static String dstAddress = "thebertozz.no-ip.org";
     public final static int dstPort = 9533;
+    public final static String TAG = "ScoreActivity";
 
     public String score;
 
@@ -40,6 +41,8 @@ public class ScoreActivity extends Activity {
         score = intent.getStringExtra(QuestionActivity.EXTRA_MESSAGE);
         message = intent.getStringExtra("Categories");
 
+        new SendScoreTask().execute();
+
         TextView textScore = (TextView) findViewById(R.id.score);
         textScore.setText("Hai totalizzato " + score + " punti!" );
 
@@ -53,22 +56,25 @@ public class ScoreActivity extends Activity {
         db.updateScore(db.getCurrentUser(), Integer.parseInt(score));
         db.close();
 
+        Log.v(TAG, "Scritto nel db");
+
         okButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
+                Log.v(TAG, "Parte AsyncTask");
+
                 goToStartGameActivity();
             }
         });
-
-        //SEND AL SERVER
     }
 
     public void goToStartGameActivity () {
 
-        new SendScoreTask().execute();
-
         Intent intent = new Intent(this, StartGameActivity.class);
         intent.putExtra(EXTRA_MESSAGE, message);
+
+        Log.v(TAG, "Parte intent");
 
         startActivity(intent);
     }
@@ -77,14 +83,17 @@ public class ScoreActivity extends Activity {
         @Override
         protected Void doInBackground(Void... params) {
             DatagramSocket ds = null;
+
             try {
+                Log.v(TAG, "Entrato nel try della SendScoreTask");
                 InetAddress serverAddr = InetAddress.getByName(dstAddress);
                 byte[] buffer = score.getBytes();
                 ds = new DatagramSocket();
-                DatagramPacket dp;
-                dp = new DatagramPacket(buffer, buffer.length, serverAddr, dstPort);
+                ds.setReuseAddress(true);
+                DatagramPacket dp = new DatagramPacket(buffer, buffer.length, serverAddr, dstPort);
                 ds.send(dp);
-                Log.v("Send score", "inviato punteggio " + score);
+                Log.v(TAG, "Dopo la send");
+                Log.v(TAG, "inviato punteggio " + score);
             } catch (Exception e) {
                 e.printStackTrace();
             }

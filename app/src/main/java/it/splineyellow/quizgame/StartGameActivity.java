@@ -210,20 +210,19 @@ public class StartGameActivity extends Activity {
 
                     DatagramPacket receivePacket;
 
-                    DatagramSocket datagramSocket = null;
+
                     try {
-                        datagramSocket = new DatagramSocket(dstPort, serverAddr);
+                        ds = new DatagramSocket();
+                        ds.setReuseAddress(true);
                     } catch (SocketException e) {
                         e.printStackTrace();
                     }
                     byte[] receiveBuffer = new byte[4096];
-                    /*receivePacket = new DatagramPacket(receiveBuffer, receiveBuffer.length,
-                            serverAddr, dstPort);*/
-                    receivePacket= new DatagramPacket(receiveBuffer,receiveBuffer.length);
-
+                    receivePacket = new DatagramPacket(receiveBuffer, receiveBuffer.length,
+                            serverAddr, dstPort);
 
                     try {
-                        datagramSocket.receive(receivePacket);
+                        ds.receive(receivePacket);
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
@@ -251,10 +250,10 @@ public class StartGameActivity extends Activity {
                     // send della categoria
 
                     try {
-
                         ds = new DatagramSocket();
                         DatagramPacket dp;
                         dp = new DatagramPacket(buffer, buffer.length, serverAddr, dstPort);
+                        Log.v("StartGameActivity", questionData);
                         ds.send(dp);
 
                     } catch (Exception e) {
@@ -263,9 +262,8 @@ public class StartGameActivity extends Activity {
 
                     // receive delle domande
 
-                    DatagramPacket packet;
                     byte[] receiveBuffer = new byte[8192];
-                    packet = new DatagramPacket(receiveBuffer, receiveBuffer.length,
+                    DatagramPacket packet = new DatagramPacket(receiveBuffer, receiveBuffer.length,
                             serverAddr, dstPort);
 
                     while (firstTurn) {
