@@ -68,6 +68,7 @@ public class ConnectionActivity extends Activity {
     public class MyClientTask extends AsyncTask<Void, Void, Void> {
         @Override
         protected Void doInBackground(Void... params) {
+
             DatagramSocket ds = null;
             try {
                 InetAddress serverAddr = InetAddress.getByName(dstAddress);
@@ -106,7 +107,6 @@ public class ConnectionActivity extends Activity {
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-
 
                 if (counter == 0) {
                     firstResponse = new String(datagramPacket.getData(), 0, datagramPacket.getLength()).split(",");

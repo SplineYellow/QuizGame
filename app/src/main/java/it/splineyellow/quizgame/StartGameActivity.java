@@ -186,7 +186,9 @@ public class StartGameActivity extends Activity {
         @Override
         protected Void doInBackground(Void... params) {
 
-            DatagramSocket ds = null;
+            DatagramSocket notFirstTurnSocket = null;
+
+            DatagramSocket datagramSocketTurnEqualsMyId = null;
 
             try {
                 serverAddr = InetAddress.getByName(dstAddress);
@@ -210,10 +212,9 @@ public class StartGameActivity extends Activity {
 
                     DatagramPacket receivePacket;
 
-
                     try {
-                        ds = new DatagramSocket();
-                        ds.setReuseAddress(true);
+                        notFirstTurnSocket = new DatagramSocket();
+                        notFirstTurnSocket.setReuseAddress(true);
                     } catch (SocketException e) {
                         e.printStackTrace();
                     }
@@ -222,7 +223,7 @@ public class StartGameActivity extends Activity {
                             serverAddr, dstPort);
 
                     try {
-                        ds.receive(receivePacket);
+                        notFirstTurnSocket.receive(receivePacket);
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
@@ -233,6 +234,8 @@ public class StartGameActivity extends Activity {
 
                     String test = receivePacket.getData().toString();
                     Log.v("STRINGA TEST", test);
+
+                    notFirstTurnSocket.close();
 
                 }
 
@@ -249,12 +252,15 @@ public class StartGameActivity extends Activity {
 
                     // send della categoria
 
+                    datagramSocketTurnEqualsMyId = null;
+
                     try {
-                        ds = new DatagramSocket();
+                        datagramSocketTurnEqualsMyId = new DatagramSocket();
+                        datagramSocketTurnEqualsMyId.setReuseAddress(true);
                         DatagramPacket dp;
                         dp = new DatagramPacket(buffer, buffer.length, serverAddr, dstPort);
                         Log.v("StartGameActivity", questionData);
-                        ds.send(dp);
+                        datagramSocketTurnEqualsMyId.send(dp);
 
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -269,7 +275,7 @@ public class StartGameActivity extends Activity {
                     while (firstTurn) {
                         try {
                             Log.v("TRY della receive", "Parte la receive");
-                            ds.receive(packet);
+                            datagramSocketTurnEqualsMyId.receive(packet);
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
@@ -280,10 +286,12 @@ public class StartGameActivity extends Activity {
                         firstTurn = false;
 
                     }
+
+                    datagramSocketTurnEqualsMyId.close();
                 }
             }
 
-            ds.close();
+
 
             return null;
 

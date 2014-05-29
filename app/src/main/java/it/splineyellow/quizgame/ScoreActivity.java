@@ -82,6 +82,7 @@ public class ScoreActivity extends Activity {
     public class SendScoreTask extends AsyncTask<Void, Void, Void> {
         @Override
         protected Void doInBackground(Void... params) {
+
             DatagramSocket ds = null;
 
             try {
