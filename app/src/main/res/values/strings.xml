@@ -28,5 +28,6 @@
     <string name="title_activity_score">Punteggio</string>
     <string name="print_score">PUNTI</string>
     <string name="hello_world">Hello world!</string>
+    <string name="title_activity_end_game">Fine Partita</string>
 
 </resources>

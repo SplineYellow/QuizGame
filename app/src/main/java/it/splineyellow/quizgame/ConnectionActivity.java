@@ -122,16 +122,17 @@ public class ConnectionActivity extends Activity {
                     secondResponse = new String (datagramPacket.getData(), 0, datagramPacket.getLength()).split(",");
 
                     categories = secondResponse;
-
+                    ds.close();
                     goToStartGameActivity(categories);
                     checkExecute = false;
+
 
                 }
 
                 counter ++;
             }
 
-            ds.close();
+
             return null;
         }
 

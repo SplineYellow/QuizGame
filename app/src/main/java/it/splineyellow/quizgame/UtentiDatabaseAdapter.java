@@ -215,6 +215,36 @@ public class UtentiDatabaseAdapter {
         return "";
     }
 
+    public void updateWin () {
+        String user = getCurrentUser();
+        int oldWin = getPlayData(user, 2);
+        int win = oldWin + 1;
+        String query = "UPDATE " + TABLE_UTENTI + " SET " + KEY_VINTE +
+                " = " + Integer.toString(win) + " WHERE " + KEY_NICKNAME +
+                " = '" + user + "';";
+        db.execSQL(query);
+    }
+
+    public void updateLost () {
+        String user = getCurrentUser();
+        int oldLost = getPlayData(user, 2);
+        int lost = oldLost + 1;
+        String query = "UPDATE " + TABLE_UTENTI + " SET " + KEY_PERSE +
+                " = " + Integer.toString(lost) + " WHERE " + KEY_NICKNAME +
+                " = '" + user + "';";
+        db.execSQL(query);
+    }
+
+    public void updateDraw () {
+        String user = getCurrentUser();
+        int oldDraw = getPlayData(user, 2);
+        int draw = oldDraw + 1;
+        String query = "UPDATE " + TABLE_UTENTI + " SET " + KEY_PAREGGIATE +
+                " = " + Integer.toString(draw) + " WHERE " + KEY_NICKNAME +
+                " = '" + user + "';";
+        db.execSQL(query);
+    }
+
     public void updateScore (String username, int giuste) {
 
         int errate = 3 - giuste;

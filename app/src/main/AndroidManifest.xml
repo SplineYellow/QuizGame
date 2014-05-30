@@ -13,7 +13,7 @@
         android:label="@string/app_name"
         android:theme="@style/Theme.Quizgamestyle" >
         <activity
-            android:name="it.splineyellow.quizgame.MainActivity"
+            android:name=".MainActivity"
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -22,60 +22,68 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="it.splineyellow.quizgame.MenuActivity"
+            android:name=".MenuActivity"
             android:label="@string/title_activity_menu"
-            android:parentActivityName="it.splineyellow.quizgame.MainActivity" >
+            android:parentActivityName=".MainActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="it.splineyellow.quizgame.MainActivity" />
         </activity>
         <activity
-            android:name="it.splineyellow.quizgame.StatisticsActivity"
+            android:name=".StatisticsActivity"
             android:label="@string/title_activity_statistics"
-            android:parentActivityName="it.splineyellow.quizgame.MenuActivity" >
+            android:parentActivityName=".MenuActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="MenuActivity" />
         </activity>
         <activity
-            android:name="it.splineyellow.quizgame.StartGameActivity"
+            android:name=".StartGameActivity"
             android:label="@string/title_activity_start_game"
-            android:parentActivityName="it.splineyellow.quizgame.MenuActivity" >
+            android:parentActivityName=".MenuActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="MenuActivity" />
         </activity>
         <activity
-            android:name="it.splineyellow.quizgame.ListGamesActivity"
+            android:name=".ListGamesActivity"
             android:label="@string/title_activity_list_games"
-            android:parentActivityName="it.splineyellow.quizgame.MenuActivity" >
+            android:parentActivityName=".MenuActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="MenuActivity" />
         </activity>
         <activity
-            android:name="it.splineyellow.quizgame.ConnectionActivity"
+            android:name=".ConnectionActivity"
             android:label="@string/title_activity_connection"
-            android:parentActivityName="it.splineyellow.quizgame.MenuActivity" >
+            android:parentActivityName=".MenuActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="MenuActivity" />
         </activity>
         <activity
-            android:name="it.splineyellow.quizgame.QuestionActivity"
+            android:name=".QuestionActivity"
             android:label="@string/title_activity_question"
-            android:parentActivityName="it.splineyellow.quizgame.StartGameActivity" >
+            android:parentActivityName=".StartGameActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="StartGameActivity" />
         </activity>
         <activity
-            android:name="it.splineyellow.quizgame.ScoreActivity"
+            android:name=".ScoreActivity"
             android:label="@string/title_activity_score"
-            android:parentActivityName="it.splineyellow.quizgame.QuestionActivity" >
+            android:parentActivityName=".QuestionActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="it.splineyellow.quizgame.QuestionActivity" />
+        </activity>
+        <activity
+            android:name=".EndGameActivity"
+            android:label="@string/title_activity_end_game"
+            android:parentActivityName=".StartGameActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="it.splineyellow.quizgame.StartGameActivity" />
         </activity>
     </application>
 

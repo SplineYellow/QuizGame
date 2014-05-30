@@ -110,6 +110,8 @@ public class ScoreActivity extends Activity {
                 ds.setReuseAddress(true);
                 DatagramPacket dp = new DatagramPacket(buffer, buffer.length, serverAddr, dstPort);
                 ds.send(dp);
+
+
                 Log.v(TAG, "Dopo la send");
                 Log.v(TAG, "inviato punteggio " + score);
             } catch (Exception e) {
