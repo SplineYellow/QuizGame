@@ -141,6 +141,7 @@ public class UtentiDatabaseAdapter {
     }
 
     public void updateLastAccess (String timestamp, String username) {
+        Log.v(TAG, "dentro updatelastaccess");
 
         timestamp = formatDate(timestamp);
 
@@ -152,6 +153,7 @@ public class UtentiDatabaseAdapter {
     }
 
     public String getCurrentUser () {
+        Log.v(TAG, "dentro getcurrentuser");
         String query = "select " + KEY_NICKNAME + ", " +
             KEY_PASSWORD + ", max(" + KEY_ULTIMO + ") from " + TABLE_UTENTI + ";";
         Cursor c = db.rawQuery(query, null);
@@ -163,6 +165,7 @@ public class UtentiDatabaseAdapter {
     }
 
     public int getPlayData (String user, int parameter) {
+        Log.v(TAG, "dentro getplaydata");
 
         String camp;
 
@@ -194,6 +197,7 @@ public class UtentiDatabaseAdapter {
     }
 
     public String getLastAccess (String user) {
+        Log.v(TAG, "dentro getlastaccess");
         String query = "select " + KEY_ULTIMO + " from " + TABLE_UTENTI +
                 " where " + KEY_NICKNAME + " = '" + user + "';";
         Cursor c = db.rawQuery(query, null);
@@ -206,6 +210,7 @@ public class UtentiDatabaseAdapter {
     }
 
     public String getPasswordByUser (String user) {
+        Log.v(TAG, "dentro getpasswordbyuser");
         String query = "select " + KEY_PASSWORD + " from " + TABLE_UTENTI +
                 " where " + KEY_NICKNAME + " = '" + user + "';";
         Cursor c = db.rawQuery(query, null);
@@ -216,7 +221,9 @@ public class UtentiDatabaseAdapter {
     }
 
     public void updateWin () {
-        String user = getCurrentUser();
+        Log.v(TAG, "dentro updatewin");
+        String[] userData = getCurrentUser().split(",");
+        String user = userData[0];
         int oldWin = getPlayData(user, 2);
         int win = oldWin + 1;
         String query = "UPDATE " + TABLE_UTENTI + " SET " + KEY_VINTE +
@@ -226,7 +233,9 @@ public class UtentiDatabaseAdapter {
     }
 
     public void updateLost () {
-        String user = getCurrentUser();
+        Log.v(TAG, "dentro updatelost");
+        String[] userData = getCurrentUser().split(",");
+        String user = userData[0];
         int oldLost = getPlayData(user, 2);
         int lost = oldLost + 1;
         String query = "UPDATE " + TABLE_UTENTI + " SET " + KEY_PERSE +
@@ -236,7 +245,9 @@ public class UtentiDatabaseAdapter {
     }
 
     public void updateDraw () {
-        String user = getCurrentUser();
+        Log.v(TAG, "dentro updatedraw");
+        String[] userData = getCurrentUser().split(",");
+        String user = userData[0];
         int oldDraw = getPlayData(user, 2);
         int draw = oldDraw + 1;
         String query = "UPDATE " + TABLE_UTENTI + " SET " + KEY_PAREGGIATE +
@@ -246,6 +257,7 @@ public class UtentiDatabaseAdapter {
     }
 
     public void updateScore (String username, int giuste) {
+        Log.v(TAG, "dentro updatescore");
 
         int errate = 3 - giuste;
 
