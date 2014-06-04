@@ -4,11 +4,9 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.Toast;
 
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
@@ -16,17 +14,17 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.sql.SQLException;
 
-
 public class ConnectionActivity extends Activity {
-
     public final static String EXTRA_MESSAGE = "it.splineyellow.quizgame.MESSAGE";
 
     String dstAddress = "thebertozz.no-ip.org";
+
     int dstPort = 9533;
 
     String userData;
 
     String nick;
+
     int turn;
 
     UtentiDatabaseAdapter db = new UtentiDatabaseAdapter(this);
@@ -34,6 +32,7 @@ public class ConnectionActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.connection_activity);
 
         try {
@@ -41,11 +40,12 @@ public class ConnectionActivity extends Activity {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+
         userData = db.getCurrentUser();
+
         db.close();
 
         new MyClientTask().execute();
-
     }
 
     /*
@@ -69,6 +69,7 @@ public class ConnectionActivity extends Activity {
         } catch (NullPointerException n) {
             n.printStackTrace();
         }
+
         return true;
     }
 
@@ -78,6 +79,7 @@ public class ConnectionActivity extends Activity {
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
+
         return id == R.id.action_settings || super.onOptionsItemSelected(item);
     }
 
@@ -93,21 +95,28 @@ public class ConnectionActivity extends Activity {
         } catch(NullPointerException n) {
             n.printStackTrace();
         }
+
         return super.onPrepareOptionsMenu(menu);
     }
 
     public class MyClientTask extends AsyncTask<Void, Void, Void> {
         @Override
         protected Void doInBackground(Void... params) {
-
             DatagramSocket ds = null;
+
             try {
                 InetAddress serverAddr = InetAddress.getByName(dstAddress);
+
                 byte[] buffer = userData.getBytes();
+
                 ds = new DatagramSocket();
+
                 ds.setReuseAddress(true);
+
                 DatagramPacket dp;
+
                 dp = new DatagramPacket(buffer, buffer.length, serverAddr, dstPort);
+
                 ds.send(dp);
             } catch (Exception e) {
                 e.printStackTrace();
@@ -122,10 +131,15 @@ public class ConnectionActivity extends Activity {
             }
 
             Boolean checkExecute = true;
+
             String[] firstResponse;
+
             String[] secondResponse;
+
             String[] categories = {};
+
             byte[] receiveBuffer = new byte[4096];
+
             int counter = 0;
 
             while (checkExecute && counter < 2) {
@@ -133,7 +147,6 @@ public class ConnectionActivity extends Activity {
 
                 try {
                     ds.receive(datagramPacket);
-
                 } catch (NullPointerException n) {
                     n.printStackTrace();
                 } catch (Exception e) {
@@ -142,23 +155,26 @@ public class ConnectionActivity extends Activity {
 
                 if (counter == 0) {
                     firstResponse = new String(datagramPacket.getData(), 0, datagramPacket.getLength()).split(",");
+
                     if (firstResponse[0].equals("errore")) {
-                      //  Toast t = Toast.makeText(getApplicationContext(), "Errore di connessione", Toast.LENGTH_LONG);
-                      //  t.show();
                         backToMenu();
                     }
+
                     nick = firstResponse[0];
+
                     turn = Integer.parseInt(firstResponse[1]);
-                 }
+                }
+
                 if (counter == 1) {
                     secondResponse = new String (datagramPacket.getData(), 0, datagramPacket.getLength()).split(",");
 
                     categories = secondResponse;
+
                     ds.close();
+
                     goToStartGameActivity(categories);
+
                     checkExecute = false;
-
-
                 }
 
                 counter ++;
@@ -177,22 +193,25 @@ public class ConnectionActivity extends Activity {
         Intent intent = new Intent(this, StartGameActivity.class);
 
         String message = "";
+
         String myID = categories[0];
 
         for (int i = 1; i <= 9; i++) {
             message = message + categories[i];
+
             if (i < 9) message = message + ",";
         }
 
         message = Integer.toString(turn) + "," + myID + "," + message;
 
         intent.putExtra(EXTRA_MESSAGE, message);
+
         startActivity(intent);
     }
 
     public void backToMenu() {
         Intent intent = new Intent(this, MenuActivity.class);
+
         startActivity(intent);
     }
-
 }

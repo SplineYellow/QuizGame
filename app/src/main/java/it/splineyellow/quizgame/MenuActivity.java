@@ -12,7 +12,6 @@ import android.widget.Button;
 import java.sql.SQLException;
 
 public class MenuActivity extends Activity {
-
     String userData;
 
     UtentiDatabaseAdapter db = new UtentiDatabaseAdapter(this);
@@ -20,44 +19,59 @@ public class MenuActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.menu_activity);
+
         Button buttonNewGame = (Button) findViewById(R.id.button_new_game);
+
         buttonNewGame.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 goToConnect();
             }
         });
+
         Button buttonListGame = (Button) findViewById(R.id.button_list_games);
+
         buttonListGame.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v){
                 goToListGames();
             }
         });
+
         Button buttonStatistics = (Button) findViewById(R.id.button_statistics);
+
         buttonStatistics.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 goToStatistics();
             }
         });
+
         Button buttonLogout = (Button) findViewById(R.id.button_logout);
+
         buttonLogout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 onBackPressed();
             }
         });
+
         try {
             db.open();
         } catch (SQLException e) {
             e.printStackTrace();
         }
+
         userData = db.getCurrentUser();
+
         db.close();
+
         String[] parts = userData.split(",");
+
         String user = parts[0];
+
         setTitle("Utente: " + user);
     }
 
@@ -82,6 +96,7 @@ public class MenuActivity extends Activity {
         } catch (NullPointerException n) {
             n.printStackTrace();
         }
+
         return true;
     }
 
@@ -91,6 +106,7 @@ public class MenuActivity extends Activity {
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
+
         return id == R.id.action_settings || super.onOptionsItemSelected(item);
     }
 
@@ -106,23 +122,25 @@ public class MenuActivity extends Activity {
         } catch(NullPointerException n) {
             n.printStackTrace();
         }
+
         return super.onPrepareOptionsMenu(menu);
     }
 
-
-
     private void goToListGames() {
         Intent intent = new Intent(this, ListGamesActivity.class);
+
         startActivity(intent);
     }
 
     private void goToStatistics () {
         Intent intent = new Intent(this, StatisticsActivity.class);
+
         startActivity(intent);
     }
 
     private void goToConnect() {
         Intent intent = new Intent(this, ConnectionActivity.class);
+
         startActivity(intent);
     }
 }

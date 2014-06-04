@@ -12,14 +12,13 @@ import android.widget.TextView;
 
 import java.sql.SQLException;
 
-
 public class EndGameActivity extends Activity {
-
     UtentiDatabaseAdapter db = new UtentiDatabaseAdapter(this);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.end_game_activity);
 
         TextView resultText = (TextView) findViewById(R.id.game_result);
@@ -34,21 +33,24 @@ public class EndGameActivity extends Activity {
 
         if (result.equals("v")) {
             resultText.setText("Hai vinto!");
+
             db.updateWin();
         }
         else if (result.equals("s")) {
             resultText.setText("Hai Perso!");
+
             db.updateLost();
         }
         else if (result.equals("p")) {
             resultText.setText("Pareggio!");
+
             db.updateDraw();
         }
 
         db.close();
 
-
         Button okButton = (Button) findViewById(R.id.endgame_button);
+
         okButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -78,6 +80,7 @@ public class EndGameActivity extends Activity {
         } catch (NullPointerException n) {
             n.printStackTrace();
         }
+
         return true;
     }
 
@@ -87,6 +90,7 @@ public class EndGameActivity extends Activity {
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
+
         return id == R.id.action_settings || super.onOptionsItemSelected(item);
     }
 
@@ -102,11 +106,13 @@ public class EndGameActivity extends Activity {
         } catch(NullPointerException n) {
             n.printStackTrace();
         }
+
         return super.onPrepareOptionsMenu(menu);
     }
 
     public void goToMenu () {
         Intent intent = new Intent(this, MenuActivity.class);
+
         startActivity(intent);
     }
 }
