@@ -52,7 +52,7 @@ public class QuestionActivity extends Activity {
         risposta3 = (Button) findViewById(R.id.risposta3);
         risposta4 = (Button) findViewById(R.id.risposta4);
 
-        countDownTimer = new CountDownTimer(10000, 1000) {
+        countDownTimer = new CountDownTimer(15000, 1000) {
             @Override
             public void onTick(long l) {
 
@@ -96,7 +96,6 @@ public class QuestionActivity extends Activity {
 
                 if (!answered) {
                     answered = true;
-                    SystemClock.sleep(1000);
                     if (questionsMatrix[contatore][5].equals(posizioneBottone)) {
                         punteggio++;
                         Log.v("Contatore: ", Integer.toString(contatore));
@@ -129,7 +128,6 @@ public class QuestionActivity extends Activity {
 
                 if (!answered) {
                     answered = true;
-                    SystemClock.sleep(1000);
                     if (questionsMatrix[contatore][5].equals(posizioneBottone)) {
                         punteggio++;
                         Log.v("Contatore: ", Integer.toString(contatore));
@@ -161,7 +159,6 @@ public class QuestionActivity extends Activity {
 
                 if (!answered) {
                     answered = true;
-                    SystemClock.sleep(1000);
                     if (questionsMatrix[contatore][5].equals(posizioneBottone)) {
                         punteggio++;
                         Log.v("Contatore: ", Integer.toString(contatore));
@@ -193,7 +190,6 @@ public class QuestionActivity extends Activity {
 
                 if (!answered) {
                     answered = true;
-                    SystemClock.sleep(1000);
                     if (questionsMatrix[contatore][5].equals(posizioneBottone)) {
                         punteggio++;
                         Log.v("Contatore: ", Integer.toString(contatore));

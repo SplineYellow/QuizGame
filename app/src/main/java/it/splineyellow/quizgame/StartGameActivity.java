@@ -84,7 +84,7 @@ public class StartGameActivity extends Activity {
         countdown = (TextView) findViewById(R.id.countdown);
         if (turn != myID) {
 
-            countDownTimer = new CountDownTimer(27000, 1000) {
+            countDownTimer = new CountDownTimer(30000, 1000) {
 
                 public void onTick(long millisUntilFinished) {
 
@@ -250,8 +250,8 @@ public class StartGameActivity extends Activity {
 
             if (punteggioDaRicevere) {
 
-                Log.v("TURN != MYID", "Entrato nell'if");
 
+                Log.v("TESTBOOL", "testbool");
                 DatagramPacket packet = null;
 
                 try {
@@ -261,8 +261,9 @@ public class StartGameActivity extends Activity {
                         packet = new DatagramPacket(receiveBuffer, receiveBuffer.length, serverAddr, dstPort);
 
                         //receive del punteggio
-
+                        Log.v("TESTBOOL", "prima receive");
                         ds.receive(packet);
+                        Log.v("TESTBOOL", "dopo receive");
                     }
                     catch (SocketTimeoutException e) {
                     } catch (IOException e) {
@@ -274,11 +275,11 @@ public class StartGameActivity extends Activity {
                 }
 
                 String[] gameData = new String(packet.getData(), 0, packet.getLength()).split(";");
-                Log.v(TAG, "Turno: " + gameData[0] + " Tabellone: " + gameData[1] + " " + gameData[2]);
+                Log.v("TESTBOOL", "turno: " + gameData[0] + " tabellone: " + gameData[1] + " " + gameData[2]);
 
-                //turn = Integer.parseInt(gameData[0]);
+                /*turn = Integer.parseInt(gameData[0]);
                 String[][] completedBy = gameDataSplitter(gameData[1]);
-                String[][] score = gameDataSplitter(gameData[2]);
+                String[][] score = gameDataSplitter(gameData[2]);*/
 
             }
 
@@ -310,12 +311,14 @@ public class StartGameActivity extends Activity {
                             Log.v("TESTIF", "prima receive");
                             ds.receive(packet);
                             Log.v("TESTIF", "dopo receive");
-                            String questions = new String();
                             continueSending = false; // a packet has been received : stop sending
                         }
                         catch (SocketTimeoutException e) {
                             // no response received after 1 second. continue sending
                         }
+
+                        String[] gameData = new String(packet.getData(), 0, packet.getLength()).split(";");
+                        Log.v("TESTIF", "domanda prova: " + gameData[0]);
                     }
 
                 } catch (Exception e) {
