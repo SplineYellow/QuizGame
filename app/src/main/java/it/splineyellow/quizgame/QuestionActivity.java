@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.SystemClock;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -211,11 +212,27 @@ public class QuestionActivity extends Activity {
         });
     }
 
+    /*
+        Disable "hardware" back button.
+     */
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        return (keyCode == KeyEvent.KEYCODE_BACK || super.onKeyDown(keyCode, event));
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.question, menu);
+        //getMenuInflater().inflate(R.menu.menu, menu);
+
+        /*
+            Disable action bar back button.
+         */
+        try {
+            getActionBar().setDisplayHomeAsUpEnabled(false);
+        } catch (NullPointerException n) {
+            n.printStackTrace();
+        }
         return true;
     }
 
@@ -225,10 +242,22 @@ public class QuestionActivity extends Activity {
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-        if (id == R.id.action_settings) {
-            return true;
+        return id == R.id.action_settings || super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        try {
+            MenuItem item = menu.findItem(R.id.action_settings);
+
+        /*
+            Remove "more action" setting in the action bar.
+         */
+            item.setVisible(false);
+        } catch(NullPointerException n) {
+            n.printStackTrace();
         }
-        return super.onOptionsItemSelected(item);
+        return super.onPrepareOptionsMenu(menu);
     }
 
     private boolean checkAnswer() {
