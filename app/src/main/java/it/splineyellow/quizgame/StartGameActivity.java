@@ -21,7 +21,6 @@ import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
-import java.net.SocketAddress;
 import java.net.SocketException;
 import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
@@ -56,6 +55,8 @@ public class StartGameActivity extends Activity {
 
     String[] categories = {};
 
+    boolean punteggioDaRicevere = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -78,10 +79,9 @@ public class StartGameActivity extends Activity {
         setTitle("Nuova Partita");
 
         turnMyIdTextview = (TextView) findViewById(R.id.turn_myID);
-        turnMyIdTextview.setText("Turno: " + categories[0] + "MyId: " + categories[1]);
+        turnMyIdTextview.setText("Tocca a Te");
 
         countdown = (TextView) findViewById(R.id.countdown);
-
         if (turn != myID) {
 
             countDownTimer = new CountDownTimer(27000, 1000) {
@@ -89,18 +89,18 @@ public class StartGameActivity extends Activity {
                 public void onTick(long millisUntilFinished) {
 
                     countdown.setText("Secondi rimanenti: " + millisUntilFinished / 1000);
+                    turnMyIdTextview.setText("Turno Avversario...");
 
                 }
 
                 public void onFinish() {
 
                     myID = turn;
-
-                    turnMyIdTextview.setText("Turno: " + turn + "MyId: " + myID);
-
+                    turnMyIdTextview.setText("Tocca a Te");
                     categories[1] = Integer.toString(myID);
 
                 }
+
             }.start();
 
         }
@@ -109,9 +109,13 @@ public class StartGameActivity extends Activity {
 
         GridView gridview = (GridView) findViewById(R.id.gridview);
         gridview.setAdapter(new ImageAdapter(this));
+
+
+
         gridview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
+                new SocketTask().execute();
                 actualCategoryPosition = position;
                 goToQuestion(categories[actualCategoryPosition+2]);
 
@@ -213,8 +217,6 @@ public class StartGameActivity extends Activity {
 
     public void goToQuestion(String i) {
 
-        new SocketTask().execute();
-
         Intent intent = new Intent (this, QuestionActivity.class);
         intent.putExtra(EXTRA_MESSAGE, i);
         intent.putExtra("Categories", categories[0] + "," + categories[1] + "," + categories[2] + "," +
@@ -246,48 +248,7 @@ public class StartGameActivity extends Activity {
 
             }
 
-            if (turn == myID) {
-
-                Log.v("TESTIF2", "testif2");
-
-                try {
-                    ds = new DatagramSocket();
-                    DatagramPacket dp = null;
-                    DatagramPacket packet = null;
-                    byte[] receiveBuffer = new byte[8192];
-                    dp = new DatagramPacket(buffer, buffer.length, serverAddr, dstPort);
-
-                    ds.setSoTimeout(1000);
-                    boolean continueSending = true;
-                    int counter = 0;
-
-                    while (continueSending && counter < 1) {
-
-                        //send della categoria
-
-                        ds.send(dp);
-                        counter++;
-                        try {
-                            packet = new DatagramPacket(receiveBuffer, receiveBuffer.length, serverAddr, dstPort);
-
-                            //receive delle domande
-
-                            ds.receive(packet);
-
-                            String questions = new String();
-                            continueSending = false; // a packet has been received : stop sending
-                        }
-                        catch (SocketTimeoutException e) {
-                            // no response received after 1 second. continue sending
-                        }
-                    }
-
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-
-            if (turn != myID) {
+            if (punteggioDaRicevere) {
 
                 Log.v("TURN != MYID", "Entrato nell'if");
 
@@ -319,6 +280,49 @@ public class StartGameActivity extends Activity {
                 String[][] completedBy = gameDataSplitter(gameData[1]);
                 String[][] score = gameDataSplitter(gameData[2]);
 
+            }
+
+            if (turn == myID) {
+
+                Log.v("TESTIF", "testif");
+
+                try {
+                    ds = new DatagramSocket();
+                    DatagramPacket dp = null;
+                    DatagramPacket packet = null;
+                    byte[] receiveBuffer = new byte[8192];
+                    dp = new DatagramPacket(buffer, buffer.length, serverAddr, dstPort);
+
+                    ds.setSoTimeout(1000);
+                    boolean continueSending = true;
+                    int counter = 0;
+
+                    while (continueSending && counter < 1) {
+
+                        //send della categoria
+
+                        ds.send(dp);
+                        counter++;
+                        try {
+                            packet = new DatagramPacket(receiveBuffer, receiveBuffer.length, serverAddr, dstPort);
+
+                            //receive delle domande
+                            Log.v("TESTIF", "prima receive");
+                            ds.receive(packet);
+                            Log.v("TESTIF", "dopo receive");
+                            String questions = new String();
+                            continueSending = false; // a packet has been received : stop sending
+                        }
+                        catch (SocketTimeoutException e) {
+                            // no response received after 1 second. continue sending
+                        }
+                    }
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+                punteggioDaRicevere = true;
             }
 
             try {
@@ -353,4 +357,3 @@ public class StartGameActivity extends Activity {
     }
 
 }
-

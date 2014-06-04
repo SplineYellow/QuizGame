@@ -72,12 +72,12 @@ public class QuestionActivity extends Activity {
 
         try {
 
-           questionsMatrix = getQuestion(category);
-           Log.v("questionMatrix", "Tento di riempire la matrice");
+            questionsMatrix = getQuestion(category);
+            Log.v("questionMatrix", "Tento di riempire la matrice");
 
         } catch (SQLException e) {
 
-           e.printStackTrace();
+            e.printStackTrace();
 
         }
 
@@ -217,7 +217,7 @@ public class QuestionActivity extends Activity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        
+
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.question, menu);
         return true;

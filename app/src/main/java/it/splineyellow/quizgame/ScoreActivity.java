@@ -91,8 +91,8 @@ public class ScoreActivity extends Activity {
 
         Intent intent = new Intent(this, StartGameActivity.class);
         intent.putExtra(EXTRA_MESSAGE, categories[0] + "," + Integer.toString(myID) + "," + categories[2] + "," +
-        categories[3] + "," + categories[4] + "," + categories[5] + "," + categories[6] + "," + categories[7] + "," +
-        categories[8] + "," + categories[9] + "," + categories[10]);
+                categories[3] + "," + categories[4] + "," + categories[5] + "," + categories[6] + "," + categories[7] + "," +
+                categories[8] + "," + categories[9] + "," + categories[10]);
 
         Log.v(TAG, "Parte intent");
 

@@ -102,6 +102,7 @@ public class ConnectionActivity extends Activity {
 
                 try {
                     ds.receive(datagramPacket);
+
                 } catch (NullPointerException n) {
                     n.printStackTrace();
                 } catch (Exception e) {
@@ -131,7 +132,6 @@ public class ConnectionActivity extends Activity {
 
                 counter ++;
             }
-
 
             return null;
         }
