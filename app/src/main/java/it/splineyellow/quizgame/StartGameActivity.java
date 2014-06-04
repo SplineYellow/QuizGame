@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -47,6 +48,14 @@ public class StartGameActivity extends Activity {
 
     String message;
 
+    CountDownTimer countDownTimer;
+
+    TextView turnMyIdTextview;
+
+    TextView countdown;
+
+    String[] categories = {};
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -59,7 +68,8 @@ public class StartGameActivity extends Activity {
             e.printStackTrace();
             message = intent.getStringExtra(ScoreActivity.EXTRA_MESSAGE);
         }
-        final String[] categories = message.toLowerCase().split(",");
+
+        categories = message.toLowerCase().split(",");
 
         mThumbIds = categoriesOrder(categories);
         turn = Integer.parseInt(categories[0]);
@@ -67,8 +77,35 @@ public class StartGameActivity extends Activity {
 
         setTitle("Nuova Partita");
 
-        TextView textView = (TextView) findViewById(R.id.placeholder);
-        textView.setText("Turno: " + categories[0] + "MyId: " + categories[1]);
+        turnMyIdTextview = (TextView) findViewById(R.id.turn_myID);
+        turnMyIdTextview.setText("Turno: " + categories[0] + "MyId: " + categories[1]);
+
+        countdown = (TextView) findViewById(R.id.countdown);
+
+        if (turn != myID) {
+
+            countDownTimer = new CountDownTimer(27000, 1000) {
+
+                public void onTick(long millisUntilFinished) {
+
+                    countdown.setText("Secondi rimanenti: " + millisUntilFinished / 1000);
+
+                }
+
+                public void onFinish() {
+
+                    myID = turn;
+
+                    turnMyIdTextview.setText("Turno: " + turn + "MyId: " + myID);
+
+                    categories[1] = Integer.toString(myID);
+
+                }
+            }.start();
+
+        }
+
+
 
         GridView gridview = (GridView) findViewById(R.id.gridview);
         gridview.setAdapter(new ImageAdapter(this));
@@ -180,7 +217,9 @@ public class StartGameActivity extends Activity {
 
         Intent intent = new Intent (this, QuestionActivity.class);
         intent.putExtra(EXTRA_MESSAGE, i);
-        intent.putExtra("Categories", message);
+        intent.putExtra("Categories", categories[0] + "," + categories[1] + "," + categories[2] + "," +
+                categories[3] + "," + categories[4] + "," + categories[5] + "," + categories[6] + "," + categories[7] + "," +
+                categories[8] + "," + categories[9] + "," + categories[10]);
         startActivity(intent);
     }
 
@@ -198,9 +237,6 @@ public class StartGameActivity extends Activity {
 
             questionData = Integer.toString(actualCategoryPosition + 1);
             byte[] buffer = questionData.getBytes();
-
-
-
 
             if (turn == 2) {
 
@@ -253,6 +289,8 @@ public class StartGameActivity extends Activity {
 
             if (turn != myID) {
 
+                Log.v("TURN != MYID", "Entrato nell'if");
+
                 DatagramPacket packet = null;
 
                 try {
@@ -277,7 +315,7 @@ public class StartGameActivity extends Activity {
                 String[] gameData = new String(packet.getData(), 0, packet.getLength()).split(";");
                 Log.v(TAG, "Turno: " + gameData[0] + " Tabellone: " + gameData[1] + " " + gameData[2]);
 
-                turn = Integer.parseInt(gameData[0]);
+                //turn = Integer.parseInt(gameData[0]);
                 String[][] completedBy = gameDataSplitter(gameData[1]);
                 String[][] score = gameDataSplitter(gameData[2]);
 

@@ -32,7 +32,7 @@ public class ScoreActivity extends Activity {
     String message;
     Button okButton;
     String[] categories = {};
-    int turn;
+    int myID;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,17 +44,20 @@ public class ScoreActivity extends Activity {
         message = intent.getStringExtra("Categories");
         categories = message.toLowerCase().split(",");
 
-        turn = Integer.parseInt(categories[0]);
+        myID = Integer.parseInt(categories[1]);
 
-        if (turn == 0) {
+        if (myID == 0) {
 
-            turn = 1;
+            myID = 1;
+
         }
 
-        else if (turn == 1) {
+        else if (myID == 1) {
 
-            turn = 0;
+            myID = 0;
         }
+
+        Log.v("MYID", Integer.toString(myID));
 
         new SendScoreTask().execute();
 
@@ -87,7 +90,7 @@ public class ScoreActivity extends Activity {
     public void goToStartGameActivity () {
 
         Intent intent = new Intent(this, StartGameActivity.class);
-        intent.putExtra(EXTRA_MESSAGE, Integer.toString(turn) + "," + categories[1] + "," + categories[2] + "," +
+        intent.putExtra(EXTRA_MESSAGE, categories[0] + "," + Integer.toString(myID) + "," + categories[2] + "," +
         categories[3] + "," + categories[4] + "," + categories[5] + "," + categories[6] + "," + categories[7] + "," +
         categories[8] + "," + categories[9] + "," + categories[10]);
 

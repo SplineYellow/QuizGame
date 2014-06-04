@@ -3,6 +3,7 @@ package it.splineyellow.quizgame;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.os.SystemClock;
 import android.util.Log;
 import android.view.Menu;
@@ -25,11 +26,13 @@ public class QuestionActivity extends Activity {
     int punteggio = 0;
     boolean answered = false;
     TextView question;
+    TextView countdown;
     Button risposta1;
     Button risposta2;
     Button risposta3;
     Button risposta4;
     String message;
+    CountDownTimer countDownTimer;
 
 
     @Override
@@ -41,11 +44,31 @@ public class QuestionActivity extends Activity {
         String category = intent.getStringExtra(StartGameActivity.EXTRA_MESSAGE);
         message = intent.getStringExtra("Categories");
 
+        countdown = (TextView) findViewById(R.id.countdown);
+
         question = (TextView) findViewById(R.id.testo_domanda);
         risposta1 = (Button) findViewById(R.id.risposta1);
         risposta2 = (Button) findViewById(R.id.risposta2);
         risposta3 = (Button) findViewById(R.id.risposta3);
         risposta4 = (Button) findViewById(R.id.risposta4);
+
+        countDownTimer = new CountDownTimer(10000, 1000) {
+            @Override
+            public void onTick(long l) {
+
+                countdown.setText("Secondi rimanenti: " + l / 1000);
+
+            }
+
+            @Override
+            public void onFinish() {
+
+                Toast t = Toast.makeText(getApplicationContext(), "Fine turno!", Toast.LENGTH_LONG);
+                t.show();
+                goToScoreActivity();
+
+            }
+        }.start();
 
         try {
 
@@ -240,6 +263,8 @@ public class QuestionActivity extends Activity {
 
     public void goToScoreActivity () {
 
+        countDownTimer.cancel();
+
         Intent intent = new Intent(this, ScoreActivity.class);
 
         String punti = Integer.toString(punteggio);
@@ -259,7 +284,7 @@ public class QuestionActivity extends Activity {
         }
 
         if (contatore < 3) {
-            question.setText(questionsMatrix[contatore][0] + "\n Risposta esatta: " + questionsMatrix[contatore][5]);
+            question.setText(questionsMatrix[contatore][0]);
             risposta1.setText(questionsMatrix[contatore][1]);
             risposta2.setText(questionsMatrix[contatore][2]);
             risposta3.setText(questionsMatrix[contatore][3]);
