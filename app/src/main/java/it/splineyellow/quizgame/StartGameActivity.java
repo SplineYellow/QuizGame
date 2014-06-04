@@ -261,12 +261,11 @@ public class StartGameActivity extends Activity {
                     try {
                         packet = new DatagramPacket(receiveBuffer, receiveBuffer.length, serverAddr, dstPort);
 
-                        //receive delle domande
+                        //receive del punteggio
+
                         ds.receive(packet);
-                        String questions = new String();
                     }
                     catch (SocketTimeoutException e) {
-                        // no response received after 1 second. continue sending
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
@@ -275,8 +274,12 @@ public class StartGameActivity extends Activity {
                     e.printStackTrace();
                 }
 
-                 String[] response = new String(packet.getData(), 0, packet.getLength()).split(";");
-                 Log.v(TAG, "Turno: " + response[0] + " Tabellone: " + response[1] +" " + response[2]);
+                String[] gameData = new String(packet.getData(), 0, packet.getLength()).split(";");
+                Log.v(TAG, "Turno: " + gameData[0] + " Tabellone: " + gameData[1] + " " + gameData[2]);
+
+                turn = Integer.parseInt(gameData[0]);
+                String[][] completedBy = gameDataSplitter(gameData[1]);
+                String[][] score = gameDataSplitter(gameData[2]);
 
             }
 
@@ -291,6 +294,18 @@ public class StartGameActivity extends Activity {
 
             return null;
 
+        }
+
+        public String[][] gameDataSplitter (String string) {
+            String[][] matrix = new String[3][3];
+
+            String[] stringArray = string.split(":");
+
+            matrix[0] = stringArray[0].split(",");
+            matrix[1] = stringArray[1].split(",");
+            matrix[2] = stringArray[2].split(",");
+
+            return matrix;
         }
 
         @Override
