@@ -62,6 +62,11 @@ public class StartGameActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_start_game);
 
+        final GridView gridview = (GridView) findViewById(R.id.gridview);
+        gridview.setAdapter(new ImageAdapter(this));
+
+
+
         Intent intent = getIntent();
         try {
             message = intent.getStringExtra(ConnectionActivity.EXTRA_MESSAGE);
@@ -84,12 +89,15 @@ public class StartGameActivity extends Activity {
         countdown = (TextView) findViewById(R.id.countdown);
         if (turn != myID) {
 
+            gridview.setEnabled(false);
+
             countDownTimer = new CountDownTimer(30000, 1000) {
 
                 public void onTick(long millisUntilFinished) {
 
                     countdown.setText("Secondi rimanenti: " + millisUntilFinished / 1000);
                     turnMyIdTextview.setText("Turno Avversario...");
+
 
                 }
 
@@ -99,17 +107,12 @@ public class StartGameActivity extends Activity {
                     turnMyIdTextview.setText("Tocca a Te");
                     categories[1] = Integer.toString(myID);
 
+                    gridview.setEnabled(true);
+
                 }
 
             }.start();
-
         }
-
-
-
-        GridView gridview = (GridView) findViewById(R.id.gridview);
-        gridview.setAdapter(new ImageAdapter(this));
-
 
 
         gridview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
