@@ -26,6 +26,8 @@ import java.net.SocketException;
 import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
 
+//Copyright SplineYellow - 2014
+
 public class StartGameActivity extends Activity {
     public final static String EXTRA_MESSAGE = "it.splineyellow.quizgame.MESSAGE";
 

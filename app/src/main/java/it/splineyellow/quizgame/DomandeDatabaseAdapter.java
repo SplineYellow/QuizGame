@@ -9,6 +9,8 @@ import android.util.Log;
 
 import java.sql.SQLException;
 
+//Copyright SplineYellow - 2014
+
 public class DomandeDatabaseAdapter {
     public static final String KEY_DOMANDA = "domanda";
 

@@ -6,6 +6,8 @@ import android.widget.TextView;
 
 import java.sql.SQLException;
 
+//Copyright SplineYellow - 2014
+
 public class StatisticsActivity extends Activity {
     UtentiDatabaseAdapter utentiDatabaseAdapter = new UtentiDatabaseAdapter(this);
 

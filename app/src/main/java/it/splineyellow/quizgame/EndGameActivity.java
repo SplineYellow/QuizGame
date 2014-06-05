@@ -12,6 +12,8 @@ import android.widget.TextView;
 
 import java.sql.SQLException;
 
+//Copyright SplineYellow - 2014
+
 public class EndGameActivity extends Activity {
     UtentiDatabaseAdapter db = new UtentiDatabaseAdapter(this);
 

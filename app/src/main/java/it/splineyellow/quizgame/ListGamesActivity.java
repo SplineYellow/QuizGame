@@ -5,6 +5,8 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
+//Copyright SplineYellow - 2014
+
 public class ListGamesActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {

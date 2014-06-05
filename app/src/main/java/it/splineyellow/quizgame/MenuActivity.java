@@ -11,6 +11,8 @@ import android.widget.Button;
 
 import java.sql.SQLException;
 
+//Copyright SplineYellow - 2014
+
 public class MenuActivity extends Activity {
     String userData;
 

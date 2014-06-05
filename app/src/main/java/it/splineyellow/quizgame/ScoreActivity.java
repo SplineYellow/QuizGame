@@ -17,6 +17,8 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.sql.SQLException;
 
+//Copyright SplineYellow - 2014
+
 public class ScoreActivity extends Activity {
     public final static String EXTRA_MESSAGE = "it.splineyellow.quizgame.MESSAGE";
 

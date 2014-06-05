@@ -15,6 +15,8 @@ import android.widget.Toast;
 
 import java.sql.SQLException;
 
+//Copyright SplineYellow - 2014
+
 public class QuestionActivity extends Activity {
     public final static String EXTRA_MESSAGE = "it.splineyellow.quizgame.MESSAGE";
 
