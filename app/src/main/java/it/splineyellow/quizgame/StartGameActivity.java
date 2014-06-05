@@ -168,6 +168,11 @@ public class StartGameActivity extends Activity {
     public boolean onPrepareOptionsMenu(Menu menu) {
         try {
             MenuItem item = menu.findItem(R.id.action_settings);
+
+        /*
+            Remove "more action" setting in the action bar.
+         */
+            item.setVisible(false);
         } catch(NullPointerException n) {
             n.printStackTrace();
         }
