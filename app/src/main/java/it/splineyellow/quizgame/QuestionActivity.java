@@ -15,17 +15,16 @@ import android.widget.Toast;
 
 import java.sql.SQLException;
 
-
 public class QuestionActivity extends Activity {
     public final static String EXTRA_MESSAGE = "it.splineyellow.quizgame.MESSAGE";
 
-    DomandeDatabaseAdapter db = new DomandeDatabaseAdapter(this);
+    DomandeDatabaseAdapter domandeDatabaseAdapter = new DomandeDatabaseAdapter(this);
 
     String[][] questionsMatrix = new String[3][6];
 
-    int contatore = 0;
+    int counter = 0;
 
-    int punteggio = 0;
+    int score = 0;
 
     boolean answered = false;
 
@@ -33,13 +32,13 @@ public class QuestionActivity extends Activity {
 
     TextView countdown;
 
-    Button risposta1;
+    Button question1;
 
-    Button risposta2;
+    Button question2;
 
-    Button risposta3;
+    Button question3;
 
-    Button risposta4;
+    Button question4;
 
     String message;
 
@@ -61,13 +60,13 @@ public class QuestionActivity extends Activity {
 
         question = (TextView) findViewById(R.id.testo_domanda);
 
-        risposta1 = (Button) findViewById(R.id.risposta1);
+        question1 = (Button) findViewById(R.id.risposta1);
 
-        risposta2 = (Button) findViewById(R.id.risposta2);
+        question2 = (Button) findViewById(R.id.risposta2);
 
-        risposta3 = (Button) findViewById(R.id.risposta3);
+        question3 = (Button) findViewById(R.id.risposta3);
 
-        risposta4 = (Button) findViewById(R.id.risposta4);
+        question4 = (Button) findViewById(R.id.risposta4);
 
         countDownTimer = new CountDownTimer(15000, 1000) {
             @Override
@@ -93,138 +92,134 @@ public class QuestionActivity extends Activity {
             e.printStackTrace();
         }
 
-        if (contatore == 0) {
-            setQuestions(contatore);
+        if (counter == 0) {
+            setQuestions(counter);
         }
 
-        risposta1.setOnClickListener(new View.OnClickListener() {
+        question1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 //chiama funzione checkRisposta
-                String posizioneBottone = "1";
+                String buttonPosition = "1";
 
                 if (!answered) {
                     answered = true;
 
-                    if (questionsMatrix[contatore][5].equals(posizioneBottone)) {
-                        punteggio++;
+                    if (questionsMatrix[counter][5].equals(buttonPosition)) {
+                        score++;
 
-                        Log.v("Contatore: ", Integer.toString(contatore));
+                        Log.v("Contatore: ", Integer.toString(counter));
 
                         Toast t = Toast.makeText(getApplicationContext(), "Risposta 1 esatta!", Toast.LENGTH_SHORT);
 
                         t.show();
 
-                        contatore++;
-                    }
-                    else {
+                        counter++;
+                    } else {
                         Toast t = Toast.makeText(getApplicationContext(), "Risposta 1 errata!", Toast.LENGTH_SHORT);
 
                         t.show();
 
-                        contatore++;
+                        counter++;
                     }
 
-                    setQuestions(contatore);
+                    setQuestions(counter);
                 }
             }
         });
 
-        risposta2.setOnClickListener(new View.OnClickListener() {
+        question2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 //chiama funzione checkRisposta
-                String posizioneBottone = "2";
+                String buttonPosition = "2";
 
                 if (!answered) {
                     answered = true;
 
-                    if (questionsMatrix[contatore][5].equals(posizioneBottone)) {
-                        punteggio++;
+                    if (questionsMatrix[counter][5].equals(buttonPosition)) {
+                        score++;
 
-                        Log.v("Contatore: ", Integer.toString(contatore));
+                        Log.v("Contatore: ", Integer.toString(counter));
 
                         Toast t = Toast.makeText(getApplicationContext(), "Risposta 2 esatta!", Toast.LENGTH_SHORT);
 
                         t.show();
 
-                        contatore++;
-                    }
-                    else {
+                        counter++;
+                    } else {
                         Toast t = Toast.makeText(getApplicationContext(), "Risposta 2 errata!", Toast.LENGTH_SHORT);
 
                         t.show();
 
-                        contatore++;
+                        counter++;
                     }
 
-                    setQuestions(contatore);
+                    setQuestions(counter);
                 }
             }
         });
 
-        risposta3.setOnClickListener(new View.OnClickListener() {
+        question3.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 //chiama funzione checkRisposta
-                String posizioneBottone = "3";
+                String buttonPosition = "3";
 
                 if (!answered) {
                     answered = true;
 
-                    if (questionsMatrix[contatore][5].equals(posizioneBottone)) {
-                        punteggio++;
+                    if (questionsMatrix[counter][5].equals(buttonPosition)) {
+                        score++;
 
-                        Log.v("Contatore: ", Integer.toString(contatore));
+                        Log.v("Contatore: ", Integer.toString(counter));
 
                         Toast t = Toast.makeText(getApplicationContext(), "Risposta 3 esatta!", Toast.LENGTH_SHORT);
 
                         t.show();
 
-                        contatore++;
-                    }
-                    else {
+                        counter++;
+                    } else {
                         Toast t = Toast.makeText(getApplicationContext(), "Risposta 3 errata!", Toast.LENGTH_SHORT);
 
                         t.show();
 
-                        contatore++;
+                        counter++;
                     }
 
-                    setQuestions(contatore);
+                    setQuestions(counter);
                 }
             }
         });
 
-        risposta4.setOnClickListener(new View.OnClickListener() {
+        question4.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 //chiama funzione checkRisposta
-                String posizioneBottone = "4";
+                String buttonPosition = "4";
 
                 if (!answered) {
                     answered = true;
 
-                    if (questionsMatrix[contatore][5].equals(posizioneBottone)) {
-                        punteggio++;
+                    if (questionsMatrix[counter][5].equals(buttonPosition)) {
+                        score++;
 
-                        Log.v("Contatore: ", Integer.toString(contatore));
+                        Log.v("Contatore: ", Integer.toString(counter));
 
                         Toast t = Toast.makeText(getApplicationContext(), "Risposta 4 esatta!", Toast.LENGTH_SHORT);
 
                         t.show();
 
-                        contatore++;
-                    }
-                    else {
+                        counter++;
+                    } else {
                         Toast t = Toast.makeText(getApplicationContext(), "Risposta 4 errata!", Toast.LENGTH_SHORT);
 
                         t.show();
 
-                        contatore++;
+                        counter++;
                     }
 
-                    setQuestions(contatore);
+                    setQuestions(counter);
                 }
             }
         });
@@ -288,20 +283,20 @@ public class QuestionActivity extends Activity {
     private String[][] getQuestion(String category) throws SQLException {
         //Send al db della categoria
         try {
-            db.open();
+            domandeDatabaseAdapter.open();
         } catch (SQLException e) {
             e.printStackTrace();
         }
 
-        db.fillCategoryTable();
+        domandeDatabaseAdapter.fillCategoryTable();
 
-        db.fillQuestionsTable();
+        domandeDatabaseAdapter.fillQuestionsTable();
 
-        String[][] questions = db.getQuestions(category);
+        String[][] questions = domandeDatabaseAdapter.getQuestions(category);
 
         Log.v("getQuestion", "Chiamata getQuestions");
 
-        db.close();
+        domandeDatabaseAdapter.close();
 
         return questions;
     }
@@ -311,7 +306,7 @@ public class QuestionActivity extends Activity {
 
         Intent intent = new Intent(this, ScoreActivity.class);
 
-        String punti = Integer.toString(punteggio);
+        String punti = Integer.toString(score);
 
         intent.putExtra(EXTRA_MESSAGE, punti);
 
@@ -320,25 +315,25 @@ public class QuestionActivity extends Activity {
         startActivity(intent);
     }
 
-    public void setQuestions (int contatore) {
+    public void setQuestions (int counter) {
         answered = false;
 
-        Log.v("Contatore dentro setQuestions: ", Integer.toString(contatore));
+        Log.v("Contatore dentro setQuestions: ", Integer.toString(counter));
 
-        if (contatore == 3) {
+        if (counter == 3) {
             goToScoreActivity();
         }
 
-        if (contatore < 3) {
-            question.setText(questionsMatrix[contatore][0]);
+        if (counter < 3) {
+            question.setText(questionsMatrix[counter][0]);
 
-            risposta1.setText(questionsMatrix[contatore][1]);
+            question1.setText(questionsMatrix[counter][1]);
 
-            risposta2.setText(questionsMatrix[contatore][2]);
+            question2.setText(questionsMatrix[counter][2]);
 
-            risposta3.setText(questionsMatrix[contatore][3]);
+            question3.setText(questionsMatrix[counter][3]);
 
-            risposta4.setText(questionsMatrix[contatore][4]);
+            question4.setText(questionsMatrix[counter][4]);
         }
     }
 }

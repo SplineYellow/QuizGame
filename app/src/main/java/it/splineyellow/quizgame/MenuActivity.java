@@ -14,7 +14,7 @@ import java.sql.SQLException;
 public class MenuActivity extends Activity {
     String userData;
 
-    UtentiDatabaseAdapter db = new UtentiDatabaseAdapter(this);
+    UtentiDatabaseAdapter utentiDatabaseAdapter = new UtentiDatabaseAdapter(this);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,7 +27,7 @@ public class MenuActivity extends Activity {
         buttonNewGame.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                goToConnect();
+                goToConnection();
             }
         });
 
@@ -59,14 +59,14 @@ public class MenuActivity extends Activity {
         });
 
         try {
-            db.open();
+            utentiDatabaseAdapter.open();
         } catch (SQLException e) {
             e.printStackTrace();
         }
 
-        userData = db.getCurrentUser();
+        userData = utentiDatabaseAdapter.getCurrentUser();
 
-        db.close();
+        utentiDatabaseAdapter.close();
 
         String[] parts = userData.split(",");
 
@@ -126,6 +126,12 @@ public class MenuActivity extends Activity {
         return super.onPrepareOptionsMenu(menu);
     }
 
+    private void goToConnection() {
+        Intent intent = new Intent(this, ConnectionActivity.class);
+
+        startActivity(intent);
+    }
+
     private void goToListGames() {
         Intent intent = new Intent(this, ListGamesActivity.class);
 
@@ -134,12 +140,6 @@ public class MenuActivity extends Activity {
 
     private void goToStatistics () {
         Intent intent = new Intent(this, StatisticsActivity.class);
-
-        startActivity(intent);
-    }
-
-    private void goToConnect() {
-        Intent intent = new Intent(this, ConnectionActivity.class);
 
         startActivity(intent);
     }

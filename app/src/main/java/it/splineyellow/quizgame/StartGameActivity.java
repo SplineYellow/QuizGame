@@ -51,13 +51,13 @@ public class StartGameActivity extends Activity {
 
     CountDownTimer countDownTimer;
 
-    TextView turnMyIdTextview;
+    TextView turnMyIdTextView;
 
     TextView countdown;
 
     String[] categories = {};
 
-    boolean punteggioDaRicevere = false;
+    boolean receivingScore = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,9 +65,9 @@ public class StartGameActivity extends Activity {
 
         setContentView(R.layout.activity_start_game);
 
-        final GridView gridview = (GridView) findViewById(R.id.gridview);
+        final GridView gridView = (GridView) findViewById(R.id.gridview);
 
-        gridview.setAdapter(new ImageAdapter(this));
+        gridView.setAdapter(new ImageAdapter(this));
 
         Intent intent = getIntent();
         try {
@@ -88,43 +88,43 @@ public class StartGameActivity extends Activity {
 
         setTitle("Nuova Partita");
 
-        turnMyIdTextview = (TextView) findViewById(R.id.turn_myID);
+        turnMyIdTextView = (TextView) findViewById(R.id.turn_myID);
 
-        turnMyIdTextview.setText("Tocca a Te");
+        turnMyIdTextView.setText("Tocca a Te");
 
         countdown = (TextView) findViewById(R.id.countdown);
 
         if (turn != myID) {
-            gridview.setEnabled(false);
+            gridView.setEnabled(false);
 
             countDownTimer = new CountDownTimer(30000, 1000) {
                 public void onTick(long millisUntilFinished) {
                     countdown.setText("Secondi rimanenti: " + millisUntilFinished / 1000);
 
-                    turnMyIdTextview.setText("Turno Avversario...");
+                    turnMyIdTextView.setText("Turno Avversario...");
                 }
 
                 public void onFinish() {
                     myID = turn;
 
-                    turnMyIdTextview.setText("Tocca a Te");
+                    turnMyIdTextView.setText("Tocca a Te");
 
                     categories[1] = Integer.toString(myID);
 
-                    gridview.setEnabled(true);
+                    gridView.setEnabled(true);
                 }
 
             }.start();
         }
 
-        gridview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
                 new SocketTask().execute();
 
                 actualCategoryPosition = position;
 
-                goToQuestion(categories[actualCategoryPosition+2]);
+                goToQuestion(categories[actualCategoryPosition + 2]);
             }
         });
     }
@@ -261,7 +261,7 @@ public class StartGameActivity extends Activity {
     public class SocketTask extends AsyncTask<Void, Void, Void> {
         @Override
         protected Void doInBackground(Void... params) {
-            DatagramSocket ds = null;
+            DatagramSocket datagramSocket = null;
 
             try {
                 serverAddr = InetAddress.getByName(dstAddress);
@@ -274,27 +274,27 @@ public class StartGameActivity extends Activity {
             byte[] buffer = questionData.getBytes();
 
             if (turn == 2) {
-                //IMPLEMENTARE
+                // TODO ==> IMPLEMENTARE
                 Log.v("FINE PARTITA", "fine partita");
             }
 
-            if (punteggioDaRicevere) {
+            if (receivingScore) {
                 Log.v("TESTBOOL", "testbool");
 
-                DatagramPacket packet = null;
+                DatagramPacket datagramPacket = null;
 
                 try {
-                    ds = new DatagramSocket();
+                    datagramSocket = new DatagramSocket();
 
                     byte[] receiveBuffer = new byte[8192];
 
                     try {
-                        packet = new DatagramPacket(receiveBuffer, receiveBuffer.length, serverAddr, dstPort);
+                        datagramPacket = new DatagramPacket(receiveBuffer, receiveBuffer.length, serverAddr, dstPort);
 
                         //receive del punteggio
                         Log.v("TESTBOOL", "prima receive");
 
-                        ds.receive(packet);
+                        datagramSocket.receive(datagramPacket);
 
                         Log.v("TESTBOOL", "dopo receive");
                     } catch (SocketTimeoutException e) {
@@ -306,7 +306,7 @@ public class StartGameActivity extends Activity {
                     e.printStackTrace();
                 }
 
-                String[] gameData = new String(packet.getData(), 0, packet.getLength()).split(";");
+                String[] gameData = new String(datagramPacket.getData(), 0, datagramPacket.getLength()).split(";");
 
                 Log.v("TESTBOOL", "turno: " + gameData[0] + " tabellone: " + gameData[1] + " " + gameData[2]);
 
@@ -321,17 +321,17 @@ public class StartGameActivity extends Activity {
                 Log.v("TESTIF", "testif");
 
                 try {
-                    ds = new DatagramSocket();
+                    datagramSocket = new DatagramSocket();
 
-                    DatagramPacket dp = null;
+                    DatagramPacket datagramPacket = null;
 
                     DatagramPacket packet = null;
 
                     byte[] receiveBuffer = new byte[8192];
 
-                    dp = new DatagramPacket(buffer, buffer.length, serverAddr, dstPort);
+                    datagramPacket = new DatagramPacket(buffer, buffer.length, serverAddr, dstPort);
 
-                    ds.setSoTimeout(1000);
+                    datagramSocket.setSoTimeout(1000);
 
                     boolean continueSending = true;
 
@@ -339,7 +339,7 @@ public class StartGameActivity extends Activity {
 
                     while (continueSending && counter < 1) {
                         //send della categoria
-                        ds.send(dp);
+                        datagramSocket.send(datagramPacket);
 
                         counter++;
 
@@ -349,7 +349,7 @@ public class StartGameActivity extends Activity {
                             //receive delle domande
                             Log.v("TESTIF", "prima receive");
 
-                            ds.receive(packet);
+                            datagramSocket.receive(packet);
 
                             Log.v("TESTIF", "dopo receive");
 
@@ -366,11 +366,11 @@ public class StartGameActivity extends Activity {
                     e.printStackTrace();
                 }
 
-                punteggioDaRicevere = true;
+                receivingScore = true;
             }
 
             try {
-                ds.close();
+                datagramSocket.close();
             } catch (NullPointerException e) {
                 e.printStackTrace();
             }

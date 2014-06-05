@@ -17,7 +17,6 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.sql.SQLException;
 
-
 public class ScoreActivity extends Activity {
     public final static String EXTRA_MESSAGE = "it.splineyellow.quizgame.MESSAGE";
 
@@ -160,7 +159,7 @@ public class ScoreActivity extends Activity {
     public class SendScoreTask extends AsyncTask<Void, Void, Void> {
         @Override
         protected Void doInBackground(Void... params) {
-            DatagramSocket ds = null;
+            DatagramSocket datagramSocket = null;
 
             try {
                 Log.v(TAG, "Entrato nel try della SendScoreTask");
@@ -169,13 +168,13 @@ public class ScoreActivity extends Activity {
 
                 byte[] buffer = score.getBytes();
 
-                ds = new DatagramSocket();
+                datagramSocket = new DatagramSocket();
 
-                ds.setReuseAddress(true);
+                datagramSocket.setReuseAddress(true);
 
-                DatagramPacket dp = new DatagramPacket(buffer, buffer.length, serverAddr, dstPort);
+                DatagramPacket datagramPacket = new DatagramPacket(buffer, buffer.length, serverAddr, dstPort);
 
-                ds.send(dp);
+                datagramSocket.send(datagramPacket);
 
                 Log.v(TAG, "Dopo la send");
 
@@ -184,7 +183,7 @@ public class ScoreActivity extends Activity {
                 e.printStackTrace();
             }
 
-            ds.close();
+            datagramSocket.close();
 
             return null;
         }

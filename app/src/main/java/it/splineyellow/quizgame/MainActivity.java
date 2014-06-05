@@ -12,6 +12,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
+
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -19,11 +20,13 @@ import java.util.Date;
 //Copyright SplineYellow - 2014
 
 public class MainActivity extends Activity {
-    EditText editTextUser, editTextPassword;
+    EditText editTextUser;
+
+    EditText editTextPassword;
 
     Button buttonLogin;
 
-    UtentiDatabaseAdapter db = new UtentiDatabaseAdapter(this);
+    UtentiDatabaseAdapter utentiDatabaseAdapter = new UtentiDatabaseAdapter(this);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,13 +58,13 @@ public class MainActivity extends Activity {
 
                 if (!nick.equals("") && !passwd.equals("")) {
                     try {
-                        db.open();
+                        utentiDatabaseAdapter.open();
                     } catch (SQLException e) {
                         e.printStackTrace();
                     }
 
-                    if (db.alreadyIn(nick)) {
-                        if (!passwd.equals(db.getPasswordByUser(nick))) {
+                    if (utentiDatabaseAdapter.alreadyIn(nick)) {
+                        if (!passwd.equals(utentiDatabaseAdapter.getPasswordByUser(nick))) {
                             Toast t = Toast.makeText(getApplicationContext(), "Username o Password errati", Toast.LENGTH_LONG);
 
                             t.show();
@@ -69,16 +72,16 @@ public class MainActivity extends Activity {
                         else {
                             correctUserPass = true;
 
-                            db.updateLastAccess(timestamp, nick);
+                            utentiDatabaseAdapter.updateLastAccess(timestamp, nick);
                         }
                     }
                     else {
-                        db.insertUser(nick, passwd, timestamp);
+                        utentiDatabaseAdapter.insertUser(nick, passwd, timestamp);
 
                         correctUserPass = true;
                     }
 
-                    db.close();
+                    utentiDatabaseAdapter.close();
 
                     if (correctUserPass) {
                         goToMenu();

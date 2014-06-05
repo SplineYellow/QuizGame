@@ -3,10 +3,11 @@ package it.splineyellow.quizgame;
 import android.app.Activity;
 import android.os.Bundle;
 import android.widget.TextView;
+
 import java.sql.SQLException;
 
 public class StatisticsActivity extends Activity {
-    UtentiDatabaseAdapter db = new UtentiDatabaseAdapter(this);
+    UtentiDatabaseAdapter utentiDatabaseAdapter = new UtentiDatabaseAdapter(this);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -15,12 +16,12 @@ public class StatisticsActivity extends Activity {
         setContentView(R.layout.statistics_activity);
 
         try {
-            db.open();
+            utentiDatabaseAdapter.open();
         } catch (SQLException e) {
             e.printStackTrace();
         }
 
-        String currentUserData = db.getCurrentUser();
+        String currentUserData = utentiDatabaseAdapter.getCurrentUser();
 
         String [] data = currentUserData.split(",");
 
@@ -30,43 +31,43 @@ public class StatisticsActivity extends Activity {
 
         username.setText(currentUser);
 
-        int result = db.getPlayData(currentUser, 1);
+        int result = utentiDatabaseAdapter.getPlayData(currentUser, 1);
 
         TextView giocate = (TextView) findViewById(R.id.statistics_giocate);
 
         giocate.setText(Integer.toString(result));
 
-        result = db.getPlayData(currentUser, 2);
+        result = utentiDatabaseAdapter.getPlayData(currentUser, 2);
 
         TextView vinte = (TextView) findViewById(R.id.statistics_vinte);
 
         vinte.setText(Integer.toString(result));
 
-        result = db.getPlayData(currentUser, 3);
+        result = utentiDatabaseAdapter.getPlayData(currentUser, 3);
 
         TextView pareggiate = (TextView) findViewById(R.id.statistics_pareggiate);
 
         pareggiate.setText(Integer.toString(result));
 
-        result = db.getPlayData(currentUser, 4);
+        result = utentiDatabaseAdapter.getPlayData(currentUser, 4);
 
         TextView perse = (TextView) findViewById(R.id.statistics_perse);
 
         perse.setText(Integer.toString(result));
 
-        result = db.getPlayData(currentUser, 5);
+        result = utentiDatabaseAdapter.getPlayData(currentUser, 5);
 
         TextView giuste = (TextView) findViewById(R.id.statistics_giuste);
 
         giuste.setText(Integer.toString(result));
 
-        result = db.getPlayData(currentUser, 6);
+        result = utentiDatabaseAdapter.getPlayData(currentUser, 6);
 
         TextView sbagliate = (TextView) findViewById(R.id.statistics_sbagliate);
 
         sbagliate.setText(Integer.toString(result));
 
-        String access = db.getLastAccess(currentUser);
+        String access = utentiDatabaseAdapter.getLastAccess(currentUser);
 
         String[] accessData = access.split(";");
 
@@ -76,6 +77,6 @@ public class StatisticsActivity extends Activity {
 
         lastAccess.setText(access);
 
-        db.close();
+        utentiDatabaseAdapter.close();
     }
 }

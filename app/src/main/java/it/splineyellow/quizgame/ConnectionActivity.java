@@ -27,7 +27,7 @@ public class ConnectionActivity extends Activity {
 
     int turn;
 
-    UtentiDatabaseAdapter db = new UtentiDatabaseAdapter(this);
+    UtentiDatabaseAdapter utentiDatabaseAdapter = new UtentiDatabaseAdapter(this);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,14 +36,14 @@ public class ConnectionActivity extends Activity {
         setContentView(R.layout.connection_activity);
 
         try {
-            db.open();
+            utentiDatabaseAdapter.open();
         } catch (SQLException e) {
             e.printStackTrace();
         }
 
-        userData = db.getCurrentUser();
+        userData = utentiDatabaseAdapter.getCurrentUser();
 
-        db.close();
+        utentiDatabaseAdapter.close();
 
         new MyClientTask().execute();
     }
@@ -102,22 +102,22 @@ public class ConnectionActivity extends Activity {
     public class MyClientTask extends AsyncTask<Void, Void, Void> {
         @Override
         protected Void doInBackground(Void... params) {
-            DatagramSocket ds = null;
+            DatagramSocket datagramSocket = null;
 
             try {
                 InetAddress serverAddr = InetAddress.getByName(dstAddress);
 
                 byte[] buffer = userData.getBytes();
 
-                ds = new DatagramSocket();
+                datagramSocket = new DatagramSocket();
 
-                ds.setReuseAddress(true);
+                datagramSocket.setReuseAddress(true);
 
-                DatagramPacket dp;
+                DatagramPacket datagramPacket;
 
-                dp = new DatagramPacket(buffer, buffer.length, serverAddr, dstPort);
+                datagramPacket = new DatagramPacket(buffer, buffer.length, serverAddr, dstPort);
 
-                ds.send(dp);
+                datagramSocket.send(datagramPacket);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -146,7 +146,7 @@ public class ConnectionActivity extends Activity {
                 DatagramPacket datagramPacket = new DatagramPacket(receiveBuffer, receiveBuffer.length, inetAddress, dstPort);
 
                 try {
-                    ds.receive(datagramPacket);
+                    datagramSocket.receive(datagramPacket);
                 } catch (NullPointerException n) {
                     n.printStackTrace();
                 } catch (Exception e) {
@@ -170,7 +170,7 @@ public class ConnectionActivity extends Activity {
 
                     categories = secondResponse;
 
-                    ds.close();
+                    datagramSocket.close();
 
                     goToStartGameActivity(categories);
 
