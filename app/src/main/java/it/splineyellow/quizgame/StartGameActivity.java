@@ -210,7 +210,7 @@ public class StartGameActivity extends Activity {
 
                 imageView.setLayoutParams(new GridView.LayoutParams(85, 85));
 
-                imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
+                imageView.setScaleType(ImageView.ScaleType.CENTER);
 
                 imageView.setPadding(8, 8, 8, 8);
             } else {
