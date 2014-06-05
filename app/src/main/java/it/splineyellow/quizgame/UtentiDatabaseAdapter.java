@@ -10,15 +10,22 @@ import android.util.Log;
 import java.sql.SQLException;
 
 public class UtentiDatabaseAdapter {
-
     public static final String KEY_NICKNAME = "nickname";
+
     public static final String KEY_PASSWORD = "password";
+
     public static final String KEY_GIOCATE = "giocate";
+
     public static final String KEY_VINTE = "vinte";
+
     public static final String KEY_PAREGGIATE = "pareggiate";
+
     public static final String KEY_PERSE = "perse";
+
     public static final String KEY_GIUSTE = "risp_giuste";
+
     public static final String KEY_ERRATE = "risp_errate";
+
     public static final String KEY_ULTIMO = "ultimo_accesso";
 
     public static final String TAG = "UtentiDatabaseAdapter";
@@ -45,16 +52,18 @@ public class UtentiDatabaseAdapter {
     public static final String TABLE_UTENTI_DROP = "drop table if exists " + TABLE_UTENTI + ";";
 
     private final Context context;
+
     private DatabaseHelper DBHelper;
+
     private SQLiteDatabase db;
 
     public UtentiDatabaseAdapter(Context ctx) {
         this.context = ctx;
+
         DBHelper = new DatabaseHelper(context);
     }
 
     private static class DatabaseHelper extends SQLiteOpenHelper {
-
         DatabaseHelper (Context context) {
             super (context, DATABASE_NAME, null, DATABASE_VERSION);
         }
@@ -69,7 +78,9 @@ public class UtentiDatabaseAdapter {
             Log.w(TAG, "Upgrading database from version " + oldVersion
                     + " to "
                     + newVersion + ", which will destroy all old data");
+
             db.execSQL(TABLE_UTENTI_DROP);
+
             onCreate(db);
         }
 
@@ -77,6 +88,7 @@ public class UtentiDatabaseAdapter {
 
     public UtentiDatabaseAdapter open() throws SQLException {
         db = DBHelper.getWritableDatabase();
+
         return this;
     }
 
@@ -87,11 +99,14 @@ public class UtentiDatabaseAdapter {
     public void checkOrInitializeDB () {
         try{
             String sql = "SELECT "+ KEY_NICKNAME +" FROM " + TABLE_UTENTI + ";";
+
             Cursor cursor = db.rawQuery(sql, null);
+
             cursor.close();
         }
         catch(Exception s){
             db.execSQL(TABLE_UTENTI_DROP);
+
             db.execSQL(TABLE_UTENTI_CREATE);
         }
     }
@@ -101,30 +116,40 @@ public class UtentiDatabaseAdapter {
     public boolean alreadyIn (String user) {
         String check = "select count(" + KEY_NICKNAME + ") from " + TABLE_UTENTI +
                 " where " + KEY_NICKNAME + " = '" + user + "';";
+
         Cursor c = db.rawQuery(check, null);
+
         if (c != null && c.moveToFirst()) {
             if (c.getInt(0) == 0) {
                 return false;
             }
             return true;
         }
+
         return false;
     }
 
     public void insertUser (String username, String password, String accessTimestamp) {
-
         accessTimestamp = formatDate (accessTimestamp);
 
         ContentValues initialValues = new ContentValues();
 
         initialValues.put(KEY_NICKNAME, username);
+
         initialValues.put(KEY_PASSWORD, password);
+
         initialValues.put(KEY_GIOCATE, 0);
+
         initialValues.put(KEY_VINTE, 0);
+
         initialValues.put(KEY_PAREGGIATE, 0);
+
         initialValues.put(KEY_PERSE, 0);
+
         initialValues.put(KEY_GIUSTE, 0);
+
         initialValues.put(KEY_ERRATE, 0);
+
         initialValues.put(KEY_ULTIMO, accessTimestamp);
 
         db.insert(TABLE_UTENTI, null, initialValues);
@@ -133,7 +158,6 @@ public class UtentiDatabaseAdapter {
     }
 
     public String formatDate (String ts) {
-
         ts = ts.substring(0, 2) + ":" + ts.substring(2,4) + ":" + ts.substring(4, 6) + ";" +
                 ts.substring(6, 8) + "/" + ts.substring(8, 10) + "/" + ts.substring(10);
 
@@ -146,7 +170,9 @@ public class UtentiDatabaseAdapter {
         timestamp = formatDate(timestamp);
 
         ContentValues initialValues = new ContentValues();
+
         initialValues.put(KEY_ULTIMO, timestamp);
+
         db.update(TABLE_UTENTI, initialValues, KEY_NICKNAME + " = '" + username + "'", null);
 
         Log.d(TAG, "Aggiornato a: " + timestamp);
@@ -154,14 +180,17 @@ public class UtentiDatabaseAdapter {
 
     public String getCurrentUser () {
         Log.v(TAG, "dentro getcurrentuser");
+
         String query = "select " + KEY_NICKNAME + ", " +
             KEY_PASSWORD + ", max(" + KEY_ULTIMO + ") from " + TABLE_UTENTI + ";";
+
         Cursor c = db.rawQuery(query, null);
 
         if (c != null && c.moveToFirst()) {
             return c.getString(0) + "," + c.getString(1);
         }
-        else return "Guest,guest";
+        else
+            return "Guest,guest";
     }
 
     public int getPlayData (String user, int parameter) {
@@ -172,21 +201,28 @@ public class UtentiDatabaseAdapter {
         switch (parameter) {
             case 1: camp = KEY_GIOCATE;
                 break;
+
             case 2: camp = KEY_VINTE;
                 break;
+
             case 3: camp = KEY_PAREGGIATE;
                 break;
+
             case 4: camp = KEY_PERSE;
                 break;
+
             case 5: camp = KEY_GIUSTE;
                 break;
+
             case 6: camp = KEY_ERRATE;
                 break;
+
             default: return 0;
         }
 
         String query = "select " + camp + " from " + TABLE_UTENTI +
                 " where " + KEY_NICKNAME + " = '" + user + "';";
+
         Cursor c = db.rawQuery(query, null);
 
         if (c != null && c.moveToFirst()) {
@@ -198,61 +234,85 @@ public class UtentiDatabaseAdapter {
 
     public String getLastAccess (String user) {
         Log.v(TAG, "dentro getlastaccess");
+
         String query = "select " + KEY_ULTIMO + " from " + TABLE_UTENTI +
                 " where " + KEY_NICKNAME + " = '" + user + "';";
+
         Cursor c = db.rawQuery(query, null);
 
         if (c != null && c.moveToFirst()) {
             return c.getString(0);
         }
-        return "";
 
+        return "";
     }
 
     public String getPasswordByUser (String user) {
         Log.v(TAG, "dentro getpasswordbyuser");
+
         String query = "select " + KEY_PASSWORD + " from " + TABLE_UTENTI +
                 " where " + KEY_NICKNAME + " = '" + user + "';";
+
         Cursor c = db.rawQuery(query, null);
+
         if (c != null && c.moveToFirst()) {
             return c.getString(0);
         }
+
         return "";
     }
 
     public void updateWin () {
         Log.v(TAG, "dentro updatewin");
+
         String[] userData = getCurrentUser().split(",");
+
         String user = userData[0];
+
         int oldWin = getPlayData(user, 2);
+
         int win = oldWin + 1;
+
         String query = "UPDATE " + TABLE_UTENTI + " SET " + KEY_VINTE +
                 " = " + Integer.toString(win) + " WHERE " + KEY_NICKNAME +
                 " = '" + user + "';";
+
         db.execSQL(query);
     }
 
     public void updateLost () {
         Log.v(TAG, "dentro updatelost");
+
         String[] userData = getCurrentUser().split(",");
+
         String user = userData[0];
+
         int oldLost = getPlayData(user, 2);
+
         int lost = oldLost + 1;
+
         String query = "UPDATE " + TABLE_UTENTI + " SET " + KEY_PERSE +
                 " = " + Integer.toString(lost) + " WHERE " + KEY_NICKNAME +
                 " = '" + user + "';";
+
         db.execSQL(query);
     }
 
     public void updateDraw () {
         Log.v(TAG, "dentro updatedraw");
+
         String[] userData = getCurrentUser().split(",");
+
         String user = userData[0];
+
         int oldDraw = getPlayData(user, 2);
+
         int draw = oldDraw + 1;
+
         String query = "UPDATE " + TABLE_UTENTI + " SET " + KEY_PAREGGIATE +
                 " = " + Integer.toString(draw) + " WHERE " + KEY_NICKNAME +
                 " = '" + user + "';";
+
         db.execSQL(query);
     }
 
@@ -262,20 +322,23 @@ public class UtentiDatabaseAdapter {
         int errate = 3 - giuste;
 
         int oldGiuste = getPlayData(username, 5);
+
         int oldErrate = getPlayData(username, 6);
 
         giuste = giuste + oldGiuste;
+
         errate = errate + oldErrate;
 
         String queryGiuste = "UPDATE " + TABLE_UTENTI + " SET " +
+
                 KEY_GIUSTE + " = " + Integer.toString(giuste) + " WHERE " + KEY_NICKNAME + " = '" + username + "';";
         String queryErrate = "UPDATE " + TABLE_UTENTI + " SET " +
                 KEY_ERRATE + " = " + Integer.toString(errate) + " WHERE " + KEY_NICKNAME + " = '" + username + "';";
 
         db.execSQL(queryGiuste);
+
         if (errate != 0) {
             db.execSQL(queryErrate);
         }
     }
-
 }
