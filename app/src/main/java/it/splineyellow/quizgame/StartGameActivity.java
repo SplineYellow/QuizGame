@@ -1,8 +1,10 @@
 package it.splineyellow.quizgame;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.CountDownTimer;
@@ -29,6 +31,9 @@ import java.net.UnknownHostException;
 //Copyright SplineYellow - 2014
 
 public class StartGameActivity extends Activity {
+
+    public static final String PREFS_NAME = "ReceivingScore";
+
     public final static String EXTRA_MESSAGE = "it.splineyellow.quizgame.MESSAGE";
 
     String dstAddress = "thebertozz.no-ip.org";
@@ -58,8 +63,6 @@ public class StartGameActivity extends Activity {
     TextView countdown;
 
     String[] categories = {};
-
-    boolean receivingScore = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -285,7 +288,7 @@ public class StartGameActivity extends Activity {
                 Log.v("FINE PARTITA", "fine partita");
             }
 
-            if (receivingScore) {
+            if (!getBooleanReceivingScore()) {
                 Log.v("TESTBOOL", "testbool");
 
                 DatagramPacket datagramPacket = null;
@@ -296,20 +299,26 @@ public class StartGameActivity extends Activity {
                     byte[] receiveBuffer = new byte[8192];
 
                     try {
+
+                        Log.v("CREAZIONESOCCA", "Sto per creare una socca");
+
                         datagramPacket = new DatagramPacket(receiveBuffer, receiveBuffer.length, serverAddr, dstPort);
 
                         //receive del punteggio
-                        Log.v("TESTBOOL", "prima receive");
+                        Log.v("TESTBOOL", "prima della receive");
 
                         datagramSocket.receive(datagramPacket);
 
                         Log.v("TESTBOOL", "dopo receive");
                     } catch (SocketTimeoutException e) {
+                        Log.v("CATCH", "eccezione receive");
                         e.printStackTrace();
                     } catch (IOException e) {
+                        Log.v("CATCH", "eccezione receive");
                         e.printStackTrace();
                     }
                 } catch (SocketException e) {
+                    Log.v("CATCH", "eccezione socket");
                     e.printStackTrace();
                 }
 
@@ -332,10 +341,6 @@ public class StartGameActivity extends Activity {
 
                     DatagramPacket datagramPacket = null;
 
-                    DatagramPacket packet = null;
-
-                    byte[] receiveBuffer = new byte[8192];
-
                     datagramPacket = new DatagramPacket(buffer, buffer.length, serverAddr, dstPort);
 
                     datagramSocket.setSoTimeout(1000);
@@ -344,36 +349,18 @@ public class StartGameActivity extends Activity {
 
                     int counter = 0;
 
+                    setBooleanReceivingScore(true);
+
                     while (continueSending && counter < 1) {
-                        //send della categoria
+                        Log.v("SEND", "send della categoria");
+
                         datagramSocket.send(datagramPacket);
 
                         counter++;
-
-                        try {
-                            packet = new DatagramPacket(receiveBuffer, receiveBuffer.length, serverAddr, dstPort);
-
-                            //receive delle domande
-                            Log.v("TESTIF", "prima receive");
-
-                            datagramSocket.receive(packet);
-
-                            Log.v("TESTIF", "dopo receive");
-
-                            continueSending = false; // a packet has been received : stop sending
-                        } catch (SocketTimeoutException e) {
-                            // no response received after 1 second. continue sending
-                        }
-
-                        String[] gameData = new String(packet.getData(), 0, packet.getLength()).split(";");
-
-                        Log.v("TESTIF", "domanda prova: " + gameData[0]);
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-
-                receivingScore = true;
             }
 
             try {
@@ -387,23 +374,40 @@ public class StartGameActivity extends Activity {
             return null;
         }
 
-        public String[][] gameDataSplitter (String string) {
-            String[][] matrix = new String[3][3];
-
-            String[] stringArray = string.split(":");
-
-            matrix[0] = stringArray[0].split(",");
-
-            matrix[1] = stringArray[1].split(",");
-
-            matrix[2] = stringArray[2].split(",");
-
-            return matrix;
-        }
-
         @Override
         protected void onPostExecute(Void result) {
             super.onPostExecute(result);
         }
+
+    }
+
+    public String[][] gameDataSplitter (String string) {
+        String[][] matrix = new String[3][3];
+
+        String[] stringArray = string.split(":");
+
+        matrix[0] = stringArray[0].split(",");
+
+        matrix[1] = stringArray[1].split(",");
+
+        matrix[2] = stringArray[2].split(",");
+
+        return matrix;
+    }
+
+    public void setBooleanReceivingScore (boolean value) {
+        SharedPreferences settings = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
+
+        SharedPreferences.Editor editor = settings.edit();
+
+        editor.putBoolean("receivingScore", value);
+
+        editor.commit();
+    }
+
+    public boolean getBooleanReceivingScore () {
+        SharedPreferences settings = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
+
+        return settings.getBoolean("receivingScore", false);
     }
 }

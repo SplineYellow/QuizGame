@@ -226,7 +226,7 @@ public class DomandeDatabaseAdapter {
         // ARTE ============================================
         argomento = "ARTE";
 
-        domanda.put(KEY_DOMANDA, "Chi ha dipinto la Cappella Sistina?\n");
+        domanda.put(KEY_DOMANDA, "Chi ha dipinto la Cappella Sistina?");
 
         domanda.put(KEY_ARGOMENTO, argomento);
 
@@ -386,7 +386,7 @@ public class DomandeDatabaseAdapter {
 
         db.insert(TABLE_DOMANDE, null, domanda);
 
-        domanda.put(KEY_DOMANDA, "Chi fu il precursore dei manga in Giappone?\n");
+        domanda.put(KEY_DOMANDA, "Chi fu il precursore dei manga in Giappone?");
 
         domanda.put(KEY_ARGOMENTO, argomento);
 
@@ -1606,7 +1606,7 @@ public class DomandeDatabaseAdapter {
 
         domanda.put(KEY_RISPOSTA4, "Fidenza");
 
-        domanda.put(KEY_ESATTA, 4);
+        domanda.put(KEY_ESATTA, 2);
 
         db.insert(TABLE_DOMANDE, null, domanda);
 
