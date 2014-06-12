@@ -41,6 +41,16 @@ public class MainActivity extends Activity {
         buttonLogin = (Button) findViewById(R.id.login);
 
         buttonLogin.setOnClickListener(buttonLoginOnClickListener);
+
+        try {
+            utentiDatabaseAdapter.open();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        utentiDatabaseAdapter.insertDefaultBooleanVariables();
+        utentiDatabaseAdapter.setBooleanVariable("receivingScore", false);
+        utentiDatabaseAdapter.setIntegerVariable("gameCounter", 0);
+        utentiDatabaseAdapter.close();
     }
 
     View.OnClickListener buttonLoginOnClickListener = new View.OnClickListener() {

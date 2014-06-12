@@ -3,7 +3,6 @@ package it.splineyellow.quizgame;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.CountDownTimer;
@@ -23,15 +22,13 @@ import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
-import java.net.SocketException;
 import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
+import java.sql.SQLException;
 
 //Copyright SplineYellow - 2014
 
 public class StartGameActivity extends Activity {
-
-    public static final String PREFS_NAME = "ReceivingScore";
 
     public final static String EXTRA_MESSAGE = "it.splineyellow.quizgame.MESSAGE";
 
@@ -62,6 +59,8 @@ public class StartGameActivity extends Activity {
     TextView countdown;
 
     String[] categories = {};
+
+    UtentiDatabaseAdapter db = new UtentiDatabaseAdapter(this);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -99,6 +98,7 @@ public class StartGameActivity extends Activity {
         countdown = (TextView) findViewById(R.id.countdown);
 
         if (turn != myID) {
+
             gridView.setEnabled(false);
 
             countDownTimer = new CountDownTimer(30000, 1000) {
@@ -109,6 +109,9 @@ public class StartGameActivity extends Activity {
                 }
 
                 public void onFinish() {
+
+                  //  new ReceiveTask().execute();
+
                     myID = turn;
 
                     turnMyIdTextView.setText("Tocca a Te");
@@ -116,6 +119,7 @@ public class StartGameActivity extends Activity {
                     categories[1] = Integer.toString(myID);
 
                     gridView.setEnabled(true);
+
                 }
 
             }.start();
@@ -124,7 +128,8 @@ public class StartGameActivity extends Activity {
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
-                new SocketTask().execute();
+
+                new SendCategoryTask().execute();
 
                 actualCategoryPosition = position;
 
@@ -267,9 +272,10 @@ public class StartGameActivity extends Activity {
         startActivity(intent);
     }
 
-    public class SocketTask extends AsyncTask<Void, Void, Void> {
+    public class SendCategoryTask extends AsyncTask<Void, Void, Void> {
         @Override
         protected Void doInBackground(Void... params) {
+
             DatagramSocket datagramSocket = null;
 
             try {
@@ -282,8 +288,9 @@ public class StartGameActivity extends Activity {
 
             byte[] buffer = questionData.getBytes();
 
+            /*
             if (turn == 2) {
-                goToEndGame(); // passare come poarametro il risultato della partita
+                goToEndGame(); // passare come parametro il risultato della partita
                 Log.v("FINE PARTITA", "fine partita");
             }
 
@@ -291,7 +298,7 @@ public class StartGameActivity extends Activity {
                 Log.v("TESTBOOL", "testbool");
 
                 DatagramPacket datagramPacket = null;
-
+                /*
                 try {
                     datagramSocket = new DatagramSocket();
 
@@ -302,6 +309,9 @@ public class StartGameActivity extends Activity {
                 }
 
                 byte[] receiveBuffer = new byte[8192];
+
+                setBooleanReceivingScore(false);
+
 
                 try {
 
@@ -324,6 +334,7 @@ public class StartGameActivity extends Activity {
                 }
 
 
+
                 String[] gameData = new String(datagramPacket.getData(), 0, datagramPacket.getLength()).split(";");
 
                 Log.v("TESTBOOL", "turno: " + gameData[0] + " tabellone: " + gameData[1] + " " + gameData[2]);
@@ -333,9 +344,9 @@ public class StartGameActivity extends Activity {
                 String[][] completedBy = gameDataSplitter(gameData[1]);
 
                 String[][] score = gameDataSplitter(gameData[2]);*/
-            }
 
             if (turn == myID) {
+
                 Log.v("TESTIF", "testif");
 
                 try {
@@ -363,7 +374,10 @@ public class StartGameActivity extends Activity {
                 }
 
                 setBooleanReceivingScore(true);
+                incrementCounter();
             }
+
+
 
             try {
                 datagramSocket.close();
@@ -378,6 +392,52 @@ public class StartGameActivity extends Activity {
 
         @Override
         protected void onPostExecute(Void result) {
+            super.onPostExecute(result);
+        }
+
+    }
+
+    public class ReceiveTask extends AsyncTask<Void, Void, Void> {
+        @Override
+        protected Void doInBackground(Void... params) {
+
+
+            DatagramPacket datagramPacket;
+            byte[] buffer;
+            InetAddress serverAddr;
+
+            try {
+
+                DatagramSocket datagramSocket = new DatagramSocket();
+
+                Log.v("CREAZIONESOCCA", "Sto per creare una socca");
+
+                buffer = new byte[4096];
+
+                serverAddr = InetAddress.getByName(dstAddress);
+
+                datagramPacket = new DatagramPacket(buffer, buffer.length, serverAddr, dstPort);
+
+                //receive del punteggio
+                Log.v("TESTBOOL", "prima della receive");
+
+                    datagramSocket.receive(datagramPacket);
+
+                Log.v("TESTBOOL", "dopo receive");
+            } catch (SocketTimeoutException e) {
+                Log.v("CATCH", "eccezione receive");
+                e.printStackTrace();
+            } catch (IOException e) {
+                Log.v("CATCH", "eccezione receive");
+                e.printStackTrace();
+            }
+
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void result) {
+
             super.onPostExecute(result);
         }
 
@@ -398,23 +458,41 @@ public class StartGameActivity extends Activity {
     }
 
     public void setBooleanReceivingScore (boolean value) {
-        SharedPreferences settings = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
-
-        SharedPreferences.Editor editor = settings.edit();
-
-        editor.putBoolean("receivingScore", value);
-
-        editor.commit();
+        try {
+            db.open();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        db.setBooleanVariable("receivingScore", value);
+        db.close();
     }
 
     public boolean getBooleanReceivingScore () {
-        SharedPreferences settings = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
-
-        return settings.getBoolean("receivingScore", false);
+        try {
+            db.open();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        boolean value = db.getBooleanVariable("receivingScore");
+        db.close();
+        return value;
     }
 
     public void goToEndGame () { // farsi passare risultato della partita
         Intent intent = new Intent(this, EndGameActivity.class);
         startActivity(intent);
+    }
+
+    public void incrementCounter () {
+        int oldCounter;
+        String varName = "gameCounter";
+        try {
+            db.open();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        oldCounter = db.getIntegerVariable(varName);
+        int newCounter = oldCounter + 1;
+        db.setIntegerVariable(varName, newCounter);
     }
 }

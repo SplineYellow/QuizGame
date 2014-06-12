@@ -49,6 +49,8 @@ public class EndGameActivity extends Activity {
             db.updateDraw();
         }
 
+        db.setBooleanVariable("receivingScore", false);
+
         db.close();
 
         Button okButton = (Button) findViewById(R.id.endgame_button);

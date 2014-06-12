@@ -12,9 +12,11 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
+import java.net.SocketTimeoutException;
 import java.sql.SQLException;
 
 //Copyright SplineYellow - 2014
@@ -88,7 +90,6 @@ public class ScoreActivity extends Activity {
         okButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Log.v(TAG, "Parte AsyncTask");
 
                 goToStartGameActivity();
             }
@@ -162,19 +163,22 @@ public class ScoreActivity extends Activity {
         @Override
         protected Void doInBackground(Void... params) {
             DatagramSocket datagramSocket = null;
+            DatagramPacket datagramPacket;
+            byte[] buffer;
+            InetAddress serverAddr;
 
             try {
                 Log.v(TAG, "Entrato nel try della SendScoreTask");
 
-                InetAddress serverAddr = InetAddress.getByName(dstAddress);
+                serverAddr = InetAddress.getByName(dstAddress);
 
-                byte[] buffer = score.getBytes();
+                buffer = score.getBytes();
 
                 datagramSocket = new DatagramSocket();
 
                 datagramSocket.setReuseAddress(true);
 
-                DatagramPacket datagramPacket = new DatagramPacket(buffer, buffer.length, serverAddr, dstPort);
+                datagramPacket = new DatagramPacket(buffer, buffer.length, serverAddr, dstPort);
 
                 datagramSocket.send(datagramPacket);
 
@@ -185,14 +189,68 @@ public class ScoreActivity extends Activity {
                 e.printStackTrace();
             }
 
-            datagramSocket.close();
+            if (getBooleanReceivingScore() && getGameCounter() >= 1) {
 
-            return null;
-        }
+                try {
+
+                    Log.v("CREAZIONESOCCA", "Sto per creare una socca");
+
+                    buffer = new byte[4096];
+
+                    serverAddr = InetAddress.getByName(dstAddress);
+
+                    datagramPacket = new DatagramPacket(buffer, buffer.length, serverAddr, dstPort);
+
+                    //receive del punteggio
+                    Log.v("TESTBOOL", "prima della receive");
+
+                        datagramSocket.receive(datagramPacket);
+
+                    Log.v("TESTBOOL", "dopo receive");
+                } catch (SocketTimeoutException e) {
+                    Log.v("CATCH", "eccezione receive");
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    Log.v("CATCH", "eccezione receive");
+                    e.printStackTrace();
+                }
+            }
+
+                datagramSocket.close();
+
+                return null;
+            }
+
 
         @Override
         protected void onPostExecute(Void result) {
             super.onPostExecute(result);
         }
+    }
+
+    public boolean getBooleanReceivingScore () {
+        try {
+            db.open();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        boolean value = db.getBooleanVariable("receivingScore");
+        db.close();
+        return value;
+    }
+
+    public int getGameCounter () {
+
+        try {
+            db.open();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        int counter = db.getIntegerVariable("gameCounter");
+        db.close();
+
+        return counter;
+
     }
 }

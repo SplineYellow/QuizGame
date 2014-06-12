@@ -38,6 +38,10 @@ public class UtentiDatabaseAdapter {
 
     public static final int DATABASE_VERSION = 1;
 
+    private static final String KEY_VARIABILE = "variabile";
+    private static final String KEY_VALORE = "valore";
+    private static final String TABLE_VARIABILI = "variabili_utenti";
+
     private static final String TABLE_UTENTI_CREATE = "create table " +
             TABLE_UTENTI + " (" +
             KEY_NICKNAME + " text primary key," +
@@ -51,7 +55,16 @@ public class UtentiDatabaseAdapter {
             KEY_ULTIMO + " text not null" + // aggiungere eventuali check
             ");";
 
+    private static final String TABLE_VARIABILI_CREATE = "create table " +
+            TABLE_VARIABILI + " (" +
+            KEY_VARIABILE + " text primary key," +
+            KEY_VALORE + " text not null," +
+            " check (" + KEY_VALORE + " = 'true' or " + KEY_VALORE + " = 'false')" +
+            ");";
+
     public static final String TABLE_UTENTI_DROP = "drop table if exists " + TABLE_UTENTI + ";";
+
+    public static final String TABLE_VARIABILI_DROP = "drop table if exists " + TABLE_VARIABILI + ";";
 
     private final Context context;
 
@@ -73,6 +86,7 @@ public class UtentiDatabaseAdapter {
         @Override
         public void onCreate(SQLiteDatabase db) {
             db.execSQL(TABLE_UTENTI_CREATE);
+            db.execSQL(TABLE_VARIABILI_CREATE);
         }
 
         @Override
@@ -108,8 +122,10 @@ public class UtentiDatabaseAdapter {
         }
         catch(Exception s){
             db.execSQL(TABLE_UTENTI_DROP);
+            db.execSQL(TABLE_VARIABILI_DROP);
 
             db.execSQL(TABLE_UTENTI_CREATE);
+            db.execSQL(TABLE_VARIABILI_CREATE);
         }
     }
 
@@ -343,4 +359,73 @@ public class UtentiDatabaseAdapter {
             db.execSQL(queryErrate);
         }
     }
+
+    public void insertBooleanVariable (String varName, boolean bool) {
+        String value;
+        if (bool) value = "true";
+        else value = "false";
+
+        ContentValues variable = new ContentValues();
+        variable.put(KEY_VARIABILE, varName);
+        variable.put(KEY_VALORE, value);
+
+        db.insert(TABLE_VARIABILI, null, variable);
+
+    }
+
+    public void setBooleanVariable (String varName, boolean bool) {
+        String value;
+        if (bool) value = "true";
+        else value = "false";
+
+        String query = "UPDATE " + TABLE_VARIABILI + " SET " +
+                KEY_VALORE + " = '" + value + "' WHERE " + KEY_VARIABILE + " = '" + varName + "';";
+
+        db.execSQL(query);
+    }
+
+    public boolean getBooleanVariable (String varName) {
+        String query = "SELECT " + KEY_VALORE + " FROM "+ TABLE_VARIABILI +
+                " WHERE " + KEY_VARIABILE + " = '" + varName + "';";
+        Cursor c = db.rawQuery(query, null);
+
+        if (c != null && c.moveToFirst()) {
+            if (c.getString(0).equals("true")) return true;
+            else return false;
+        }
+        // default case
+        return false;
+    }
+
+    public void setIntegerVariable (String varName, int integer) {
+        String value = Integer.toString(integer);
+
+        String query = "UPDATE " + TABLE_VARIABILI + " SET " +
+                KEY_VALORE + " = '" + value + "' WHERE " + KEY_VARIABILE + " = '" + varName + "';";
+
+        db.execSQL(query);
+    }
+
+    public int getIntegerVariable (String varName) {
+        String query = "SELECT " + KEY_VALORE + " FROM "+ TABLE_VARIABILI +
+                " WHERE " + KEY_VARIABILE + " = '" + varName + "';";
+        Cursor c = db.rawQuery(query, null);
+        if (c != null && c.moveToFirst()) {
+            return Integer.parseInt(c.getString(0));
+        }
+        return 0;
+    }
+
+    public void insertDefaultBooleanVariables () {
+        ContentValues var = new ContentValues();
+        var.put(KEY_VARIABILE, "receivingScore");
+        var.put(KEY_VALORE, "false");
+
+        db.insert(TABLE_VARIABILI, null, var);
+
+        var = new ContentValues();
+        var.put(KEY_VARIABILE, "gameCounter");
+        var.put(KEY_VALORE, "0");
+    }
+
 }
