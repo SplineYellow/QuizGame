@@ -270,7 +270,7 @@ public class DomandeDatabaseAdapter {
 
         domanda.put(KEY_RISPOSTA4, "Incisione");
 
-        domanda.put(KEY_ESATTA, 4);
+        domanda.put(KEY_ESATTA, 3);
 
         db.insert(TABLE_DOMANDE, null, domanda);
 

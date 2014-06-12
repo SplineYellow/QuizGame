@@ -1,7 +1,6 @@
 package it.splineyellow.quizgame;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -284,11 +283,11 @@ public class StartGameActivity extends Activity {
             byte[] buffer = questionData.getBytes();
 
             if (turn == 2) {
-                // TODO ==> IMPLEMENTARE
+                goToEndGame(); // passare come poarametro il risultato della partita
                 Log.v("FINE PARTITA", "fine partita");
             }
 
-            if (!getBooleanReceivingScore()) {
+            if (getBooleanReceivingScore()) {
                 Log.v("TESTBOOL", "testbool");
 
                 DatagramPacket datagramPacket = null;
@@ -296,31 +295,34 @@ public class StartGameActivity extends Activity {
                 try {
                     datagramSocket = new DatagramSocket();
 
-                    byte[] receiveBuffer = new byte[8192];
 
-                    try {
-
-                        Log.v("CREAZIONESOCCA", "Sto per creare una socca");
-
-                        datagramPacket = new DatagramPacket(receiveBuffer, receiveBuffer.length, serverAddr, dstPort);
-
-                        //receive del punteggio
-                        Log.v("TESTBOOL", "prima della receive");
-
-                        datagramSocket.receive(datagramPacket);
-
-                        Log.v("TESTBOOL", "dopo receive");
-                    } catch (SocketTimeoutException e) {
-                        Log.v("CATCH", "eccezione receive");
-                        e.printStackTrace();
-                    } catch (IOException e) {
-                        Log.v("CATCH", "eccezione receive");
-                        e.printStackTrace();
-                    }
                 } catch (SocketException e) {
                     Log.v("CATCH", "eccezione socket");
                     e.printStackTrace();
                 }
+
+                byte[] receiveBuffer = new byte[8192];
+
+                try {
+
+                    Log.v("CREAZIONESOCCA", "Sto per creare una socca");
+
+                    datagramPacket = new DatagramPacket(receiveBuffer, receiveBuffer.length, serverAddr, dstPort);
+
+                    //receive del punteggio
+                    Log.v("TESTBOOL", "prima della receive");
+
+                    datagramSocket.receive(datagramPacket);
+
+                    Log.v("TESTBOOL", "dopo receive");
+                } catch (SocketTimeoutException e) {
+                    Log.v("CATCH", "eccezione receive");
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    Log.v("CATCH", "eccezione receive");
+                    e.printStackTrace();
+                }
+
 
                 String[] gameData = new String(datagramPacket.getData(), 0, datagramPacket.getLength()).split(";");
 
@@ -349,8 +351,6 @@ public class StartGameActivity extends Activity {
 
                     int counter = 0;
 
-                    setBooleanReceivingScore(true);
-
                     while (continueSending && counter < 1) {
                         Log.v("SEND", "send della categoria");
 
@@ -361,6 +361,8 @@ public class StartGameActivity extends Activity {
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
+
+                setBooleanReceivingScore(true);
             }
 
             try {
@@ -409,5 +411,10 @@ public class StartGameActivity extends Activity {
         SharedPreferences settings = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
 
         return settings.getBoolean("receivingScore", false);
+    }
+
+    public void goToEndGame () { // farsi passare risultato della partita
+        Intent intent = new Intent(this, EndGameActivity.class);
+        startActivity(intent);
     }
 }
