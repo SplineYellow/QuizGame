@@ -18,18 +18,16 @@ import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
-import java.net.SocketTimeoutException;
+import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.sql.SQLException;
 
 //Copyright SplineYellow - 2014
 
 public class StartGameActivity extends Activity {
-
     public final static String EXTRA_MESSAGE = "it.splineyellow.quizgame.MESSAGE";
 
     String dstAddress = "thebertozz.no-ip.org";
@@ -73,6 +71,7 @@ public class StartGameActivity extends Activity {
         gridView.setAdapter(new ImageAdapter(this));
 
         Intent intent = getIntent();
+
         try {
             message = intent.getStringExtra(ConnectionActivity.EXTRA_MESSAGE);
         } catch (NullPointerException e) {
@@ -98,6 +97,7 @@ public class StartGameActivity extends Activity {
         countdown = (TextView) findViewById(R.id.countdown);
 
         if (turn != myID) {
+            new ReceiveTask().execute();
 
             gridView.setEnabled(false);
 
@@ -109,9 +109,6 @@ public class StartGameActivity extends Activity {
                 }
 
                 public void onFinish() {
-
-                  //  new ReceiveTask().execute();
-
                     myID = turn;
 
                     turnMyIdTextView.setText("Tocca a Te");
@@ -119,7 +116,6 @@ public class StartGameActivity extends Activity {
                     categories[1] = Integer.toString(myID);
 
                     gridView.setEnabled(true);
-
                 }
 
             }.start();
@@ -128,8 +124,7 @@ public class StartGameActivity extends Activity {
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
-
-                new SendCategoryTask().execute();
+                new SendTask().execute();
 
                 actualCategoryPosition = position;
 
@@ -272,11 +267,16 @@ public class StartGameActivity extends Activity {
         startActivity(intent);
     }
 
-    public class SendCategoryTask extends AsyncTask<Void, Void, Void> {
+    public class SendTask extends AsyncTask<Void, Void, Void> {
         @Override
         protected Void doInBackground(Void... params) {
-
             DatagramSocket datagramSocket = null;
+
+            DatagramPacket datagramPacket = null;
+
+            questionData = Integer.toString(actualCategoryPosition + 1);
+
+            byte[] buffer = questionData.getBytes();
 
             try {
                 serverAddr = InetAddress.getByName(dstAddress);
@@ -284,79 +284,21 @@ public class StartGameActivity extends Activity {
                 e.printStackTrace();
             }
 
-            questionData = Integer.toString(actualCategoryPosition + 1);
-
-            byte[] buffer = questionData.getBytes();
-
-            /*
             if (turn == 2) {
-                goToEndGame(); // passare come parametro il risultato della partita
+                goToEndGame();
+
                 Log.v("FINE PARTITA", "fine partita");
             }
 
-            if (getBooleanReceivingScore()) {
-                Log.v("TESTBOOL", "testbool");
-
-                DatagramPacket datagramPacket = null;
-                /*
-                try {
-                    datagramSocket = new DatagramSocket();
-
-
-                } catch (SocketException e) {
-                    Log.v("CATCH", "eccezione socket");
-                    e.printStackTrace();
-                }
-
-                byte[] receiveBuffer = new byte[8192];
-
-                setBooleanReceivingScore(false);
-
-
-                try {
-
-                    Log.v("CREAZIONESOCCA", "Sto per creare una socca");
-
-                    datagramPacket = new DatagramPacket(receiveBuffer, receiveBuffer.length, serverAddr, dstPort);
-
-                    //receive del punteggio
-                    Log.v("TESTBOOL", "prima della receive");
-
-                    datagramSocket.receive(datagramPacket);
-
-                    Log.v("TESTBOOL", "dopo receive");
-                } catch (SocketTimeoutException e) {
-                    Log.v("CATCH", "eccezione receive");
-                    e.printStackTrace();
-                } catch (IOException e) {
-                    Log.v("CATCH", "eccezione receive");
-                    e.printStackTrace();
-                }
-
-
-
-                String[] gameData = new String(datagramPacket.getData(), 0, datagramPacket.getLength()).split(";");
-
-                Log.v("TESTBOOL", "turno: " + gameData[0] + " tabellone: " + gameData[1] + " " + gameData[2]);
-
-                /*turn = Integer.parseInt(gameData[0]);
-
-                String[][] completedBy = gameDataSplitter(gameData[1]);
-
-                String[][] score = gameDataSplitter(gameData[2]);*/
-
             if (turn == myID) {
-
                 Log.v("TESTIF", "testif");
 
                 try {
                     datagramSocket = new DatagramSocket();
 
-                    DatagramPacket datagramPacket = null;
+                    datagramSocket.setReuseAddress(true);
 
                     datagramPacket = new DatagramPacket(buffer, buffer.length, serverAddr, dstPort);
-
-                    datagramSocket.setSoTimeout(1000);
 
                     boolean continueSending = true;
 
@@ -373,19 +315,8 @@ public class StartGameActivity extends Activity {
                     e.printStackTrace();
                 }
 
-                setBooleanReceivingScore(true);
                 incrementCounter();
             }
-
-
-
-            try {
-                datagramSocket.close();
-            } catch (NullPointerException e) {
-                e.printStackTrace();
-            }
-
-            Log.v("CLOSE", "close");
 
             return null;
         }
@@ -396,40 +327,44 @@ public class StartGameActivity extends Activity {
         }
 
     }
-
     public class ReceiveTask extends AsyncTask<Void, Void, Void> {
         @Override
         protected Void doInBackground(Void... params) {
+            DatagramSocket datagramSocket = null;
 
+            DatagramPacket datagramPacket = null;
 
-            DatagramPacket datagramPacket;
-            byte[] buffer;
-            InetAddress serverAddr;
+            byte[] buffer = new byte[4096];
 
-            try {
+            Log.v("TESTELSE", "testelse");
 
-                DatagramSocket datagramSocket = new DatagramSocket();
+            if (turn != myID) {
 
-                Log.v("CREAZIONESOCCA", "Sto per creare una socca");
-
-                buffer = new byte[4096];
-
-                serverAddr = InetAddress.getByName(dstAddress);
+                try {
+                    serverAddr = InetAddress.getByName(dstAddress);
+                } catch (UnknownHostException e) {
+                    e.printStackTrace();
+                }
 
                 datagramPacket = new DatagramPacket(buffer, buffer.length, serverAddr, dstPort);
 
-                //receive del punteggio
-                Log.v("TESTBOOL", "prima della receive");
+                try {
+                    Log.v("RECEIVE", "receive del tabellone");
 
                     datagramSocket.receive(datagramPacket);
+                } catch (NullPointerException n) {
+                    n.printStackTrace();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
 
-                Log.v("TESTBOOL", "dopo receive");
-            } catch (SocketTimeoutException e) {
-                Log.v("CATCH", "eccezione receive");
-                e.printStackTrace();
-            } catch (IOException e) {
-                Log.v("CATCH", "eccezione receive");
-                e.printStackTrace();
+                try {
+                    String firstResponse = new String(datagramPacket.getData());
+
+                    Log.v("STRINGA RICEVUTA", firstResponse);
+                } catch (NullPointerException e) {
+                    e.printStackTrace();
+                }
             }
 
             return null;
@@ -437,10 +372,8 @@ public class StartGameActivity extends Activity {
 
         @Override
         protected void onPostExecute(Void result) {
-
             super.onPostExecute(result);
         }
-
     }
 
     public String[][] gameDataSplitter (String string) {

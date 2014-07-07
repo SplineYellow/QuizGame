@@ -189,33 +189,6 @@ public class ScoreActivity extends Activity {
                 e.printStackTrace();
             }
 
-            if (getBooleanReceivingScore() && getGameCounter() >= 1) {
-
-                try {
-
-                    Log.v("CREAZIONESOCCA", "Sto per creare una socca");
-
-                    buffer = new byte[4096];
-
-                    serverAddr = InetAddress.getByName(dstAddress);
-
-                    datagramPacket = new DatagramPacket(buffer, buffer.length, serverAddr, dstPort);
-
-                    //receive del punteggio
-                    Log.v("TESTBOOL", "prima della receive");
-
-                        datagramSocket.receive(datagramPacket);
-
-                    Log.v("TESTBOOL", "dopo receive");
-                } catch (SocketTimeoutException e) {
-                    Log.v("CATCH", "eccezione receive");
-                    e.printStackTrace();
-                } catch (IOException e) {
-                    Log.v("CATCH", "eccezione receive");
-                    e.printStackTrace();
-                }
-            }
-
                 datagramSocket.close();
 
                 return null;
