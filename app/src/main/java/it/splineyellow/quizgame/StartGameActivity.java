@@ -295,7 +295,7 @@ public class StartGameActivity extends Activity {
 
                 try {
                     datagramSocket = new DatagramSocket();
-
+                    
                     datagramSocket.setReuseAddress(true);
 
                     datagramPacket = new DatagramPacket(buffer, buffer.length, serverAddr, dstPort);
