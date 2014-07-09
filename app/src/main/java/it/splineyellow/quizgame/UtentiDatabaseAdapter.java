@@ -5,12 +5,14 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.util.Log;
 
 import java.sql.SQLException;
 
-//Copyright SplineYellow - 2014
+// Copyright SplineYellow - 2014
 
+/*
+    Classe per la gestione del Database Utenti.
+ */
 public class UtentiDatabaseAdapter {
     public static final String KEY_NICKNAME = "nickname";
 
@@ -39,7 +41,9 @@ public class UtentiDatabaseAdapter {
     public static final int DATABASE_VERSION = 1;
 
     private static final String KEY_VARIABILE = "variabile";
+
     private static final String KEY_VALORE = "valore";
+
     private static final String TABLE_VARIABILI = "variabili_utenti";
 
     private static final String TABLE_UTENTI_CREATE = "create table " +
@@ -52,7 +56,7 @@ public class UtentiDatabaseAdapter {
             KEY_PERSE + " integer not null," +
             KEY_GIUSTE + " integer not null," +
             KEY_ERRATE + " integer not null," +
-            KEY_ULTIMO + " text not null" + // aggiungere eventuali check
+            KEY_ULTIMO + " text not null" +
             ");";
 
     private static final String TABLE_VARIABILI_CREATE = "create table " +
@@ -86,20 +90,16 @@ public class UtentiDatabaseAdapter {
         @Override
         public void onCreate(SQLiteDatabase db) {
             db.execSQL(TABLE_UTENTI_CREATE);
+
             db.execSQL(TABLE_VARIABILI_CREATE);
         }
 
         @Override
         public void onUpgrade (SQLiteDatabase db, int oldVersion, int newVersion) {
-            Log.w(TAG, "Upgrading database from version " + oldVersion
-                    + " to "
-                    + newVersion + ", which will destroy all old data");
-
             db.execSQL(TABLE_UTENTI_DROP);
 
             onCreate(db);
         }
-
     }
 
     public UtentiDatabaseAdapter open() throws SQLException {
@@ -129,8 +129,6 @@ public class UtentiDatabaseAdapter {
         }
     }
 
-    // query functions
-
     public boolean alreadyIn (String user) {
         String check = "select count(" + KEY_NICKNAME + ") from " + TABLE_UTENTI +
                 " where " + KEY_NICKNAME + " = '" + user + "';";
@@ -141,6 +139,7 @@ public class UtentiDatabaseAdapter {
             if (c.getInt(0) == 0) {
                 return false;
             }
+
             return true;
         }
 
@@ -171,8 +170,6 @@ public class UtentiDatabaseAdapter {
         initialValues.put(KEY_ULTIMO, accessTimestamp);
 
         db.insert(TABLE_UTENTI, null, initialValues);
-
-        Log.d(TAG, "Inserito: " + username + ", " + password + ", " + accessTimestamp);
     }
 
     public String formatDate (String ts) {
@@ -183,8 +180,6 @@ public class UtentiDatabaseAdapter {
     }
 
     public void updateLastAccess (String timestamp, String username) {
-        Log.v(TAG, "dentro updatelastaccess");
-
         timestamp = formatDate(timestamp);
 
         ContentValues initialValues = new ContentValues();
@@ -192,13 +187,9 @@ public class UtentiDatabaseAdapter {
         initialValues.put(KEY_ULTIMO, timestamp);
 
         db.update(TABLE_UTENTI, initialValues, KEY_NICKNAME + " = '" + username + "'", null);
-
-        Log.d(TAG, "Aggiornato a: " + timestamp);
     }
 
     public String getCurrentUser () {
-        Log.v(TAG, "dentro getcurrentuser");
-
         String query = "select " + KEY_NICKNAME + ", " +
             KEY_PASSWORD + ", max(" + KEY_ULTIMO + ") from " + TABLE_UTENTI + ";";
 
@@ -212,8 +203,6 @@ public class UtentiDatabaseAdapter {
     }
 
     public int getPlayData (String user, int parameter) {
-        Log.v(TAG, "dentro getplaydata");
-
         String camp;
 
         switch (parameter) {
@@ -251,8 +240,6 @@ public class UtentiDatabaseAdapter {
     }
 
     public String getLastAccess (String user) {
-        Log.v(TAG, "dentro getlastaccess");
-
         String query = "select " + KEY_ULTIMO + " from " + TABLE_UTENTI +
                 " where " + KEY_NICKNAME + " = '" + user + "';";
 
@@ -266,8 +253,6 @@ public class UtentiDatabaseAdapter {
     }
 
     public String getPasswordByUser (String user) {
-        Log.v(TAG, "dentro getpasswordbyuser");
-
         String query = "select " + KEY_PASSWORD + " from " + TABLE_UTENTI +
                 " where " + KEY_NICKNAME + " = '" + user + "';";
 
@@ -281,8 +266,6 @@ public class UtentiDatabaseAdapter {
     }
 
     public void updateWin () {
-        Log.v(TAG, "dentro updatewin");
-
         String[] userData = getCurrentUser().split(",");
 
         String user = userData[0];
@@ -299,8 +282,6 @@ public class UtentiDatabaseAdapter {
     }
 
     public void updateLost () {
-        Log.v(TAG, "dentro updatelost");
-
         String[] userData = getCurrentUser().split(",");
 
         String user = userData[0];
@@ -317,8 +298,6 @@ public class UtentiDatabaseAdapter {
     }
 
     public void updateDraw () {
-        Log.v(TAG, "dentro updatedraw");
-
         String[] userData = getCurrentUser().split(",");
 
         String user = userData[0];
@@ -335,8 +314,6 @@ public class UtentiDatabaseAdapter {
     }
 
     public void updateScore (String username, int giuste) {
-        Log.v(TAG, "dentro updatescore");
-
         int errate = 3 - giuste;
 
         int oldGiuste = getPlayData(username, 5);
@@ -362,20 +339,25 @@ public class UtentiDatabaseAdapter {
 
     public void insertBooleanVariable (String varName, boolean bool) {
         String value;
+
         if (bool) value = "true";
+
         else value = "false";
 
         ContentValues variable = new ContentValues();
+
         variable.put(KEY_VARIABILE, varName);
+
         variable.put(KEY_VALORE, value);
 
         db.insert(TABLE_VARIABILI, null, variable);
-
     }
 
     public void setBooleanVariable (String varName, boolean bool) {
         String value;
+
         if (bool) value = "true";
+
         else value = "false";
 
         String query = "UPDATE " + TABLE_VARIABILI + " SET " +
@@ -387,13 +369,15 @@ public class UtentiDatabaseAdapter {
     public boolean getBooleanVariable (String varName) {
         String query = "SELECT " + KEY_VALORE + " FROM "+ TABLE_VARIABILI +
                 " WHERE " + KEY_VARIABILE + " = '" + varName + "';";
+
         Cursor c = db.rawQuery(query, null);
 
         if (c != null && c.moveToFirst()) {
             if (c.getString(0).equals("true")) return true;
+
             else return false;
         }
-        // default case
+
         return false;
     }
 
@@ -409,23 +393,29 @@ public class UtentiDatabaseAdapter {
     public int getIntegerVariable (String varName) {
         String query = "SELECT " + KEY_VALORE + " FROM "+ TABLE_VARIABILI +
                 " WHERE " + KEY_VARIABILE + " = '" + varName + "';";
+
         Cursor c = db.rawQuery(query, null);
+
         if (c != null && c.moveToFirst()) {
             return Integer.parseInt(c.getString(0));
         }
+
         return 0;
     }
 
     public void insertDefaultBooleanVariables () {
         ContentValues var = new ContentValues();
+
         var.put(KEY_VARIABILE, "receivingScore");
+
         var.put(KEY_VALORE, "false");
 
         db.insert(TABLE_VARIABILI, null, var);
 
         var = new ContentValues();
+
         var.put(KEY_VARIABILE, "gameCounter");
+
         var.put(KEY_VALORE, "0");
     }
-
 }

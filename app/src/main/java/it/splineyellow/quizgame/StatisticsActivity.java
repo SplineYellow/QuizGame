@@ -6,8 +6,17 @@ import android.widget.TextView;
 
 import java.sql.SQLException;
 
-//Copyright SplineYellow - 2014
+// Copyright SplineYellow - 2014
 
+/*
+    Classe per la gestione delle statistiche di gioco.
+ */
+/*
+    TODO
+    Nel database sono implementati i metodi relativi a questa activity; una volta risolti i problemi
+    di ricezione del tabellone, sarà possibile anche aggiornare le varie statistiche relative alle
+    partite vinte, perse e pareggiate; alle risposta corrette e sbagliate.
+ */
 public class StatisticsActivity extends Activity {
     UtentiDatabaseAdapter utentiDatabaseAdapter = new UtentiDatabaseAdapter(this);
 

@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -12,15 +11,16 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
-import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
-import java.net.SocketTimeoutException;
 import java.sql.SQLException;
 
-//Copyright SplineYellow - 2014
+// Copyright SplineYellow - 2014
 
+/*
+    Classe per la gestione del punteggio ottenuto.
+ */
 public class ScoreActivity extends Activity {
     public final static String EXTRA_MESSAGE = "it.splineyellow.quizgame.MESSAGE";
 
@@ -65,8 +65,6 @@ public class ScoreActivity extends Activity {
             myID = 0;
         }
 
-        Log.v("MYID", Integer.toString(myID));
-
         new SendScoreTask().execute();
 
         TextView textScore = (TextView) findViewById(R.id.score);
@@ -85,33 +83,30 @@ public class ScoreActivity extends Activity {
 
         db.close();
 
-        Log.v(TAG, "Scritto nel db");
-
         okButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
                 goToStartGameActivity();
             }
         });
     }
 
     /*
-        Disable "hardware" back button.
-     */
+        onKeyDown() permette di disabilitare la pressione del BackButton di Android.
+    */
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         return (keyCode == KeyEvent.KEYCODE_BACK || super.onKeyDown(keyCode, event));
     }
 
+    /*
+        onCreateOptionsMenu() permette di disabilitare la visualizzazione del bottone Indietro
+        all'interno del programma.
+    */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu, menu);
 
-        /*
-            Disable action bar back button.
-         */
         try {
             getActionBar().setDisplayHomeAsUpEnabled(false);
         } catch (NullPointerException n) {
@@ -123,22 +118,19 @@ public class ScoreActivity extends Activity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
         return id == R.id.action_settings || super.onOptionsItemSelected(item);
     }
 
+    /*
+        onPrepareOptionsMenu() permette di disabilitare la pressione del tasto Settings di Android.
+     */
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
         try {
             MenuItem item = menu.findItem(R.id.action_settings);
 
-        /*
-            Remove "more action" setting in the action bar.
-         */
             item.setVisible(false);
         } catch(NullPointerException n) {
             n.printStackTrace();
@@ -154,22 +146,24 @@ public class ScoreActivity extends Activity {
                 categories[3] + "," + categories[4] + "," + categories[5] + "," + categories[6] + "," + categories[7] + "," +
                 categories[8] + "," + categories[9] + "," + categories[10]);
 
-        Log.v(TAG, "Parte intent");
-
         startActivity(intent);
     }
 
+    /*
+        SendScoreTask è un AsyncTask per inviare al server il punteggio del giocatore.
+     */
     public class SendScoreTask extends AsyncTask<Void, Void, Void> {
         @Override
         protected Void doInBackground(Void... params) {
             DatagramSocket datagramSocket = null;
+
             DatagramPacket datagramPacket;
+
             byte[] buffer;
+
             InetAddress serverAddr;
 
             try {
-                Log.v(TAG, "Entrato nel try della SendScoreTask");
-
                 serverAddr = InetAddress.getByName(dstAddress);
 
                 buffer = score.getBytes();
@@ -181,19 +175,13 @@ public class ScoreActivity extends Activity {
                 datagramPacket = new DatagramPacket(buffer, buffer.length, serverAddr, dstPort);
 
                 datagramSocket.send(datagramPacket);
-
-                Log.v(TAG, "Dopo la send");
-
-                Log.v(TAG, "inviato punteggio " + score);
             } catch (Exception e) {
                 e.printStackTrace();
             }
+            datagramSocket.close();
 
-                datagramSocket.close();
-
-                return null;
-            }
-
+            return null;
+        }
 
         @Override
         protected void onPostExecute(Void result) {
@@ -207,13 +195,15 @@ public class ScoreActivity extends Activity {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+
         boolean value = db.getBooleanVariable("receivingScore");
+
         db.close();
+
         return value;
     }
 
     public int getGameCounter () {
-
         try {
             db.open();
         } catch (SQLException e) {
@@ -221,9 +211,9 @@ public class ScoreActivity extends Activity {
         }
 
         int counter = db.getIntegerVariable("gameCounter");
+
         db.close();
 
         return counter;
-
     }
 }

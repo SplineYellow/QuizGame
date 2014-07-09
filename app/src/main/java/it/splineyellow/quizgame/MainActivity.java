@@ -17,8 +17,11 @@ import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-//Copyright SplineYellow - 2014
+// Copyright SplineYellow - 2014
 
+/*
+    Classe per la gestione iniziale del programma.
+ */
 public class MainActivity extends Activity {
     EditText editTextUser;
 
@@ -48,11 +51,18 @@ public class MainActivity extends Activity {
             e.printStackTrace();
         }
         utentiDatabaseAdapter.insertDefaultBooleanVariables();
+
         utentiDatabaseAdapter.setBooleanVariable("receivingScore", false);
+
         utentiDatabaseAdapter.setIntegerVariable("gameCounter", 0);
+
         utentiDatabaseAdapter.close();
     }
 
+    /*
+        ClickListener per l'inserimento di utente e password nel database; in caso fosse già
+        presente si controlla l'esattezza dei dati inseriti.
+     */
     View.OnClickListener buttonLoginOnClickListener = new View.OnClickListener() {
             @Override
             public void onClick(View arg0) {
@@ -114,15 +124,16 @@ public class MainActivity extends Activity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
 
         return true;
     }
 
+    /*
+        OptionsItemSelected per la rimozione del database Utenti tramite popup.
+     */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-       // Handle action bar item clicks here.
         switch (item.getItemId()) {
             case R.id.action_delete_db:
                 AlertDialog.Builder dropBuilder = new AlertDialog.Builder(this);
@@ -175,6 +186,9 @@ public class MainActivity extends Activity {
         editTextPassword.setText("");
     }
 
+    /*
+        goToMenu() permette di passare all'activity specificata.
+     */
     public void goToMenu () {
         Intent intent = new Intent(this, MenuActivity.class);
 

@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.CountDownTimer;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -21,12 +20,14 @@ import android.widget.TextView;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
-import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.sql.SQLException;
 
-//Copyright SplineYellow - 2014
+// Copyright SplineYellow - 2014
 
+/*
+    Classe per la gestione del tabellone di gioco.
+ */
 public class StartGameActivity extends Activity {
     public final static String EXTRA_MESSAGE = "it.splineyellow.quizgame.MESSAGE";
 
@@ -101,6 +102,10 @@ public class StartGameActivity extends Activity {
 
             gridView.setEnabled(false);
 
+            /*
+                CountDownTimer è un contatore che gestisce l'abilitazione dei bottoni presenti
+                sul tabellone di gioco.
+             */
             countDownTimer = new CountDownTimer(30000, 1000) {
                 public void onTick(long millisUntilFinished) {
                     countdown.setText("Secondi rimanenti: " + millisUntilFinished / 1000);
@@ -134,21 +139,21 @@ public class StartGameActivity extends Activity {
     }
 
     /*
-        Disable "hardware" back button.
-     */
+        onKeyDown() permette di disabilitare la pressione del BackButton di Android.
+    */
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         return (keyCode == KeyEvent.KEYCODE_BACK || super.onKeyDown(keyCode, event));
     }
 
+    /*
+        onCreateOptionsMenu() permette di disabilitare la visualizzazione del bottone Indietro
+        all'interno del programma.
+    */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu, menu);
 
-        /*
-            Disable action bar back button.
-         */
         try {
             getActionBar().setDisplayHomeAsUpEnabled(false);
         } catch (NullPointerException n) {
@@ -160,22 +165,19 @@ public class StartGameActivity extends Activity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
         return id == R.id.action_settings || super.onOptionsItemSelected(item);
     }
 
+    /*
+        onPrepareOptionsMenu() permette di disabilitare la pressione del tasto Settings di Android.
+     */
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
         try {
             MenuItem item = menu.findItem(R.id.action_settings);
 
-        /*
-            Remove "more action" setting in the action bar.
-         */
             item.setVisible(false);
         } catch(NullPointerException n) {
             n.printStackTrace();
@@ -184,6 +186,10 @@ public class StartGameActivity extends Activity {
         return super.onPrepareOptionsMenu(menu);
     }
 
+    /*
+        ImageAdapter è una classe per la visualizzazione grafica del tabellone di gioco implementata
+        tramite GridView di dimensioni 3x3.
+     */
     public class ImageAdapter extends BaseAdapter {
         private Context mContext;
 
@@ -203,11 +209,10 @@ public class StartGameActivity extends Activity {
             return 0;
         }
 
-        // create a new ImageView for each item referenced by the Adapter
         public View getView(int position, View convertView, ViewGroup parent) {
             ImageView imageView;
 
-            if (convertView == null) {  // if it's not recycled, initialize some attributes
+            if (convertView == null) {
                 imageView = new ImageView(mContext);
 
                 imageView.setLayoutParams(new GridView.LayoutParams(85, 85));
@@ -227,6 +232,9 @@ public class StartGameActivity extends Activity {
         }
     }
 
+    /*
+        categoriesOrder() permette di disegnare correttamente le categorie.
+     */
     public Integer[] categoriesOrder(String[] categories) {
         Integer[] categoriesId = {R.drawable.arte, R.drawable.cinema, R.drawable.geografia,
                 R.drawable.informatica, R.drawable.letteratura, R.drawable.matematica,
@@ -255,6 +263,9 @@ public class StartGameActivity extends Activity {
         return categoriesId;
     }
 
+    /*
+        goToQuestion() gestisce la selezione delle domande.
+     */
     public void goToQuestion(String i) {
         Intent intent = new Intent (this, QuestionActivity.class);
 
@@ -267,6 +278,10 @@ public class StartGameActivity extends Activity {
         startActivity(intent);
     }
 
+    /*
+        SendTask è un AsyncTask per inviare al server la categoria scelta dall'utente tramite
+        la pressione del bottone.
+     */
     public class SendTask extends AsyncTask<Void, Void, Void> {
         @Override
         protected Void doInBackground(Void... params) {
@@ -286,13 +301,9 @@ public class StartGameActivity extends Activity {
 
             if (turn == 2) {
                 goToEndGame();
-
-                Log.v("FINE PARTITA", "fine partita");
             }
 
             if (turn == myID) {
-                Log.v("TESTIF", "testif");
-
                 try {
                     datagramSocket = new DatagramSocket();
                     
@@ -305,8 +316,6 @@ public class StartGameActivity extends Activity {
                     int counter = 0;
 
                     while (continueSending && counter < 1) {
-                        Log.v("SEND", "send della categoria");
-
                         datagramSocket.send(datagramPacket);
 
                         counter++;
@@ -325,8 +334,18 @@ public class StartGameActivity extends Activity {
         protected void onPostExecute(Void result) {
             super.onPostExecute(result);
         }
-
     }
+
+    /*
+        ReceiveTask è un AsyncTask per permettere all'utente che non sta giocando di ricevere
+        il tabellone aggiornato.
+     */
+    /*
+        TODO
+        La receive() indicata è il punto critico del nostro progetto in quanto non funziona.
+        Sistemare la ricezione del tabellone permette di completare il programma anche da un
+        punto di vista grafico.
+     */
     public class ReceiveTask extends AsyncTask<Void, Void, Void> {
         @Override
         protected Void doInBackground(Void... params) {
@@ -335,8 +354,6 @@ public class StartGameActivity extends Activity {
             DatagramPacket datagramPacket = null;
 
             byte[] buffer = new byte[4096];
-
-            Log.v("TESTELSE", "testelse");
 
             if (turn != myID) {
 
@@ -349,8 +366,6 @@ public class StartGameActivity extends Activity {
                 datagramPacket = new DatagramPacket(buffer, buffer.length, serverAddr, dstPort);
 
                 try {
-                    Log.v("RECEIVE", "receive del tabellone");
-
                     datagramSocket.receive(datagramPacket);
                 } catch (NullPointerException n) {
                     n.printStackTrace();
@@ -360,8 +375,6 @@ public class StartGameActivity extends Activity {
 
                 try {
                     String firstResponse = new String(datagramPacket.getData());
-
-                    Log.v("STRINGA RICEVUTA", firstResponse);
                 } catch (NullPointerException e) {
                     e.printStackTrace();
                 }
@@ -376,6 +389,10 @@ public class StartGameActivity extends Activity {
         }
     }
 
+    /*
+        gameDataSplitter() permette di realizzare il parsing del tabellone per essere visualizzato
+        come una matrice 3x3.
+     */
     public String[][] gameDataSplitter (String string) {
         String[][] matrix = new String[3][3];
 
@@ -396,7 +413,9 @@ public class StartGameActivity extends Activity {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+
         db.setBooleanVariable("receivingScore", value);
+
         db.close();
     }
 
@@ -406,26 +425,35 @@ public class StartGameActivity extends Activity {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        boolean value = db.getBooleanVariable("receivingScore");
-        db.close();
-        return value;
-    }
 
-    public void goToEndGame () { // farsi passare risultato della partita
-        Intent intent = new Intent(this, EndGameActivity.class);
-        startActivity(intent);
+        boolean value = db.getBooleanVariable("receivingScore");
+
+        db.close();
+
+        return value;
     }
 
     public void incrementCounter () {
         int oldCounter;
+
         String varName = "gameCounter";
+
         try {
             db.open();
         } catch (SQLException e) {
             e.printStackTrace();
         }
+
         oldCounter = db.getIntegerVariable(varName);
+
         int newCounter = oldCounter + 1;
+
         db.setIntegerVariable(varName, newCounter);
+    }
+
+    public void goToEndGame () {
+        Intent intent = new Intent(this, EndGameActivity.class);
+
+        startActivity(intent);
     }
 }

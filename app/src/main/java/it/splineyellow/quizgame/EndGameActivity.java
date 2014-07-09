@@ -12,8 +12,17 @@ import android.widget.TextView;
 
 import java.sql.SQLException;
 
-//Copyright SplineYellow - 2014
+// Copyright SplineYellow - 2014
 
+/*
+    Classe per la gestione della fine della partita.
+ */
+/*
+    TODO
+    Dato che non si riesce a ricevere il tabellone aggiornato dal Server, per i problemi esposti,
+    questa classe è stata realizzata per una futura implementazione.
+    Attualmente non è raggiungibile dal programma.
+ */
 public class EndGameActivity extends Activity {
     UtentiDatabaseAdapter db = new UtentiDatabaseAdapter(this);
 
@@ -25,7 +34,7 @@ public class EndGameActivity extends Activity {
 
         TextView resultText = (TextView) findViewById(R.id.game_result);
 
-        String result = "v"; // valore di prova; si fa passare dalla StartGameActivity il risultato
+        String result = "v";
 
         try {
             db.open();
@@ -63,9 +72,6 @@ public class EndGameActivity extends Activity {
         });
     }
 
-    /*
-        Disable "hardware" back button.
-     */
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         return (keyCode == KeyEvent.KEYCODE_BACK || super.onKeyDown(keyCode, event));
@@ -73,12 +79,8 @@ public class EndGameActivity extends Activity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu, menu);
 
-        /*
-            Disable action bar back button.
-         */
         try {
             getActionBar().setDisplayHomeAsUpEnabled(false);
         } catch (NullPointerException n) {
@@ -90,9 +92,6 @@ public class EndGameActivity extends Activity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
         return id == R.id.action_settings || super.onOptionsItemSelected(item);
@@ -103,9 +102,6 @@ public class EndGameActivity extends Activity {
         try {
             MenuItem item = menu.findItem(R.id.action_settings);
 
-        /*
-            Remove "more action" setting in the action bar.
-         */
             item.setVisible(false);
         } catch(NullPointerException n) {
             n.printStackTrace();

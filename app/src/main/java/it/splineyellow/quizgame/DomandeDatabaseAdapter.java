@@ -5,12 +5,14 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.util.Log;
 
 import java.sql.SQLException;
 
-//Copyright SplineYellow - 2014
+// Copyright SplineYellow - 2014
 
+/*
+    Classe per la gestione del Database Domande.
+ */
 public class DomandeDatabaseAdapter {
     public static final String KEY_DOMANDA = "domanda";
 
@@ -88,10 +90,6 @@ public class DomandeDatabaseAdapter {
 
         @Override
         public void onUpgrade (SQLiteDatabase db, int oldVersion, int newVersion) {
-            Log.w(TAG, "Upgrading database from version " + oldVersion
-                    + " to "
-                    + newVersion + ", which will destroy all old data");
-
             db.execSQL(TABLE_DOMANDE_DROP);
 
             db.execSQL(TABLE_CATEGORIE_DROP);
@@ -191,7 +189,6 @@ public class DomandeDatabaseAdapter {
         return questionsToSend;
     }
 
-    /* PROVISIONAL METHODS */
     public void fillCategoryTable () {
         db.delete(TABLE_CATEGORIE, null, null);
 
@@ -223,7 +220,8 @@ public class DomandeDatabaseAdapter {
 
         ContentValues domanda = new ContentValues();
 
-        // ARTE ============================================
+        // ARTE ===================================================================================
+
         argomento = "ARTE";
 
         domanda.put(KEY_DOMANDA, "Chi ha dipinto la Cappella Sistina?");
@@ -466,7 +464,8 @@ public class DomandeDatabaseAdapter {
 
         db.insert(TABLE_DOMANDE, null, domanda);
 
-        // CINEMA =============================
+        // CINEMA =================================================================================
+
         argomento = "CINEMA";
 
         domanda.put(KEY_DOMANDA, "Chi e' il regista del film La Migliore Offerta?");
@@ -645,7 +644,8 @@ public class DomandeDatabaseAdapter {
 
         db.insert(TABLE_DOMANDE, null, domanda);
 
-        // GEOGRAFIA ====================================
+        // GEOGRAFIA ==============================================================================
+
         argomento = "GEOGRAFIA";
 
         domanda.put(KEY_DOMANDA, "La capitale del Giappone:");
@@ -824,10 +824,11 @@ public class DomandeDatabaseAdapter {
 
         db.insert(TABLE_DOMANDE, null, domanda);
 
-        // INFORMATICA ======================================
+        // INFORMATICA ============================================================================
+
         argomento = "INFORMATICA";
 
-        domanda.put(KEY_DOMANDA, "Nel caso peggiore il costo dell'algoritmo di ordinamento quicksort?");
+        domanda.put(KEY_DOMANDA, "Qual è il costo dell'algoritmo di ordinamento quicksort nel caso pessimo?");
 
         domanda.put(KEY_ARGOMENTO, argomento);
 
@@ -939,7 +940,8 @@ public class DomandeDatabaseAdapter {
 
         db.insert(TABLE_DOMANDE, null, domanda);
 
-        // LETTERATURA ======================================
+        // LETTERATURA ============================================================================
+
         argomento = "LETTERATURA";
 
         domanda.put(KEY_DOMANDA, "Chi fu Erodoto?");
@@ -1182,7 +1184,8 @@ public class DomandeDatabaseAdapter {
 
         db.insert(TABLE_DOMANDE, null, domanda);
 
-        // MATEMATICA ======================================
+        // MATEMATICA =============================================================================
+
         argomento = "MATEMATICA";
 
         domanda.put(KEY_DOMANDA, "Quanto fa 23/24-5/36 ?");
@@ -1345,7 +1348,8 @@ public class DomandeDatabaseAdapter {
 
         db.insert(TABLE_DOMANDE, null, domanda);
 
-        // MUSICA ======================================
+        // MUSICA =================================================================================
+
         argomento = "MUSICA";
 
         domanda.put(KEY_DOMANDA, "Quanti Grammy Awards ha vinto la cantante Beyonce'?");
@@ -1428,7 +1432,8 @@ public class DomandeDatabaseAdapter {
 
         db.insert(TABLE_DOMANDE, null, domanda);
 
-        // SPORT ======================================
+        // SPORT ==================================================================================
+
         argomento = "SPORT";
 
         domanda.put(KEY_DOMANDA, "I primi giochi olimpici si svolsero:");
@@ -1575,7 +1580,8 @@ public class DomandeDatabaseAdapter {
 
         db.insert(TABLE_DOMANDE, null, domanda);
 
-        // STORIA ======================================
+        // STORIA =================================================================================
+
         argomento = "STORIA";
 
         domanda.put(KEY_DOMANDA, "Chi fu l'ultimo Re di Roma?");

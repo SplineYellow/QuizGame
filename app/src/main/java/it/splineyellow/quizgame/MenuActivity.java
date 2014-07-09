@@ -11,13 +11,20 @@ import android.widget.Button;
 
 import java.sql.SQLException;
 
-//Copyright SplineYellow - 2014
+// Copyright SplineYellow - 2014
 
+/*
+    Classe per la gestione del menù utente.
+ */
 public class MenuActivity extends Activity {
     String userData;
 
     UtentiDatabaseAdapter utentiDatabaseAdapter = new UtentiDatabaseAdapter(this);
 
+    /*
+        onCreate() permette di gestire la selezione eseguita dall'utente tramite la pressione
+        dei vari bottoni controllati tramite OnClickListener().
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -78,21 +85,21 @@ public class MenuActivity extends Activity {
     }
 
     /*
-        Disable "hardware" back button.
+        onKeyDown() permette di disabilitare la pressione del BackButton di Android.
      */
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         return (keyCode == KeyEvent.KEYCODE_BACK || super.onKeyDown(keyCode, event));
     }
 
+    /*
+        onCreateOptionsMenu() permette di disabilitare la visualizzazione del bottone Indietro
+        all'interno del programma.
+     */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu, menu);
 
-        /*
-            Disable action bar back button.
-         */
         try {
             getActionBar().setDisplayHomeAsUpEnabled(false);
         } catch (NullPointerException n) {
@@ -104,22 +111,19 @@ public class MenuActivity extends Activity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
         return id == R.id.action_settings || super.onOptionsItemSelected(item);
     }
 
+    /*
+        onPrepareOptionsMenu() permette di disabilitare la pressione del tasto Settings di Android.
+     */
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
         try {
             MenuItem item = menu.findItem(R.id.action_settings);
 
-        /*
-            Remove "more action" setting in the action bar.
-         */
             item.setVisible(false);
         } catch(NullPointerException n) {
             n.printStackTrace();

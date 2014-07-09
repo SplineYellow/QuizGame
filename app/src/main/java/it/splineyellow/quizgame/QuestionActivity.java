@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.CountDownTimer;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -15,8 +14,11 @@ import android.widget.Toast;
 
 import java.sql.SQLException;
 
-//Copyright SplineYellow - 2014
+// Copyright SplineYellow - 2014
 
+/*
+    Classe per la gestione delle domande nella partita in corso di svolgimento.
+ */
 public class QuestionActivity extends Activity {
     public final static String EXTRA_MESSAGE = "it.splineyellow.quizgame.MESSAGE";
 
@@ -46,6 +48,10 @@ public class QuestionActivity extends Activity {
 
     CountDownTimer countDownTimer;
 
+    /*
+        onClickListener() permettono di ricevere tramite bottone la risposta selezionata dall'utente
+        e andare alla successiva domanda, registrando il punteggio e aggiornandolo.
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -88,8 +94,6 @@ public class QuestionActivity extends Activity {
 
         try {
             questionsMatrix = getQuestion(category);
-
-            Log.v("questionMatrix", "Tento di riempire la matrice");
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -101,7 +105,6 @@ public class QuestionActivity extends Activity {
         question1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //chiama funzione checkRisposta
                 String buttonPosition = "1";
 
                 if (!answered) {
@@ -109,8 +112,6 @@ public class QuestionActivity extends Activity {
 
                     if (questionsMatrix[counter][5].equals(buttonPosition)) {
                         score++;
-
-                        Log.v("Contatore: ", Integer.toString(counter));
 
                         Toast t = Toast.makeText(getApplicationContext(), "Risposta 1 esatta!", Toast.LENGTH_SHORT);
 
@@ -133,7 +134,6 @@ public class QuestionActivity extends Activity {
         question2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //chiama funzione checkRisposta
                 String buttonPosition = "2";
 
                 if (!answered) {
@@ -141,8 +141,6 @@ public class QuestionActivity extends Activity {
 
                     if (questionsMatrix[counter][5].equals(buttonPosition)) {
                         score++;
-
-                        Log.v("Contatore: ", Integer.toString(counter));
 
                         Toast t = Toast.makeText(getApplicationContext(), "Risposta 2 esatta!", Toast.LENGTH_SHORT);
 
@@ -165,7 +163,6 @@ public class QuestionActivity extends Activity {
         question3.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //chiama funzione checkRisposta
                 String buttonPosition = "3";
 
                 if (!answered) {
@@ -173,8 +170,6 @@ public class QuestionActivity extends Activity {
 
                     if (questionsMatrix[counter][5].equals(buttonPosition)) {
                         score++;
-
-                        Log.v("Contatore: ", Integer.toString(counter));
 
                         Toast t = Toast.makeText(getApplicationContext(), "Risposta 3 esatta!", Toast.LENGTH_SHORT);
 
@@ -197,7 +192,6 @@ public class QuestionActivity extends Activity {
         question4.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //chiama funzione checkRisposta
                 String buttonPosition = "4";
 
                 if (!answered) {
@@ -205,8 +199,6 @@ public class QuestionActivity extends Activity {
 
                     if (questionsMatrix[counter][5].equals(buttonPosition)) {
                         score++;
-
-                        Log.v("Contatore: ", Integer.toString(counter));
 
                         Toast t = Toast.makeText(getApplicationContext(), "Risposta 4 esatta!", Toast.LENGTH_SHORT);
 
@@ -228,21 +220,21 @@ public class QuestionActivity extends Activity {
     }
 
     /*
-        Disable "hardware" back button.
-     */
+        onKeyDown() permette di disabilitare la pressione del BackButton di Android.
+    */
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         return (keyCode == KeyEvent.KEYCODE_BACK || super.onKeyDown(keyCode, event));
     }
 
+    /*
+        onCreateOptionsMenu() permette di disabilitare la visualizzazione del bottone Indietro
+        all'interno del programma.
+    */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu, menu);
 
-        /*
-            Disable action bar back button.
-         */
         try {
             getActionBar().setDisplayHomeAsUpEnabled(false);
         } catch (NullPointerException n) {
@@ -254,22 +246,19 @@ public class QuestionActivity extends Activity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
         return id == R.id.action_settings || super.onOptionsItemSelected(item);
     }
 
+    /*
+        onPrepareOptionsMenu() permette di disabilitare la pressione del tasto Settings di Android.
+     */
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
         try {
             MenuItem item = menu.findItem(R.id.action_settings);
 
-        /*
-            Remove "more action" setting in the action bar.
-         */
             item.setVisible(false);
         } catch(NullPointerException n) {
             n.printStackTrace();
@@ -283,7 +272,6 @@ public class QuestionActivity extends Activity {
     }
 
     private String[][] getQuestion(String category) throws SQLException {
-        //Send al db della categoria
         try {
             domandeDatabaseAdapter.open();
         } catch (SQLException e) {
@@ -296,13 +284,15 @@ public class QuestionActivity extends Activity {
 
         String[][] questions = domandeDatabaseAdapter.getQuestions(category);
 
-        Log.v("getQuestion", "Chiamata getQuestions");
-
         domandeDatabaseAdapter.close();
 
         return questions;
     }
 
+    /*
+        goToScoreActivity() viene chiamata una volta terminate le domande e passa all'activity
+        successiva il punteggio ottenuto.
+     */
     public void goToScoreActivity () {
         countDownTimer.cancel();
 
@@ -319,8 +309,6 @@ public class QuestionActivity extends Activity {
 
     public void setQuestions (int counter) {
         answered = false;
-
-        Log.v("Contatore dentro setQuestions: ", Integer.toString(counter));
 
         if (counter == 3) {
             goToScoreActivity();
